@@ -1,0 +1,194 @@
+{
+  "_comment": "Sample portfolio data for reuse in other fund tracking projects. Contains 5 representative funds.",
+
+  "portfolio_metadata": {
+    "portfolio_name": "Thai Multi-AMC Diversified Fund Portfolio",
+    "currency": "THB (Thai Baht)",
+    "time_zone": "UTC+7 (Bangkok)",
+    "last_updated": "2026-06-23",
+    "total_funds": 65,
+    "portfolio_value_estimate": 2360190.95,
+    "cost_basis_estimate": 1968491.35,
+    "unrealized_pl_estimate": 391699.60
+  },
+
+  "sample_holdings": {
+    "KKP SEMICON-H-SSF": {
+      "name": "Semiconductor (Hedged)",
+      "description": "Global semiconductor companies, hedged to THB",
+      "amc": "KKP",
+      "amc_full_name": "Kasikornbank Asset Management",
+      "tax": "SSF",
+      "tax_description": "Superannuation Savings Fund (15-year lock, tax deductible)",
+      "asset": "Foreign Equity",
+      "asset_region": "Global Technology",
+      "units": 5108.9797,
+      "avg_cost_price": 20.1056,
+      "cost_basis": 102719.10,
+      "realized_pl": 2008.44,
+      "estimated_current_nav": 36.97,
+      "estimated_current_value": 188908.10,
+      "estimated_unrealized_pl": 86189.00,
+      "estimated_performance_percent": 83.89
+    },
+
+    "K-CHANGE-SSF": {
+      "name": "Global Change Thematic SSF",
+      "description": "Global trends: AI, renewable energy, digital transformation",
+      "amc": "K-Fund",
+      "amc_full_name": "K Aeon Asset Management",
+      "tax": "SSF",
+      "asset": "Foreign Equity",
+      "asset_region": "Global Thematic",
+      "units": 8234.1044,
+      "avg_cost_price": 21.3477,
+      "cost_basis": 175779.19,
+      "realized_pl": 0.0,
+      "estimated_current_nav": 20.40,
+      "estimated_current_value": 168027.60,
+      "estimated_unrealized_pl": -7751.59,
+      "estimated_performance_percent": -4.41
+    },
+
+    "KKP MP-SSF": {
+      "name": "Money Plus SSF",
+      "description": "Fixed income, short-term bonds, money market instruments",
+      "amc": "KKP",
+      "tax": "SSF",
+      "asset": "Fixed Income / Money Market",
+      "asset_region": "Thailand",
+      "units": 3660.4183,
+      "avg_cost_price": 12.5297,
+      "cost_basis": 45863.94,
+      "realized_pl": 1825.01,
+      "estimated_current_nav": 12.96,
+      "estimated_current_value": 47425.84,
+      "estimated_unrealized_pl": 1561.90,
+      "estimated_performance_percent": 3.41
+    },
+
+    "UMIX-TESGX-N68L": {
+      "name": "United Mixed 70/30 ThaiESGX",
+      "description": "70% Thai equities, 30% bonds. ESG-certified, LTF eligible",
+      "amc": "UOB",
+      "amc_full_name": "United Overseas Bank Asset Management",
+      "tax": "ThaiESGX",
+      "tax_description": "Environmental/Social/Governance certified with LTF tax benefits",
+      "asset": "Mixed",
+      "asset_region": "Thailand Balanced",
+      "units": 16143.9924,
+      "avg_cost_price": 9.5778,
+      "cost_basis": 154643.00,
+      "realized_pl": 0.0,
+      "estimated_current_nav": 11.08,
+      "estimated_current_value": 178999.74,
+      "estimated_unrealized_pl": 24356.74,
+      "estimated_performance_percent": 15.75
+    },
+
+    "ES-ESG3070-ThaiESG-A": {
+      "name": "ESG Mixed 30/70 ThaiESG",
+      "description": "30% equities, 70% bonds. ESG-certified, 5-year minimum holding",
+      "amc": "Eastspring",
+      "amc_full_name": "Eastspring Investments",
+      "tax": "ThaiESG",
+      "asset": "Mixed",
+      "asset_region": "Thailand Conservative",
+      "units": 5977.9249,
+      "avg_cost_price": 10.0369,
+      "cost_basis": 59960.56,
+      "realized_pl": 0.0,
+      "estimated_current_nav": 10.67,
+      "estimated_current_value": 63787.02,
+      "estimated_unrealized_pl": 3826.46,
+      "estimated_performance_percent": 6.38
+    }
+  },
+
+  "allocation_example": {
+    "by_asset_class": {
+      "Thai Equity": 25.3,
+      "Foreign Equity": 40.51,
+      "Fixed Income / MM": 20.8,
+      "Mixed": 13.39
+    },
+    "by_amc": {
+      "KKP": 32.1,
+      "UOB": 18.5,
+      "SCB": 15.2,
+      "LH Fund": 12.8,
+      "Eastspring": 10.4,
+      "Bualuang": 6.8,
+      "K-Fund": 3.2,
+      "ONE": 1.0
+    },
+    "by_tax_benefit": {
+      "SSF": 40.51,
+      "ThaiESGX": 40.08,
+      "ThaiESG": 19.41
+    }
+  },
+
+  "performance_metrics": {
+    "time_periods": {
+      "1_day": {
+        "change_baht": 42158.00,
+        "change_percent": 1.79
+      },
+      "1_week": {
+        "change_baht": 235600.00,
+        "change_percent": 10.05
+      },
+      "15_days": {
+        "change_baht": 391699.60,
+        "change_percent": 19.90
+      },
+      "1_month": {
+        "change_baht": 287445.00,
+        "change_percent": 13.94
+      }
+    },
+    "pl_summary": {
+      "unrealized_pl": 391699.60,
+      "realized_pl": 12200.89,
+      "total_pl": 403900.49
+    }
+  },
+
+  "data_structure_example": {
+    "fund_object": {
+      "fund_code": "KKP SEMICON-H-SSF",
+      "name": "Fund display name",
+      "amc": "Fund management company",
+      "tax": "Tax benefit type",
+      "asset": "Asset class category",
+      "units": 5108.9797,
+      "avg_cost_price": 20.1056,
+      "realized_pl": 2008.44
+    },
+    "note": "NAV (Net Asset Value) is fetched from API, not stored in holdings"
+  },
+
+  "currency_info": {
+    "code": "THB",
+    "symbol": "฿",
+    "decimals": 2,
+    "name": "Thai Baht"
+  },
+
+  "date_range_reference": {
+    "1D": "Last 1 day",
+    "1W": "Last 1 week (7 days)",
+    "15D": "Last 15 days (default view)",
+    "1M": "Last 1 month (30 days)"
+  },
+
+  "validation_notes": {
+    "verified_units": "All units match source portfolio data",
+    "cost_basis_formula": "units × avg_cost_price = cost_basis",
+    "market_value_formula": "units × current_nav = market_value",
+    "unrealized_pl_formula": "market_value - cost_basis = unrealized_pl",
+    "realized_pl_source": "From investor statements / transaction history",
+    "nav_source": "Finnomena API or fund manager official data"
+  }
+}

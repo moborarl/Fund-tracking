@@ -1,0 +1,166 @@
+═══════════════════════════════════════════════════════════════════════════════
+  COPY-PASTE READY GIT COMMANDS
+  (Run in Command Prompt or Terminal in your project folder)
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT:
+   1. Open Command Prompt (Win+R → cmd)
+   2. Navigate to project: cd "C:\Users\nupar\Claude\Projects\Fund value tracking"
+   3. Copy & paste each command below one at a time
+   4. Wait for each to complete before pasting next
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 1: Initialize Git
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git init --initial-branch=main
+
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 2: Configure Git User
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git config user.email "nuparkjr@gmail.com"
+
+
+Then copy and paste this:
+
+git config user.name "Nupark Jiravinyu"
+
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 3: Check Status (Optional - just to see what's being tracked)
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git status
+
+
+Expected output: Should list all project files as "Untracked files"
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 4: Add All Files
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git add .
+
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 5: Create Commit
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this entire block (all at once):
+
+git commit -m "Initial commit: Fund tracking dashboard for Cloudflare Pages
+
+- Multi-AMC portfolio monitor (65 mutual funds)
+- Dark-themed responsive HTML dashboard
+- Chart.js visualizations
+- Complete documentation
+- Professional financial UI
+- Ready for Cloudflare Pages deployment"
+
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 6: Add GitHub Remote
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git remote add origin https://github.com/moborarl/Fund-tracking.git
+
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 7: Push to GitHub
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git push -u origin main
+
+
+⚠️  You'll be asked for credentials:
+   - Username: Your GitHub username
+   - Password: Your Personal Access Token (NOT your GitHub password!)
+
+   To get token: https://github.com/settings/tokens
+   Generate → "Generate new token (classic)"
+   Select scope: "repo" (full control)
+   Copy the token and paste when prompted
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 8: Verify Push (Optional - confirm it worked)
+───────────────────────────────────────────────────────────────────────────────
+
+Copy and paste this:
+
+git log --oneline
+
+
+Should show: "Initial commit: Fund tracking dashboard..."
+
+Then visit: https://github.com/moborarl/Fund-tracking
+Should see all files there! ✓
+
+───────────────────────────────────────────────────────────────────────────────
+✅ ALL DONE WITH GITHUB!
+
+Next step: Connect to Cloudflare Pages
+   1. Go to: https://dash.cloudflare.com/
+   2. Pages → Create a project
+   3. Connect to Git → Select moborarl/Fund-tracking
+   4. Build settings: Leave default (no build command)
+   5. Deploy!
+
+Read: DEPLOYMENT_CHECKLIST.md for detailed Cloudflare setup
+
+───────────────────────────────────────────────────────────────────────────────
+TROUBLESHOOTING COMMANDS
+
+If something goes wrong, try these:
+
+Check git status:
+git status
+
+View recent commits:
+git log -5
+
+Check remote URL:
+git remote -v
+
+Fix remote if needed:
+git remote remove origin
+git remote add origin https://github.com/moborarl/Fund-tracking.git
+
+Try push again:
+git push -u origin main
+
+───────────────────────────────────────────────────────────────────────────────
+NOTES:
+
+✓ Commands are safe to run multiple times
+✓ Each step waits for the previous one
+✓ If you see error, don't panic - email me the error message
+✓ Most common issue: Wrong authentication token (make sure to use token, not password)
+✓ If stuck on push, try: git status (to see current state)
+
+───────────────────────────────────────────────────────────────────────────────
+Expected final output should look like:
+
+Enumerating objects: XX, done.
+Counting objects: 100% (XX/XX), done.
+...
+To https://github.com/moborarl/Fund-tracking.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+
+✅ You're done!
+
+───────────────────────────────────────────────────────────────────────────────

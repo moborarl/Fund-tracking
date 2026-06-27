@@ -1,0 +1,227 @@
+═══════════════════════════════════════════════════════════════════════════════
+  FUND VALUE TRACKING DASHBOARD - QUICK REFERENCE FOR AI ASSISTANTS
+═══════════════════════════════════════════════════════════════════════════════
+
+PROJECT TYPE: Professional financial dashboard
+MAIN DELIVERABLE: Single HTML file (dark theme, responsive)
+TARGET USER: Portfolio managers / experienced investors (Thailand market)
+TECH STACK: HTML + CSS + JavaScript + Chart.js
+
+───────────────────────────────────────────────────────────────────────────────
+PORTFOLIO COMPOSITION
+───────────────────────────────────────────────────────────────────────────────
+
+Total Funds: 65
+Asset Management Companies: 8
+  - KKP (Kasikornbank)
+  - SCB (Siam Commercial Bank)
+  - UOB (United Overseas Bank)
+  - LH Fund
+  - Bualuang
+  - Eastspring
+  - ONE
+  - K-Fund
+
+Asset Classes:
+  • Thai Equity (3+ funds each)
+  • Foreign Equity (US, Tech, Healthcare, etc.)
+  • Fixed Income / Money Market
+  • Mixed (70/30 or 60/40 equity/bonds)
+
+Tax Benefits:
+  • SSF - Superannuation Savings (15-year lock, tax deduction)
+  • ThaiESG - ESG certified (5-year minimum)
+  • ThaiESGX - ESG + LTF benefits
+  • General - No special tax treatment
+
+───────────────────────────────────────────────────────────────────────────────
+DATA STRUCTURE (JavaScript)
+───────────────────────────────────────────────────────────────────────────────
+
+const HOLDINGS = {
+  "KKP SEMICON-H-SSF": {
+    "name": "Semiconductor (Hedged)",
+    "amc": "KKP",
+    "tax": "SSF",
+    "asset": "Foreign Equity",
+    "units": 5108.9797,              // Your position size
+    "avg": 20.1056,                  // Average cost price (฿/unit)
+    "realized": 2008.44              // Cumulative realized P/L
+  }
+}
+
+Calculation: Market Value = units × current_nav
+Example: 5108.98 units × ฿36.97 NAV = ฿188,908.10
+
+───────────────────────────────────────────────────────────────────────────────
+DASHBOARD SECTIONS (8 Main Areas)
+───────────────────────────────────────────────────────────────────────────────
+
+1. HEADER (Sticky)
+   - Brand logo + title
+   - "As of [date]" + refresh button
+   - Update NAV button
+
+2. FILTER BAR
+   - AMC selector (multi-checkbox)
+   - Tax type selector (multi-checkbox)
+   - Status count
+
+3. HERO SECTION
+   - Total market value (฿) - large display
+   - Cost basis
+   - Unrealized P/L + percentage
+   - Fund count
+   - Range buttons: 1D | 1W | 15D | 1M
+
+4. HISTORY CHART
+   - Time series (XY axis)
+   - Multi-fund selection + legend toggle
+   - Toggle: Value ฿ / % Change / NAV
+   - Chart.js Line chart
+
+5. ALLOCATION (3-column grid)
+   - By Asset Class (Donut)
+   - By AMC (Donut)
+   - By Tax Type (Donut)
+   - Each with legend + %
+
+6. MOVERS (3-column grid)
+   - Top Gainers (ranked by %)
+   - Top Losers (ranked by %)
+   - Realized vs Unrealized P/L bars
+
+7. HOLDINGS TABLE
+   Columns: Fund | NAV | Units | Value | Weight | Change% | Unreal P/L | Real P/L
+   Features:
+   - Click header to sort
+   - Click row → detail modal
+   - Filter by AMC/Tax above table
+
+8. FUND DETAIL MODAL (on row click)
+   - Fund code + name
+   - 4 stat cards (units, avg cost, NAV, value)
+   - Fund description
+   - Top 5 holdings
+   - Fee breakdown
+   - Performance history
+
+───────────────────────────────────────────────────────────────────────────────
+DESIGN TOKENS (Dark Theme)
+───────────────────────────────────────────────────────────────────────────────
+
+Colors (CSS Variables):
+  --bg:        #070b14  (main background)
+  --panel:     #101829  (card background)
+  --panel2:    #0d1422  (secondary)
+  --line:      #1d2840  (border color)
+  --line2:     #28354f
+  --txt:       #e8eef7  (main text)
+  --muted:     #8593a8  (secondary text)
+  --muted2:    #5d6b82
+  --pos:       #1fd286  (green = gains)
+  --neg:       #ff5a6a  (red = losses)
+  --accent:    #4d8dff  (blue = interactive)
+
+Typography:
+  Font Families: Inter, IBM Plex Sans Thai
+  Headlines: 700 weight
+  Body: 400–600 weight
+  Numbers: Tabular nums for alignment
+
+Spacing:
+  Page margin: 22px
+  Section gap: 26px
+  Card padding: 18px
+  Card radius: 16px
+
+───────────────────────────────────────────────────────────────────────────────
+COMMON TASKS & PROMPTS
+───────────────────────────────────────────────────────────────────────────────
+
+✓ Build section X (specify: hero, chart, table, modal, allocation)
+✓ Integrate NAV API (Finnomena or custom)
+✓ Add sorting/filtering (table or chart)
+✓ Create fund detail popup
+✓ Style dark theme refinement
+✓ Responsive mobile fixes
+✓ Export/import NAV history (JSON)
+✓ Performance calculations (P/L formulas)
+
+Example: "Build the allocation donut charts section. Use Chart.js,
+3-column grid layout. Color-code by asset class. Add legend with
+percentages. Responsive grid → 1 column on mobile."
+
+───────────────────────────────────────────────────────────────────────────────
+VERIFICATION CHECKLIST
+───────────────────────────────────────────────────────────────────────────────
+
+✓ Units match source data (position sizes correct)
+✓ All 65 funds present in holdings object
+✓ Cost basis calculations: units × avg_price
+✓ Realized P/L values match statements
+✓ NAV formula: units × nav = market value
+✓ P/L formulas: (value - cost_basis) = unrealized
+✓ Colors match dark theme spec
+✓ Responsive at 1340px max, scales down
+✓ Charts render without errors
+✓ Table sorts all columns
+✓ Modal opens on row click
+✓ Filter chips work correctly
+
+───────────────────────────────────────────────────────────────────────────────
+FILES & LOCATIONS
+───────────────────────────────────────────────────────────────────────────────
+
+Project Folder: C:\Users\nupar\Claude\Projects\Fund value tracking\
+
+Main Files:
+  • KKP_Portfolio_Dashboard.html    (main deliverable)
+  • PROJECT_BRIEF.md                (full project context)
+  • SYSTEM_PROMPT_TEMPLATE.md       (detailed instructions)
+  • QUICK_REFERENCE.txt             (this file)
+  • VERIFICATION_REPORT.md          (data validation results)
+
+───────────────────────────────────────────────────────────────────────────────
+KEY CONCEPTS FOR NEW TEAM MEMBERS
+───────────────────────────────────────────────────────────────────────────────
+
+NAV = Net Asset Value (current unit price, changes daily)
+Units = Position size (number of shares you own)
+Market Value = Units × NAV (what your position is worth today)
+Cost Basis = Units × Avg Price (what you paid in total)
+Unrealized P/L = Market Value - Cost Basis (current gain/loss)
+Realized P/L = Gains from past sales/redemptions
+
+Time periods:
+  1D = 1 day ago
+  1W = 1 week ago
+  15D = 15 days ago (default view)
+  1M = 1 month ago
+
+AMC = Asset Management Company (the fund provider)
+SSF = 15-year superannuation vehicle (tax benefits)
+ThaiESG = Environmental/Social/Governance certified
+ThaiESGX = ESG + LTF (Long-term holding) benefits
+
+───────────────────────────────────────────────────────────────────────────────
+TESTING DATA SAMPLE
+───────────────────────────────────────────────────────────────────────────────
+
+If building similar dashboard, test with:
+
+Fund: KKP SEMICON-H-SSF
+  Units: 5,108.9797
+  Avg Cost: ฿20.1056
+  Cost Basis: ฿102,719.10
+  Current NAV (example): ฿36.97
+  Current Value: ฿188,908.10
+  Unrealized P/L: +฿86,189.00 (+83.89%)
+
+This shows hedged foreign equity (semiconductor focus), SSF tax benefit,
+high growth potential. Verify calculations match.
+
+───────────────────────────────────────────────────────────────────────────────
+LAST UPDATED: 2026-06-23
+STATUS: Production-ready dashboard, unit data verified ✓
+───────────────────────────────────────────────────────────────────────────────
