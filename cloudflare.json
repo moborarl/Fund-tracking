@@ -1,0 +1,20 @@
+{
+  "name": "fund-tracking-dashboard",
+  "type": "javascript",
+  "compatibility_date": "2024-01-01",
+  "build": {
+    "command": "",
+    "cwd": ".",
+    "upload": {
+      "format": "service-worker"
+    }
+  },
+  "env": {
+    "production": {
+      "vars": {
+        "API_ENDPOINT": "https://api.finnomena.com",
+        "NAV_REFRESH_INTERVAL": "3600"
+      }
+    }
+  }
+}

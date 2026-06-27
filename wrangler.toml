@@ -1,43 +1,20 @@
+# Cloudflare Pages Static Deployment Configuration
+# For: Fund Tracking Dashboard
+
 name = "fund-tracking-dashboard"
-type = "javascript"
-main = "src/index.js"
 compatibility_date = "2024-01-01"
 
-# Cloudflare Pages configuration
-[env.production]
-name = "fund-tracking-dashboard"
-route = "example.com/*"
-zone_id = ""
-
+# Build settings for Pages (static files)
 [build]
 command = ""
-cwd = "./"
-watch_paths = ["KKP_Portfolio_Dashboard.html"]
+output_dir = "."
 
-# Static assets
-[env.production.build]
-upload = { directory = "." }
+# Environment variables (optional - for future API integration)
+[env.production]
+vars = { API_ENDPOINT = "https://api.finnomena.com", NAV_REFRESH_INTERVAL = "3600" }
 
-# KV Namespace (optional - for storing NAV history)
-[[kv_namespaces]]
-binding = "NAV_HISTORY"
-id = ""
-preview_id = ""
+[env.development]
+vars = { API_ENDPOINT = "http://localhost:3000", NAV_REFRESH_INTERVAL = "60" }
 
-# Analytics Engine (optional - for tracking portfolio changes)
-[[analytics_engine_datasets]]
-binding = "PORTFOLIO_ANALYTICS"
-
-# Environment variables
-[env.production.vars]
-API_ENDPOINT = "https://api.finnomena.com"
-NAV_REFRESH_INTERVAL = "3600"
-
-# Development environment
-[env.development.vars]
-API_ENDPOINT = "http://localhost:3000"
-NAV_REFRESH_INTERVAL = "60"
-
-# Triggers (optional - for scheduled NAV updates)
-[[triggers.crons]]
-crons = ["0 17 * * 1-5"]  # 5 PM Thailand time, weekdays only
+# NOTE: This is simplified for static Pages hosting
+# If using Workers for API proxying, create separate wrangler.toml for Worker
