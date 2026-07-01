@@ -2126,6 +2126,7 @@ async function updateNAV(){
  document.getElementById('updIco').textContent='↻';document.getElementById('updTxt').textContent='Update NAV';btn.disabled=false;
  if(ok===0){toast('⚠️ Update blocked (CORS + proxies unavailable). Type “update NAV” in Claude chat to refresh, or use Import below.','err');return;}
  try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));localStorage.setItem('kkp_lastNavFetch',Date.now().toString());}catch(e){}
+ await saveNAVtoSupabase();
  renderAll();toast(`✅ Synced ${ok}/${codes.length} funds · ${added} new NAV points`+(fail?` · ${fail} failed`:''),'ok');
 }
 function exportDB(){const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};const b=new Blob([JSON.stringify(st)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nav_history.json';a.click();}
@@ -2229,6 +2230,22 @@ async function loadMarket(){ if(!sbReady())return; try{
  if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});}
  renderAll();
 }catch(e){console.error('market load',e);} }
+
+// Save fresh NAV data back to Supabase to keep it up to date
+async function saveNAVtoSupabase(){
+ if(!sbReady())return;
+ try{
+  const records=[];
+  for(const code in NAVDB){
+   for(const date in NAVDB[code].navs){
+    records.push({code,date,nav:NAVDB[code].navs[date]});
+   }
+  }
+  if(records.length>0){
+   await SB.from('nav_history').upsert(records,{onConflict:'code,date'});
+  }
+ }catch(e){console.error('save NAV to Supabase',e);}
+}
 // Auto-fetch fresh NAV data on page load (parallel fetching - faster)
 async function autoFetchNAV(){
  const lastFetch=localStorage.getItem('kkp_lastNavFetch');
@@ -2255,12 +2272,13 @@ async function autoFetchNAV(){
   );
   await Promise.all(promises);
 
-  // Save to localStorage and mark timestamp
+  // Save to localStorage and Supabase
   try{
    const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};
    localStorage.setItem(LS_NAV,JSON.stringify(st));
    localStorage.setItem('kkp_lastNavFetch',now.toString());
   }catch(e){}
+  await saveNAVtoSupabase();
   renderAll();
  }catch(e){}
 }
