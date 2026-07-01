@@ -1872,6 +1872,16 @@ let RANGE='d15',histMode='value',histSel=new Set(['__PORT__']),msFilter='',histS
 let filterAMC=new Set(),filterTax=new Set();
 let ALL=[],F=[],T={};
 
+// Clear display on page load to prevent showing cached old values
+document.getElementById('h-value').textContent='';
+document.getElementById('h-cost').textContent='';
+document.getElementById('h-unreal').textContent='';
+document.getElementById('h-count').textContent='';
+document.getElementById('m-unreal').textContent='';
+document.getElementById('m-real').textContent='';
+document.getElementById('tl-baht').textContent='';
+document.getElementById('tl-pct').textContent='';
+
 const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
 const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
 
