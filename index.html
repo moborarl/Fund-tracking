@@ -2104,16 +2104,29 @@ document.getElementById('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeM
 /* ---------- self update / import / export ---------- */
 function toast(msg,type){const t=document.getElementById('toast');t.innerHTML=msg;t.className='toast show '+(type||'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast '+(type||''),5500);}
 async function updateNAV(){
- const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class="spin"></span>';document.getElementById('updTxt').textContent='Fetching…';
- const codes=Object.keys(HOLDINGS);let ok=0,added=0,fail=0,done=0;
- for(const c of codes){try{const j=await fetchJSON(API(c)+'/nav/q?range=1M');
-   if(j&&j.data&&j.data.navs){ok++;if(!NAVDB[c])NAVDB[c]={navs:{}};j.data.navs.forEach(n=>{const d=n.date.slice(0,10);if(NAVDB[c].navs[d]===undefined)added++;NAVDB[c].navs[d]=n.value;});}else fail++;
-  }catch(e){fail++;}
-  done++;document.getElementById('updTxt').textContent='Fetching '+done+'/'+codes.length+'…';await sleep(120);}
+ const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class=”spin”></span>';document.getElementById('updTxt').textContent='Syncing…';
+ const codes=Object.keys(HOLDINGS);let ok=0,added=0,fail=0;
+
+ // Fetch ALL funds in parallel (much faster - 10-15 sec vs 2+ min sequential)
+ const promises=codes.map(c=>
+  fetchJSON(API(c)+'/nav/q?range=1M').then(j=>{
+   if(j&&j.data&&j.data.navs){
+    ok++;
+    if(!NAVDB[c])NAVDB[c]={navs:{}};
+    j.data.navs.forEach(n=>{
+     const d=n.date.slice(0,10);
+     if(NAVDB[c].navs[d]===undefined)added++;
+     NAVDB[c].navs[d]=n.value;
+    });
+   }else fail++;
+  }).catch(e=>{fail++;})
+ );
+ await Promise.all(promises);
+
  document.getElementById('updIco').textContent='↻';document.getElementById('updTxt').textContent='Update NAV';btn.disabled=false;
  if(ok===0){toast('⚠️ Update blocked (CORS + proxies unavailable). Type “update NAV” in Claude chat to refresh, or use Import below.','err');return;}
- try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}
- renderAll();toast(`✅ Updated ${ok}/${codes.length} funds · ${added} new NAV points`+(fail?` · ${fail} failed`:''),'ok');
+ try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));localStorage.setItem('kkp_lastNavFetch',Date.now().toString());}catch(e){}
+ renderAll();toast(`✅ Synced ${ok}/${codes.length} funds · ${added} new NAV points`+(fail?` · ${fail} failed`:''),'ok');
 }
 function exportDB(){const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};const b=new Blob([JSON.stringify(st)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nav_history.json';a.click();}
 function importDB(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){if(!NAVDB[c])NAVDB[c]={navs:{}};Object.assign(NAVDB[c].navs,o[c].navs);}
@@ -2216,8 +2229,45 @@ async function loadMarket(){ if(!sbReady())return; try{
  if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});}
  renderAll();
 }catch(e){console.error('market load',e);} }
+// Auto-fetch fresh NAV data on page load (parallel fetching - faster)
+async function autoFetchNAV(){
+ const lastFetch=localStorage.getItem('kkp_lastNavFetch');
+ const now=Date.now();
+ // Skip if fetched within last 6 hours
+ if(lastFetch&&(now-parseInt(lastFetch))<6*3600*1000)return;
+
+ try{
+  const codes=Object.keys(NAVDB);
+  if(!codes.length)return;
+  document.getElementById('srcline').textContent='Syncing NAV...';
+
+  // Fetch all in parallel (much faster than sequential)
+  const promises=codes.map(c=>
+   fetchJSON(API(c)+'/nav/q?range=1M').then(j=>{
+    if(j&&j.data&&j.data.navs){
+     if(!NAVDB[c])NAVDB[c]={navs:{}};
+     j.data.navs.forEach(n=>{
+      const d=n.date.slice(0,10);
+      NAVDB[c].navs[d]=n.value;
+     });
+    }
+   }).catch(e=>{})
+  );
+  await Promise.all(promises);
+
+  // Save to localStorage and mark timestamp
+  try{
+   const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};
+   localStorage.setItem(LS_NAV,JSON.stringify(st));
+   localStorage.setItem('kkp_lastNavFetch',now.toString());
+  }catch(e){}
+  renderAll();
+ }catch(e){}
+}
+
 renderAll();
 loadMarket();
+autoFetchNAV();
 </script>
 </body>
 </html>
