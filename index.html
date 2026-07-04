@@ -1879,7 +1879,7 @@ const API=c=>`https://www.finnomena.com/fn3/api/fund/v2/public/funds/${encodeURI
 const PROXIES=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u), u=>'https://corsproxy.io/?url='+encodeURIComponent(u), u=>u];
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function fetchJSON(url){let last;for(const mk of PROXIES){try{const r=await fetch(mk(url),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(j&&j.data)return j;last=new Error('no data');}catch(e){last=e;}}throw last;}
-const LS_NAV='kkp_navdb_v2', LS_DET='kkp_funddet_v1';
+const LS_NAV='kkp_navdb_v2', LS_DET='kkp_funddet_v2';
 try{const s=localStorage.getItem(LS_NAV);if(s){const o=JSON.parse(s);for(const c in o){if(!NAVDB[c])NAVDB[c]={navs:{}};Object.assign(NAVDB[c].navs,o[c].navs);}}}catch(e){}
 let DETCACHE={};try{DETCACHE=JSON.parse(localStorage.getItem(LS_DET)||'{}');}catch(e){}
 // ----- transactions ledger (buy/sell) applied over base holdings -----
@@ -1946,6 +1946,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',
  csvSaved:'✅ CSV exported',
+ mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
  swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
@@ -1972,6 +1973,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',
  csvSaved:'✅ ส่งออก CSV แล้ว',
+ mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
  swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
@@ -2282,10 +2284,12 @@ async function openFund(code){
    <div class="m-stat"><div class="l">Weight</div><div class="v">${fmt(f.value/ALL.reduce((s,x)=>s+x.value,0)*100,1)}%</div></div>
   </div><div id="mdyn"><div class="skel"><span class="spin" style="display:inline-block;vertical-align:middle"></span> ${t('mLoading')}</div></div></div>`;
  let d=DETAILS[code]||DETCACHE[code];
+ if(d&&d.mgmtA===undefined)d=null; // refetch to get actual (เก็บจริง) fees
  if(d){renderModalDyn(code,d);return;}
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
- const a=await grab(API(code)),b=await grab(API(code)+'/performance'),c=await grab(API(code)+'/portfolio');
- if(a||b||c){d={amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&a.risk_level,div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}
+ const a=await grab(API(code)),b=await grab(API(code)+'/performance'),c=await grab(API(code)+'/portfolio'),fe=await grab(API(code)+'/fee');
+ const feeArr=(fe&&fe.fees)||[];const feeOf=kw=>{const x=feeArr.find(f=>(f.description||'').includes(kw));if(!x||x.actual_value===''||x.actual_value==null)return null;const v=parseFloat(x.actual_value);return isNaN(v)?null:v;};
+ if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&a.risk_level,div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}
  renderModalDyn(code,d);
 }
 function renderModalDyn(code,d){
@@ -2309,11 +2313,10 @@ function renderModalDyn(code,d){
   <div class="fee"><span>Dividend policy</span><span>${dv(d.div)}</span></div>
   <div class="fee"><span>Inception</span><span>${d.inc||'—'}</span></div>
   <div class="fee"><span>Net assets</span><span>${na(d.na)}</span></div></div></div>`;
- h+=`<div class="m-sec"><h4>${t('mFees')}</h4><div class="feegrid">
-  <div class="fee"><span>Management fee</span><span>${fee(d.mgmt)}</span></div>
-  <div class="fee"><span>Total expense ratio</span><span>${fee(d.exp)}</span></div>
-  <div class="fee"><span>Front-end</span><span>${fee(d.front)}</span></div>
-  <div class="fee"><span>Back-end</span><span>${fee(d.back)}</span></div></div></div>`;
+ const feeA=v=>(v==null||isNaN(v))?'—':fmt(v,2)+(LANG==='th'?'% ต่อปี':'% p.a.');
+ h+=`<div class="m-sec"><h4>${t('mFees')} <span style="font-weight:500;color:var(--muted2);text-transform:none">· ${t('mFeeActual')}</span></h4><div class="feegrid">
+  <div class="fee"><span>${t('mFeeMgmt')}</span><span>${feeA(d.mgmtA)}</span></div>
+  <div class="fee"><span>${t('mFeeTER')}</span><span>${feeA(d.terA!=null?d.terA:d.exp)}</span></div></div></div>`;
  const th=(d.top||[]).filter(x=>x&&x[0]);
  if(th.length){const mx=Math.max(...th.map(x=>x[1]||0),1);
   h+=`<div class="m-sec"><h4>${t('mTop5')}</h4>`+th.map(x=>`<div class="hold-row"><div class="hold-bar" style="width:${Math.max(3,(x[1]||0)/mx*110)}px"></div><div class="hn">${x[0]}</div><div class="hp">${fmt(x[1]||0,2)}%</div></div>`).join('')+`</div>`;}
