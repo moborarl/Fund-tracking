@@ -2,6 +2,6 @@ name = "fund-nav-sync"
 main = "index.js"
 compatibility_date = "2026-07-01"
 
-# Sync NAV from Finnomena to Supabase every 6 hours
+# Rotating slice sync every 15 min (all funds fully refreshed ~every 2h)
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["*/15 * * * *"]
