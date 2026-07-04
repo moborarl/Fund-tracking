@@ -1876,7 +1876,8 @@ const DETAILS={};
 const SB_BAKED={url:"https://pmfqjnheavnbqpsdnffm.supabase.co",key:"sb_publishable_LIvzmoSxnvSXN8MaTkESNw_Bcj0pQim"};  // embedded fund profiles (returns/fees/holdings/strategy)
 const API=c=>`https://www.finnomena.com/fn3/api/fund/v2/public/funds/${encodeURIComponent(c)}`;
 // Finnomena blocks cross-origin (CORS) requests, so fetch via fallback chain: direct -> public CORS proxies.
-const PROXIES=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u), u=>'https://corsproxy.io/?url='+encodeURIComponent(u), u=>u];
+const PROXY_WORKER=localStorage.getItem('kkp_proxy')||'https://api.yourpower.today'; // private Cloudflare Worker proxy (see worker/nav-sync)
+const PROXIES=[u=>PROXY_WORKER+'/fn/'+u.replace(/^https:\/\/www\.finnomena\.com\//,''), u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u), u=>'https://corsproxy.io/?url='+encodeURIComponent(u), u=>u];
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function fetchJSON(url){let last;for(const mk of PROXIES){try{const r=await fetch(mk(url),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(j&&j.data)return j;last=new Error('no data');}catch(e){last=e;}}throw last;}
 const LS_NAV='kkp_navdb_v2', LS_DET='kkp_funddet_v2';
@@ -2287,7 +2288,7 @@ async function openFund(code){
  if(d&&d.mgmtA===undefined)d=null; // refetch to get actual (เก็บจริง) fees
  if(d){renderModalDyn(code,d);return;}
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
- const a=await grab(API(code)),b=await grab(API(code)+'/performance'),c=await grab(API(code)+'/portfolio'),fe=await grab(API(code)+'/fee');
+ const [a,b,c,fe]=await Promise.all([grab(API(code)),grab(API(code)+'/performance'),grab(API(code)+'/portfolio'),grab(API(code)+'/fee')]);
  const feeArr=(fe&&fe.fees)||[];const feeOf=kw=>{const x=feeArr.find(f=>(f.description||'').includes(kw));if(!x||x.actual_value===''||x.actual_value==null)return null;const v=parseFloat(x.actual_value);return isNaN(v)?null:v;};
  if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&a.risk_level,div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}
  renderModalDyn(code,d);
@@ -2332,7 +2333,7 @@ document.getElementById('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeM
 function toast(msg,type){const t=document.getElementById('toast');t.innerHTML=msg;t.className='toast show '+(type||'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast '+(type||''),5500);}
 async function updateNAV(){
  const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class=”spin”></span>';document.getElementById('updTxt').textContent=t('syncing');
- const codes=Object.keys(HOLDINGS);let ok=0,added=0,fail=0;
+ const codes=Object.keys(HOLDINGS);let ok=0,added=0,fail=0;const newRecs=[];
 
  // Fetch ALL funds in parallel (much faster - 10-15 sec vs 2+ min sequential)
  const promises=codes.map(c=>
@@ -2343,7 +2344,7 @@ async function updateNAV(){
     j.data.navs.forEach(n=>{
      const d=n.date.slice(0,10);
      if(NAVDB[c].navs[d]===undefined)added++;
-     NAVDB[c].navs[d]=n.value;
+     if(NAVDB[c].navs[d]!==n.value){NAVDB[c].navs[d]=n.value;newRecs.push({code:c,date:d,nav:n.value});}
     });
    }else fail++;
   }).catch(e=>{fail++;})
@@ -2353,7 +2354,7 @@ async function updateNAV(){
  document.getElementById('updIco').textContent='↻';document.getElementById('updTxt').textContent=t('updNav');btn.disabled=false;
  if(ok===0){toast('⚠️ Update blocked (CORS + proxies unavailable). Type “update NAV” in Claude chat to refresh, or use Import below.','err');return;}
  try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));localStorage.setItem('kkp_lastNavFetch',Date.now().toString());}catch(e){}
- await saveNAVtoSupabase();
+ await saveNAVtoSupabase(newRecs);
  renderAll();toast(`✅ Synced ${ok}/${codes.length} funds · ${added} new NAV points`+(fail?` · ${fail} failed`:''),'ok');
 }
 function exportDB(){const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};const b=new Blob([JSON.stringify(st)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nav_history.json';a.click();}
@@ -2551,13 +2552,15 @@ async function loadMarket(){ if(!sbReady())return; try{
 }catch(e){console.error('market load',e);} }
 
 // Save fresh NAV data back to Supabase to keep it up to date
-async function saveNAVtoSupabase(){
+async function saveNAVtoSupabase(records){
  if(!sbReady())return;
  try{
-  const records=[];
-  for(const code in NAVDB){
-   for(const date in NAVDB[code].navs){
-    records.push({code,date,nav:NAVDB[code].navs[date]});
+  if(!records){ // fallback: full dump (used after fund switch adds a new fund)
+   records=[];
+   for(const code in NAVDB){
+    for(const date in NAVDB[code].navs){
+     records.push({code,date,nav:NAVDB[code].navs[date]});
+    }
    }
   }
   if(records.length>0){
@@ -2572,10 +2575,15 @@ async function autoFetchNAV(){
  // Skip if fetched within last 6 hours
  if(lastFetch&&(now-parseInt(lastFetch))<6*3600*1000)return;
 
+ // Skip client-side fetch when server-side cron already keeps Supabase fresh
+ let newest='';for(const c in NAVDB){for(const d in NAVDB[c].navs){if(d>newest)newest=d;}}
+ if(newest&&newest>=daysBefore(new Date().toISOString().slice(0,10),3)){localStorage.setItem('kkp_lastNavFetch',now.toString());return;}
+
  try{
   const codes=Object.keys(NAVDB);
   if(!codes.length)return;
   document.getElementById('srcline').textContent='Syncing NAV...';
+  const newRecs=[];
 
   // Fetch all in parallel (much faster than sequential)
   const promises=codes.map(c=>
@@ -2584,7 +2592,7 @@ async function autoFetchNAV(){
      if(!NAVDB[c])NAVDB[c]={navs:{}};
      j.data.navs.forEach(n=>{
       const d=n.date.slice(0,10);
-      NAVDB[c].navs[d]=n.value;
+      if(NAVDB[c].navs[d]!==n.value){NAVDB[c].navs[d]=n.value;newRecs.push({code:c,date:d,nav:n.value});}
      });
     }
    }).catch(e=>{})
@@ -2597,15 +2605,14 @@ async function autoFetchNAV(){
    localStorage.setItem(LS_NAV,JSON.stringify(st));
    localStorage.setItem('kkp_lastNavFetch',now.toString());
   }catch(e){}
-  await saveNAVtoSupabase();
+  await saveNAVtoSupabase(newRecs);
   renderAll();
  }catch(e){}
 }
 
 applyLang();
 renderAll();
-loadMarket();
-autoFetchNAV();
+loadMarket().then(autoFetchNAV);
 </script>
 </body>
 </html>

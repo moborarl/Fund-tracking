@@ -1,0 +1,7 @@
+name = "fund-nav-sync"
+main = "index.js"
+compatibility_date = "2026-07-01"
+
+# Sync NAV from Finnomena to Supabase every 6 hours
+[triggers]
+crons = ["0 */6 * * *"]
