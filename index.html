@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AMC Portfolio Monitor</title>
+<!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -31,7 +32,7 @@ header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);backgroun
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--panel);border:1px solid var(--line2);color:var(--txt);padding:13px 20px;border-radius:11px;font-size:13px;box-shadow:var(--shadow);z-index:200;transition:.3s;max-width:90vw}
 .toast.show{transform:translateX(-50%) translateY(0)}.toast.err{border-color:var(--neg)}.toast.ok{border-color:var(--pos)}
 /* filter bar */
-.filterbar{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 16px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow)}
+.filterbar{margin-top:18px;background:rgba(16,24,41,.92);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:14px;padding:13px 16px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow);position:sticky;top:66px;z-index:45}
 .fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fgroup .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);font-weight:700;margin-right:2px}
 .fchip{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer;border:1px solid var(--line2);background:var(--panel2);color:var(--muted);transition:.12s;user-select:none}
@@ -144,104 +145,152 @@ input[type=file]{display:none}
 .txn-act{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px}.txn-act.buy{background:rgba(31,210,134,.16);color:var(--pos)}.txn-act.sell{background:rgba(255,90,106,.16);color:var(--neg)}
 .txn-c{font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.txn-d{color:var(--muted2)}.txn-u{font-variant-numeric:tabular-nums;color:var(--muted)}
 .txn-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:13px}.txn-del:hover{color:var(--neg)}
+/* timeframe pills + custom range */
+.tf-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.tf-custom{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)}
+.tf-custom input[type=date]{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:6px 8px;color:var(--txt);font:inherit;font-size:11.5px;color-scheme:dark}
+.bench-sel{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:7px 10px;color:var(--muted);font:inherit;font-size:12px;max-width:230px;cursor:pointer}
+.bench-sel:hover{color:var(--txt)}
+/* risk section */
+.risk-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:980px){.risk-kpis{grid-template-columns:repeat(2,1fr)}}
+.rk{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rk .l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted2);font-weight:700}
+.rk .v{font-size:19px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.rk .m{font-size:10.5px;color:var(--muted2);margin-top:2px}
+.risk-wrap{overflow-x:auto}
+.risk-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:720px}
+.risk-tbl th{text-align:right;padding:9px 11px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted2);border-bottom:1px solid var(--line);white-space:nowrap;font-weight:600}
+.risk-tbl th:first-child,.risk-tbl td:first-child{text-align:left}
+.risk-tbl td{padding:8px 11px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+.risk-tbl tr:last-child td{border-bottom:none}
+/* print */
+@media print{header.top,.filterbar,.ms-top,.ms-list,.tf-row,.foot,#pills,.btn,.range-pills{display:none!important}
+ body{background:#fff;color:#000;padding-bottom:0}
+ .card,.hero-main,.mini,.tbl-wrap{box-shadow:none;border-color:#bbb;background:#fff;color:#000}
+ .hero-main{background:#fff}.hero-main::after{display:none}}
 </style>
 </head>
 <body>
 <header class="top"><div class="top-inner">
- <div class="brand"><div class="logo">PORT</div><div><h1>Portfolio Monitor</h1><div class="sub">Multi-AMC · NAV-based valuation</div></div></div>
- <div class="upd"><div class="asof"><div>As of <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
+ <div class="brand"><div class="logo">PORT</div><div><h1>Portfolio Monitor</h1><div class="sub" data-i18n="brandSub">Multi-AMC · NAV-based valuation</div></div></div>
+ <div class="upd"><div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
+  <button class="btn ghost" id="langBtn" style="font-size:13px;padding:9px 13px;min-width:52px;justify-content:center">ไทย</button>
   <button class="btn ghost" id="authBtn" style="font-size:13px;padding:9px 13px">☁ Sign in</button>
-  <button class="btn ghost" id="txnBtn" style="font-size:13px;padding:9px 13px">⇄ Buy / Sell</button>
+  <button class="btn ghost" id="txnBtn" style="font-size:13px;padding:9px 13px" data-i18n="txnBtn">⇄ Buy / Sell</button>
+  <button class="btn ghost" id="swBtn" style="font-size:13px;padding:9px 13px" data-i18n="swBtn">⇌ Switch</button>
   <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt">Update NAV</span></button></div>
 </div></header>
 
 <div class="wrap">
  <!-- FILTER BAR -->
  <div class="filterbar">
-  <div class="fgroup"><span class="lbl">AMC</span><span id="amcFilter"></span></div>
-  <div class="fgroup"><span class="lbl">Tax</span><span id="taxFilter"></span></div>
+  <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
+  <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
   <div class="fstatus" id="fstatus"></div>
  </div>
 
  <div class="hero"><div class="hero-grid">
   <div class="hero-main">
-   <div class="eyebrow">Total Market Value</div>
+   <div class="eyebrow" data-i18n="eyebrow">Total Market Value</div>
    <div class="totval"><span class="cur">฿</span><span id="h-value" class="mono"></span></div>
-   <div class="hero-sub"><div class="it">Cost Basis<b class="mono" id="h-cost"></b></div>
-    <div class="it">Unrealized P/L<b class="mono pos" id="h-unreal"></b></div>
-    <div class="it">Funds<b id="h-count"></b></div></div>
+   <div class="hero-sub"><div class="it"><span data-i18n="costBasis">Cost Basis</span><b class="mono" id="h-cost"></b></div>
+    <div class="it"><span data-i18n="unrealPL">Unrealized P/L</span><b class="mono pos" id="h-unreal"></b></div>
+    <div class="it"><span data-i18n="fundsLbl">Funds</span><b id="h-count"></b></div></div>
    <div class="range-pills" id="pills">
     <button data-r="d1">1D</button><button data-r="w1">1W</button><button data-r="d15" class="on">15D</button><button data-r="m1">1M</button></div>
    <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span></div>
    <div class="tl-label" id="tl-label"></div>
   </div>
   <div class="hero-side">
-   <div class="mini"><div class="lab">Unrealized P/L (on current holdings)</div><div class="val mono pos" id="m-unreal"></div>
-    <div class="meta">vs cost <span class="chip2" id="m-unreal-pct" style="background:rgba(31,210,134,.14);color:var(--pos)"></span></div></div>
-   <div class="mini"><div class="lab">Realized P/L (cumulative)</div><div class="val mono" id="m-real"></div><div class="meta">from past redemptions</div></div>
+   <div class="mini"><div class="lab" data-i18n="heroUnrealLab">Unrealized P/L (on current holdings)</div><div class="val mono pos" id="m-unreal"></div>
+    <div class="meta"><span data-i18n="vsCost">vs cost</span> <span class="chip2" id="m-unreal-pct" style="background:rgba(31,210,134,.14);color:var(--pos)"></span></div></div>
+   <div class="mini"><div class="lab" data-i18n="heroRealLab">Realized P/L (cumulative)</div><div class="val mono" id="m-real"></div><div class="meta" data-i18n="heroRealMeta">from past redemptions</div></div>
   </div>
  </div></div>
 
  <!-- HISTORY MULTI-SELECT -->
  <section>
-  <div class="sec-head"><h2>Historical Comparison</h2><span class="hint">Select portfolio &amp; multiple funds · switch Value / % Change / NAV</span></div>
+  <div class="sec-head"><h2 data-i18n="secHist">Historical Comparison</h2><span class="hint" data-i18n="histHint">Select portfolio &amp; multiple funds · switch Value / % Change / NAV</span></div>
   <div class="card">
    <div class="ms-top">
-    <input class="ms-search" id="msSearch" placeholder="Search funds to add…">
-    <button class="btn ghost" id="msPort">Portfolio only</button>
-    <button class="btn ghost" id="msNone">Clear</button>
-    <div class="ms-modes" id="msSortBtns"><button data-s="value" class="on">Sort: Value</button><button data-s="name">Sort: Name</button></div>
-    <div class="ms-modes"><button data-m="value" class="on">Value ฿</button><button data-m="norm">% Change</button><button data-m="nav">NAV</button></div>
+    <input class="ms-search" id="msSearch" placeholder="Search funds to add…" data-i18n-ph="searchPh">
+    <button class="btn ghost" id="msPort" data-i18n="portOnly">Portfolio only</button>
+    <button class="btn ghost" id="msNone" data-i18n="clearBtn">Clear</button>
+    <div class="ms-modes" id="msSortBtns"><button data-s="value" class="on" data-i18n="sortValue">Sort: Value</button><button data-s="name" data-i18n="sortName">Sort: Name</button></div>
+    <div class="ms-modes"><button data-m="value" class="on" data-i18n="modeValue">Value ฿</button><button data-m="norm" data-i18n="modeNorm">% Change</button><button data-m="nav">NAV</button></div>
    </div>
    <div class="ms-list" id="msList"></div>
+   <div class="tf-row">
+    <div class="ms-modes" id="tfBtns"><button data-tf="1W">1W</button><button data-tf="1M">1M</button><button data-tf="3M">3M</button><button data-tf="6M">6M</button><button data-tf="1Y">1Y</button><button data-tf="YTD">YTD</button><button data-tf="MAX" class="on">MAX</button></div>
+    <div class="tf-custom"><input type="date" id="tfFrom"><span>→</span><input type="date" id="tfTo"><button class="btn ghost" id="tfApply" data-i18n="applyBtn">Apply</button></div>
+    <select class="bench-sel" id="benchSel" style="margin-left:auto"></select>
+   </div>
    <div class="chart-box"><canvas id="histChart"></canvas></div>
   </div>
  </section>
 
  <!-- ALLOCATION (3 donuts) -->
  <section>
-  <div class="sec-head"><h2>Allocation</h2><span class="hint">Reflects current filter</span></div>
+  <div class="sec-head"><h2 data-i18n="secAlloc">Allocation</h2><span class="hint" data-i18n="allocHint">Reflects current filter</span></div>
   <div class="grid3">
-   <div class="card"><h3>By Asset Class</h3><div class="csub">Asset allocation</div><div class="chart-sm"><canvas id="assetChart"></canvas></div><div class="legend" id="assetLegend"></div></div>
-   <div class="card"><h3>By AMC</h3><div class="csub">Asset management company</div><div class="chart-sm"><canvas id="amcChart"></canvas></div><div class="legend" id="amcLegend"></div></div>
-   <div class="card"><h3>By Tax Benefit</h3><div class="csub">SSF / ThaiESG / ThaiESGX</div><div class="chart-sm"><canvas id="taxChart"></canvas></div><div class="legend" id="taxLegend"></div></div>
+   <div class="card"><h3 data-i18n="byAsset">By Asset Class</h3><div class="csub" data-i18n="byAssetSub">Asset allocation</div><div class="chart-sm"><canvas id="assetChart"></canvas></div><div class="legend" id="assetLegend"></div></div>
+   <div class="card"><h3 data-i18n="byAMC">By AMC</h3><div class="csub" data-i18n="byAMCSub">Asset management company</div><div class="chart-sm"><canvas id="amcChart"></canvas></div><div class="legend" id="amcLegend"></div></div>
+   <div class="card"><h3 data-i18n="byTax">By Tax Benefit</h3><div class="csub">SSF / ThaiESG / ThaiESGX</div><div class="chart-sm"><canvas id="taxChart"></canvas></div><div class="legend" id="taxLegend"></div></div>
   </div>
  </section>
 
  <!-- MOVERS + PL -->
  <section><div class="grid3">
-  <div class="card"><h3>Top Gainers <span style="color:var(--muted2);font-weight:500" id="g-tl"></span></h3><div class="csub">Best performers</div><div id="gainers"></div></div>
-  <div class="card"><h3>Top Losers <span style="color:var(--muted2);font-weight:500" id="l-tl"></span></h3><div class="csub">Weakest performers</div><div id="losers"></div></div>
-  <div class="card"><h3>Realized vs Unrealized</h3><div class="csub">P/L breakdown</div>
+  <div class="card"><h3><span data-i18n="topGainers">Top Gainers</span> <span style="color:var(--muted2);font-weight:500" id="g-tl"></span></h3><div class="csub" data-i18n="bestPerf">Best performers</div><div id="gainers"></div></div>
+  <div class="card"><h3><span data-i18n="topLosers">Top Losers</span> <span style="color:var(--muted2);font-weight:500" id="l-tl"></span></h3><div class="csub" data-i18n="weakPerf">Weakest performers</div><div id="losers"></div></div>
+  <div class="card"><h3 data-i18n="rvu">Realized vs Unrealized</h3><div class="csub" data-i18n="plBreak">P/L breakdown</div>
    <div class="pl-bars">
-    <div class="pl-item"><div class="top"><span>Unrealized</span><span class="v pos mono" id="pl-unreal"></span></div><div class="track"><div class="fill" id="pl-unreal-bar" style="background:linear-gradient(90deg,#1fd286,#0e9c63)"></div></div></div>
-    <div class="pl-item"><div class="top"><span>Realized</span><span class="v mono" id="pl-real"></span></div><div class="track"><div class="fill" id="pl-real-bar" style="background:linear-gradient(90deg,#4d8dff,#9b7bff)"></div></div></div>
+    <div class="pl-item"><div class="top"><span data-i18n="unrealWord">Unrealized</span><span class="v pos mono" id="pl-unreal"></span></div><div class="track"><div class="fill" id="pl-unreal-bar" style="background:linear-gradient(90deg,#1fd286,#0e9c63)"></div></div></div>
+    <div class="pl-item"><div class="top"><span data-i18n="realWord">Realized</span><span class="v mono" id="pl-real"></span></div><div class="track"><div class="fill" id="pl-real-bar" style="background:linear-gradient(90deg,#4d8dff,#9b7bff)"></div></div></div>
    </div>
    <div class="pl-foot" id="pl-foot"></div>
   </div>
  </div></section>
 
+ <!-- RISK & PERFORMANCE -->
+ <section>
+  <div class="sec-head"><h2 data-i18n="secRisk">Risk &amp; Performance</h2><span class="hint" data-i18n="riskHint">Computed from NAV history · follows chart timeframe above</span></div>
+  <div class="card">
+   <div class="risk-kpis" id="riskKpis"></div>
+   <div class="risk-wrap"><table class="risk-tbl"><thead><tr>
+    <th data-i18n="thFund">Fund</th><th data-i18n="rhRet">Return</th><th data-i18n="rhVol">Volatility (ann.)</th><th data-i18n="rhDD">Max Drawdown</th><th data-i18n="rhRR">Return / Risk</th><th data-i18n="rhBest">Best Day</th><th data-i18n="rhWorst">Worst Day</th>
+   </tr></thead><tbody id="riskBody"></tbody></table></div>
+  </div>
+ </section>
+
  <!-- TABLE -->
  <section>
-  <div class="sec-head"><h2>Holdings</h2><span class="hint">Click any row for fund details · click headers to sort · change column follows selected range</span></div>
+  <div class="sec-head"><h2 data-i18n="secHold">Holdings</h2>
+   <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span class="hint" data-i18n="holdHint">Click any row for fund details · click headers to sort · change column follows selected range</span>
+    <button class="btn ghost" id="csvBtn" data-i18n="csvBtn">⬇ Export CSV</button>
+    <button class="btn ghost" id="printBtn" data-i18n="printBtn">🖨 Print</button>
+   </span></div>
   <div class="tbl-wrap"><table id="tbl"><thead><tr>
-   <th class="sortable" data-k="code">Fund</th><th class="sortable" data-k="nav">NAV</th><th class="sortable" data-k="units">Units</th>
-   <th class="sortable" data-k="value">Market Value</th><th class="sortable" data-k="weight">Weight</th>
-   <th class="sortable" data-k="chg">Change <span id="th-tl"></span></th><th class="sortable" data-k="unreal">Unrealized</th><th class="sortable" data-k="realized">Realized</th>
+   <th class="sortable" data-k="code" data-i18n="thFund">Fund</th><th class="sortable" data-k="nav">NAV</th><th class="sortable" data-k="units" data-i18n="thUnits">Units</th>
+   <th class="sortable" data-k="value" data-i18n="thValue">Market Value</th><th class="sortable" data-k="weight" data-i18n="thWeight">Weight</th>
+   <th class="sortable" data-k="chg"><span data-i18n="thChange">Change</span> <span id="th-tl"></span></th><th class="sortable" data-k="unreal" data-i18n="thUnreal">Unrealized</th><th class="sortable" data-k="realized" data-i18n="thReal">Realized</th>
   </tr></thead><tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot></table></div>
  </section>
 
  <div class="foot">
-  Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.<br>
-  <button class="btn ghost" id="expBtn">⬇ Download nav_history.json</button>
-  <button class="btn ghost" id="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
-  <button class="btn ghost" id="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
-  <div style="margin-top:9px">For portfolio tracking only — not investment advice.</div>
+  <span data-i18n="footNote">Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.</span><br>
+  <button class="btn ghost" id="expBtn" data-i18n="expBtn">⬇ Download nav_history.json</button>
+  <button class="btn ghost" id="impBtn" data-i18n="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
+  <button class="btn ghost" id="impHoldBtn" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
+  <div style="margin-top:9px" data-i18n="disclaimer">For portfolio tracking only — not investment advice.</div>
  </div>
 </div>
 
 <div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
 <div class="modal-bg" id="txnBg"><div class="modal" id="txnModal"></div></div>
+<div class="modal-bg" id="swBg"><div class="modal" id="swModal" style="max-width:600px"></div></div>
 <div class="modal-bg" id="authBg"><div class="modal" id="authModal" style="max-width:430px"></div></div>
 <div class="toast" id="toast"></div>
 
@@ -1871,6 +1920,74 @@ const PALETTE=['#4d8dff','#1fd286','#f0b95d','#9b7bff','#ff5a6a','#39d6e0','#ff9
 let RANGE='d15',histMode='value',histSel=new Set(['__PORT__']),msFilter='',histSort='value',sortK='value',sortDir=-1;
 let filterAMC=new Set(),filterTax=new Set();
 let ALL=[],F=[],T={};
+let histTF=localStorage.getItem('kkp_histtf')||'MAX',histFrom='',histTo='';
+let BENCH=localStorage.getItem('kkp_bench')||'';
+let LANG=localStorage.getItem('kkp_lang')||'en';
+
+/* ---------- i18n ---------- */
+const I18N={
+en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',
+ lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
+ heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
+ secHist:'Historical Comparison',histHint:'Select portfolio & multiple funds · switch Value / % Change / NAV',searchPh:'Search funds to add…',
+ portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
+ benchNone:'Benchmark: none',benchAdd:'+ Add benchmark fund code…',benchPrompt:'Enter a Finnomena fund code to use as benchmark (e.g. SCBSET50, K-SET50-A):',benchFetch:'Fetching benchmark',benchFail:'❌ Could not fetch benchmark',
+ secAlloc:'Allocation',allocHint:'Reflects current filter',byAsset:'By Asset Class',byAssetSub:'Asset allocation',byAMC:'By AMC',byAMCSub:'Asset management company',byTax:'By Tax Benefit',
+ topGainers:'Top Gainers',topLosers:'Top Losers',bestPerf:'Best performers',weakPerf:'Weakest performers',rvu:'Realized vs Unrealized',plBreak:'P/L breakdown',unrealWord:'Unrealized',realWord:'Realized',
+ secRisk:'Risk & Performance',riskHint:'Computed from NAV history · follows chart timeframe above',
+ rhRet:'Return',rhVol:'Volatility (ann.)',rhDD:'Max Drawdown',rhRR:'Return / Risk',rhBest:'Best Day',rhWorst:'Worst Day',portWord:'Portfolio',
+ rkRet:'Period Return',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return / Risk',rkWorst:'Worst Day',noData:'Not enough NAV history in this window',
+ secHold:'Holdings',holdHint:'Click any row for fund details · click headers to sort · change column follows selected range',
+ csvBtn:'⬇ Export CSV',printBtn:'🖨 Print',thFund:'Fund',thUnits:'Units',thValue:'Market Value',thWeight:'Weight',thChange:'Change',thUnreal:'Unrealized',thReal:'Realized',totalWord:'Total',fundsWord:'funds',
+ footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
+ expBtn:'⬇ Download nav_history.json',impBtn:'⬆ Import NAV database',impHoldBtn:'⬆ Import portfolio (holdings.json)',disclaimer:'For portfolio tracking only — not investment advice.',
+ r_d1:'1 Day',r_w1:'1 Week',r_d15:'15 Days',r_m1:'1 Month',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
+ plFoot:'Total P/L <b style="color:var(--txt)">฿{t}</b> — unrealized gains on paper make up the majority; realized P/L ฿{r} comes from past partial redemptions.',
+ wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
+ mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',
+ csvSaved:'✅ CSV exported',
+ swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
+ swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',
+ swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
+ swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
+ swTooMany:'Not enough units held',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'❌ Could not fetch fund',
+ swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
+th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',
+ lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
+ heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
+ secHist:'เปรียบเทียบย้อนหลัง',histHint:'เลือกพอร์ตและหลายกองทุน · สลับ มูลค่า / % เปลี่ยนแปลง / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
+ portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
+ benchNone:'เกณฑ์เปรียบเทียบ: ไม่มี',benchAdd:'+ เพิ่มรหัสกองทุนเกณฑ์เทียบ…',benchPrompt:'ใส่รหัสกองทุน Finnomena เพื่อใช้เป็นเกณฑ์เทียบ (เช่น SCBSET50, K-SET50-A):',benchFetch:'กำลังดึงข้อมูลเกณฑ์เทียบ',benchFail:'❌ ดึงข้อมูลเกณฑ์เทียบไม่สำเร็จ',
+ secAlloc:'สัดส่วนการลงทุน',allocHint:'ตามตัวกรองปัจจุบัน',byAsset:'ตามประเภทสินทรัพย์',byAssetSub:'การจัดสรรสินทรัพย์',byAMC:'ตาม บลจ.',byAMCSub:'บริษัทหลักทรัพย์จัดการกองทุน',byTax:'ตามสิทธิประโยชน์ภาษี',
+ topGainers:'ปรับขึ้นสูงสุด',topLosers:'ปรับลงมากสุด',bestPerf:'ผลงานดีที่สุด',weakPerf:'ผลงานอ่อนแอที่สุด',rvu:'รับรู้แล้ว vs ยังไม่รับรู้',plBreak:'สรุปกำไรขาดทุน',unrealWord:'ยังไม่รับรู้',realWord:'รับรู้แล้ว',
+ secRisk:'ความเสี่ยงและผลตอบแทน',riskHint:'คำนวณจากประวัติ NAV · ตามช่วงเวลาของกราฟด้านบน',
+ rhRet:'ผลตอบแทน',rhVol:'ความผันผวน (ต่อปี)',rhDD:'ขาดทุนสะสมสูงสุด',rhRR:'ผลตอบแทน/ความเสี่ยง',rhBest:'วันที่ดีที่สุด',rhWorst:'วันแย่ที่สุด',portWord:'พอร์ตรวม',
+ rkRet:'ผลตอบแทนช่วงเวลา',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน/ความเสี่ยง',rkWorst:'วันแย่ที่สุด',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',
+ secHold:'กองทุนที่ถือครอง',holdHint:'คลิกแถวเพื่อดูรายละเอียด · คลิกหัวตารางเพื่อเรียง · คอลัมน์เปลี่ยนแปลงตามช่วงเวลาที่เลือก',
+ csvBtn:'⬇ ส่งออก CSV',printBtn:'🖨 พิมพ์',thFund:'กองทุน',thUnits:'หน่วย',thValue:'มูลค่าตลาด',thWeight:'น้ำหนัก',thChange:'เปลี่ยนแปลง',thUnreal:'ยังไม่รับรู้',thReal:'รับรู้แล้ว',totalWord:'รวม',fundsWord:'กองทุน',
+ footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
+ expBtn:'⬇ ดาวน์โหลด nav_history.json',impBtn:'⬆ นำเข้าฐานข้อมูล NAV',impHoldBtn:'⬆ นำเข้าพอร์ต (holdings.json)',disclaimer:'ใช้เพื่อติดตามพอร์ตเท่านั้น — ไม่ใช่คำแนะนำการลงทุน',
+ r_d1:'1 วัน',r_w1:'1 สัปดาห์',r_d15:'15 วัน',r_m1:'1 เดือน',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
+ plFoot:'กำไร/ขาดทุนรวม <b style="color:var(--txt)">฿{t}</b> — ส่วนใหญ่เป็นกำไรที่ยังไม่รับรู้ · กำไรรับรู้แล้ว ฿{r} จากการขายคืนบางส่วนที่ผ่านมา',
+ wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
+ mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',
+ csvSaved:'✅ ส่งออก CSV แล้ว',
+ swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
+ swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',
+ swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
+ swDo:'ยืนยันการสับเปลี่ยน',swHeld:'ถืออยู่',swInvalid:'กรุณากรอกข้อมูลให้ครบถ้วน',swSame:'กองทุนออกและเข้าต้องต่างกัน',
+ swTooMany:'จำนวนหน่วยที่ถือไม่เพียงพอ',swFetch:'กำลังดึงข้อมูลกองทุนจาก Finnomena…',swFetchFail:'❌ ดึงข้อมูลกองทุนไม่สำเร็จ',
+ swNoNav:'ไม่มีข้อมูล NAV ณ วันที่เลือกสำหรับ',swDone:'สับเปลี่ยนแล้ว',swNavOut:'NAV ขาออก',swNavIn:'NAV ขาเข้า'}
+};
+const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
+const rangeLabel=k=>t('r_'+k);
+function applyLang(){
+ document.documentElement.lang=LANG;
+ document.querySelectorAll('[data-i18n]').forEach(el=>{el.innerHTML=t(el.dataset.i18n);});
+ document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.dataset.i18nPh);});
+ const lb=document.getElementById('langBtn');if(lb)lb.textContent=LANG==='en'?'ไทย':'EN';
+ updateAuthUI();renderBenchSel();
+}
 
 // Clear display on page load to prevent showing cached old values
 document.getElementById('h-value').textContent='';
@@ -1915,7 +2032,7 @@ function buildFilters(){
  document.getElementById('taxFilter').innerHTML=taxes.map(t=>`<span class="fchip tax ${filterTax.has(t)?'on':''}" data-t="${t}" style="${filterTax.has(t)?`background:${TAX_COL[t]||'#4d8dff'};color:#0b111e`:''}">${t}</span>`).join('');
  document.querySelectorAll('.fchip.amc').forEach(c=>c.onclick=()=>{const a=c.dataset.a;filterAMC.has(a)?filterAMC.delete(a):filterAMC.add(a);renderAll();});
  document.querySelectorAll('.fchip.tax').forEach(c=>c.onclick=()=>{const t=c.dataset.t;filterTax.has(t)?filterTax.delete(t):filterTax.add(t);renderAll();});
- document.getElementById('fstatus').innerHTML=`Showing <b>${F.length}</b> of ${ALL.length} funds`;
+ document.getElementById('fstatus').innerHTML=t('showing').replace('{a}',F.length).replace('{b}',ALL.length);
 }
 
 /* ---------- header / KPIs ---------- */
@@ -1935,9 +2052,9 @@ function renderTL(){
  const b=T.chg[RANGE],p=T.pct[RANGE];
  document.getElementById('tl-baht').textContent='฿'+sign(b);document.getElementById('tl-baht').className='big mono '+cls(b);
  const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
- document.getElementById('tl-label').textContent='Portfolio value change over the past '+RANGES[RANGE].l.toLowerCase();
- document.getElementById('g-tl').textContent='· '+RANGES[RANGE].l;document.getElementById('l-tl').textContent='· '+RANGES[RANGE].l;
- document.getElementById('th-tl').textContent='('+RANGES[RANGE].l+')';
+ document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(RANGE).toLowerCase():rangeLabel(RANGE));
+ document.getElementById('g-tl').textContent='· '+rangeLabel(RANGE);document.getElementById('l-tl').textContent='· '+rangeLabel(RANGE);
+ document.getElementById('th-tl').textContent='('+rangeLabel(RANGE)+')';
 }
 function renderMovers(){
  const s=[...F].sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
@@ -1954,7 +2071,7 @@ function renderPL(){
  document.getElementById('pl-unreal-bar').style.width=(Math.abs(T.unreal)/mp*100)+'%';
  document.getElementById('pl-real-bar').style.width=(Math.abs(T.realized)/mp*100)+'%';
  const tot=T.unreal+T.realized;
- document.getElementById('pl-foot').innerHTML=`Total P/L <b style="color:var(--txt)">฿${sign(tot)}</b> — unrealized gains on paper make up the majority; realized P/L ฿${sign(T.realized)} comes from past partial redemptions.`;
+ document.getElementById('pl-foot').innerHTML=t('plFoot').replace('{t}',sign(tot)).replace('{r}',sign(T.realized));
 }
 
 /* ---------- donuts ---------- */
@@ -1988,7 +2105,7 @@ function renderTable(){
    <td class="${cls(chg)}">฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span></td>
    <td class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
    <td class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
- document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>Total (${F.length} funds)</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
+ document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>${t('totalWord')} (${F.length} ${t('fundsWord')})</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
    <td class="${cls(T.chg[RANGE])}">฿${sign(T.chg[RANGE])}<br><span style="font-size:10.5px">${sign(T.pct[RANGE])}%</span></td>
    <td class="${cls(T.unreal)}">฿${sign(T.unreal)}<br><span style="font-size:10.5px">${sign(T.unreal_pct)}%</span></td>
    <td class="${cls(T.realized)}">฿${sign(T.realized)}</td></tr>`;
@@ -2001,15 +2118,15 @@ function renderMSList(){
  let html='';
  const selFunds=F.filter(f=>histSel.has(f.code)).sort(msSortFn);
  if(histSel.has('__PORT__')||selFunds.length){
-  html+=`<div class="ms-grp">Selected <span class="ga" data-clear="1">clear all</span></div><div class="ms-chips">`;
-  if(histSel.has('__PORT__'))html+=`<span class="ms-chip on" data-id="__PORT__" style="background:#fff">Whole Portfolio ✕</span>`;
+  html+=`<div class="ms-grp">${t('selWord')} <span class="ga" data-clear="1">${t('clearAll')}</span></div><div class="ms-chips">`;
+  if(histSel.has('__PORT__'))html+=`<span class="ms-chip on" data-id="__PORT__" style="background:#fff">${t('wholePort')} ✕</span>`;
   html+=selFunds.map(f=>`<span class="ms-chip on" data-id="${f.code}" style="background:${AMC_COL[f.amc]||'#4d8dff'}">${f.code.replace('KKP ','')} ✕</span>`).join('');
   html+=`</div>`;}
- html+=`<div class="ms-grp">Portfolio</div><div class="ms-chips"><span class="ms-chip ${histSel.has('__PORT__')?'on':''}" data-id="__PORT__" style="${histSel.has('__PORT__')?'background:#fff':''}">Whole Portfolio</span></div>`;
+ html+=`<div class="ms-grp">${t('portWord')}</div><div class="ms-chips"><span class="ms-chip ${histSel.has('__PORT__')?'on':''}" data-id="__PORT__" style="${histSel.has('__PORT__')?'background:#fff':''}">${t('wholePort')}</span></div>`;
  for(const amc of Object.keys(byAmc)){
   const list=byAmc[amc].filter(f=>!msFilter||f.code.toLowerCase().includes(msFilter)||f.name.toLowerCase().includes(msFilter)).sort(msSortFn);
   if(!list.length)continue;
-  html+=`<div class="ms-grp">${amc} <span class="ga" data-amc="${amc}">+ all</span></div><div class="ms-chips">`;
+  html+=`<div class="ms-grp">${amc} <span class="ga" data-amc="${amc}">${t('allWord')}</span></div><div class="ms-chips">`;
   html+=list.map(f=>{const on=histSel.has(f.code);return `<span class="ms-chip ${on?'on':''}" data-id="${f.code}" style="${on?`background:${AMC_COL[amc]||'#4d8dff'}`:''}">${f.code.replace('KKP ','')}</span>`;}).join('');
   html+=`</div>`;}
  document.getElementById('msList').innerHTML=html;
@@ -2018,19 +2135,38 @@ function renderMSList(){
  const clr=document.querySelector('#msList .ga[data-clear]');if(clr)clr.onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 }
 function fundMap(f){const m={};f.dates.forEach((d,i)=>m[d]=f.units*f.vvals[i]);return m;}
+/* timeframe window: filter sorted date array to the selected range */
+function tfWindow(dates){
+ if(!dates.length)return dates;
+ const last=dates[dates.length-1];
+ if(histTF==='CUSTOM'){const from=histFrom||dates[0],to=histTo||last;return dates.filter(d=>d>=from&&d<=to);}
+ const D={'1W':7,'1M':30,'3M':91,'6M':182,'1Y':365};
+ let from;
+ if(histTF==='YTD')from=last.slice(0,4)+'-01-01';
+ else if(D[histTF])from=daysBefore(last,D[histTF]);
+ else return dates; // MAX
+ return dates.filter(d=>d>=from);
+}
 function buildHist(){
- const dateSet=new Set();F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));const dates=[...dateSet].sort();
+ const dateSet=new Set();F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
+ if(BENCH&&NAVDB[BENCH])Object.keys(NAVDB[BENCH].navs||{}).forEach(d=>dateSet.add(d));
+ const dates=tfWindow([...dateSet].sort());
  const ent=[];
  if(histSel.has('__PORT__')&&histMode!=='nav'){
-  const m={};dates.forEach(d=>{let t=0;F.forEach(f=>{let v=0;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=f.units*f.vvals[i];}t+=v;});m[d]=t;});
-  ent.push({label:'Portfolio',color:'#ffffff',map:m,bold:true});}
+  const m={};dates.forEach(d=>{let tv=0;F.forEach(f=>{let v=0;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=f.units*f.vvals[i];}tv+=v;});m[d]=tv;});
+  ent.push({label:t('portWord'),color:'#ffffff',map:m,bold:true});}
  let ci=0;
  [...F].sort(msSortFn).forEach(f=>{if(histSel.has(f.code)){const m={};
    dates.forEach(d=>{let v=null;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=(histMode==='nav'?f.vvals[i]:f.units*f.vvals[i]);}m[d]=v;});
    ent.push({label:f.code.replace('KKP ',''),color:PALETTE[ci%PALETTE.length],map:m});ci++;}});
+ /* benchmark overlay (dashed) — shown in % Change and NAV modes */
+ if(BENCH&&NAVDB[BENCH]&&histMode!=='value'){
+  const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();
+  if(bds.length){const m={};dates.forEach(d=>{let v=null;for(let i=0;i<bds.length;i++){if(bds[i]<=d)v=bn[bds[i]];else break;}m[d]=v;});
+   ent.push({label:'◆ '+BENCH,color:'#f0b95d',map:m,dash:true});}}
  const ds=ent.map(e=>{let base=null;for(const d of dates){if(e.map[d]!=null){base=e.map[d];break;}}
   const data=dates.map(d=>{const v=e.map[d];if(v==null)return null;return histMode==='norm'?(v/base-1)*100:v;});
-  return{label:e.label,data,borderColor:e.color,borderWidth:e.bold?2.6:1.7,tension:.3,pointRadius:0,pointHoverRadius:4,fill:false,spanGaps:true};});
+  return{label:e.label,data,borderColor:e.color,borderWidth:e.bold?2.6:1.7,borderDash:e.dash?[6,4]:undefined,tension:.3,pointRadius:0,pointHoverRadius:4,fill:false,spanGaps:true};});
  return{dates,ds};
 }
 function yfmt(v){return histMode==='norm'?sign(v,0)+'%':(histMode==='nav'?v.toFixed(1):'฿'+(v/1000).toFixed(0)+'k');}
@@ -2046,6 +2182,94 @@ function renderHist(){
    y:{grid:{color:C.grid},ticks:{callback:yfmt}}}}});
 }
 
+/* ---------- benchmark ---------- */
+function renderBenchSel(){
+ const sel=document.getElementById('benchSel');if(!sel)return;
+ const held=new Set(Object.keys(HOLDINGS));
+ const extra=Object.keys(NAVDB).filter(c=>!held.has(c)).sort();
+ let h=`<option value="">${t('benchNone')}</option>`;
+ if(extra.length)h+='<optgroup label="Benchmark">'+extra.map(c=>`<option value="${c}" ${BENCH===c?'selected':''}>${c}</option>`).join('')+'</optgroup>';
+ h+='<optgroup label="Portfolio">'+[...held].sort().map(c=>`<option value="${c}" ${BENCH===c?'selected':''}>${c}</option>`).join('')+'</optgroup>';
+ h+=`<option value="__ADD__">${t('benchAdd')}</option>`;
+ sel.innerHTML=h;
+}
+async function setBench(code){
+ if(code==='__ADD__'){const c=prompt(t('benchPrompt'));renderBenchSel();if(!c)return;code=c.trim();}
+ if(!code){BENCH='';localStorage.removeItem('kkp_bench');renderBenchSel();renderHist();renderRisk();return;}
+ if(!NAVDB[code]||Object.keys((NAVDB[code]||{}).navs||{}).length<2){
+  toast(t('benchFetch')+' '+code+'…');
+  try{const j=await fetchJSON(API(code)+'/nav/q?range=1Y');
+   if(j&&j.data&&j.data.navs&&j.data.navs.length){NAVDB[code]=NAVDB[code]||{navs:{}};j.data.navs.forEach(n=>{NAVDB[code].navs[n.date.slice(0,10)]=n.value;});
+    try{const st={};for(const c2 in NAVDB)st[c2]={navs:NAVDB[c2].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}}
+   else throw new Error('no data');}
+  catch(e){toast(t('benchFail')+': '+code,'err');renderBenchSel();return;}
+ }
+ BENCH=code;localStorage.setItem('kkp_bench',code);renderBenchSel();renderHist();renderRisk();
+}
+
+/* ---------- risk & performance ---------- */
+function riskStats(ds,vs){
+ if(!vs||vs.length<3)return null;
+ const rets=[];for(let i=1;i<vs.length;i++){if(vs[i-1]>0)rets.push(vs[i]/vs[i-1]-1);}
+ if(rets.length<2)return null;
+ const mean=rets.reduce((a,b)=>a+b,0)/rets.length;
+ const sd=Math.sqrt(rets.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(rets.length-1));
+ const vol=sd*Math.sqrt(252)*100;
+ let peak=vs[0],dd=0;for(const v of vs){if(v>peak)peak=v;if(peak>0)dd=Math.min(dd,v/peak-1);}
+ const ret=(vs[vs.length-1]/vs[0]-1)*100;
+ let bi=0,wi=0;rets.forEach((r,i)=>{if(r>rets[bi])bi=i;if(r<rets[wi])wi=i;});
+ return{vol,maxDD:dd*100,ret,rr:vol>0?ret/vol:0,best:{d:ds[bi+1],r:rets[bi]*100},worst:{d:ds[wi+1],r:rets[wi]*100}};
+}
+function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF window
+ const w=tfWindow(dates);const wset=new Set(w);
+ const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)){ds.push(d);vs.push(vals[i]);}});
+ return{ds,vs};
+}
+function fmtD(d){return d?new Date(d).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short'}):'—';}
+function renderRisk(){
+ const kp=document.getElementById('riskKpis'),tb=document.getElementById('riskBody');if(!kp||!tb)return;
+ // portfolio series over TF window
+ const dateSet=new Set();F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
+ const dates=tfWindow([...dateSet].sort());
+ const pv=dates.map(d=>{let tv=0;F.forEach(f=>{let v=0;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=f.units*f.vvals[i];}tv+=v;});return tv;});
+ const P=riskStats(dates,pv);
+ if(!P){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t('noData')}</div>`;tb.innerHTML='';return;}
+ const kpi=(l,v,c,m)=>`<div class="rk"><div class="l">${l}</div><div class="v ${c||''}">${v}</div>${m?`<div class="m">${m}</div>`:''}</div>`;
+ kp.innerHTML=
+  kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?fmtD(dates[0])+' → '+fmtD(dates[dates.length-1]):'')+
+  kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+
+  kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'','peak-to-trough')+
+  kpi(t('rkRR'),fmt(P.rr,2),cls(P.rr),LANG==='th'?'ยิ่งสูงยิ่งดี':'higher is better')+
+  kpi(t('rkWorst'),sign(P.worst.r)+'%','neg',fmtD(P.worst.d));
+ // per-fund rows (+ benchmark if set)
+ const rows=[];
+ const mkRow=(label,st,boldRow)=>st?`<tr${boldRow?' style="font-weight:700"':''}><td>${label}</td>
+  <td class="${cls(st.ret)}">${sign(st.ret)}%</td><td>${fmt(st.vol,1)}%</td><td class="neg">${fmt(st.maxDD,1)}%</td>
+  <td class="${cls(st.rr)}">${fmt(st.rr,2)}</td><td class="pos">${sign(st.best.r)}% <span style="color:var(--muted2)">${fmtD(st.best.d)}</span></td>
+  <td class="neg">${sign(st.worst.r)}% <span style="color:var(--muted2)">${fmtD(st.worst.d)}</span></td></tr>`:'';
+ rows.push(mkRow('◼ '+t('portWord'),P,true));
+ if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();
+  const w=windowSeries(bds,bds.map(d=>bn[d]));const B=riskStats(w.ds,w.vs);
+  if(B)rows.push(mkRow('◆ '+BENCH,B,true));}
+ [...F].sort((a,b)=>b.value-a.value).forEach(f=>{
+  const w=windowSeries(f.dates,f.vvals);const st=riskStats(w.ds,w.vs);
+  if(st)rows.push(mkRow(`${f.code} <span class="amcb">${f.amc}</span>`,st));});
+ tb.innerHTML=rows.join('');
+}
+
+/* ---------- CSV export ---------- */
+function exportCSV(){
+ const esc=x=>`"${String(x==null?'':x).replace(/"/g,'""')}"`;
+ const head=[t('thFund'),'Name','AMC','Tax','Asset','NAV','NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
+ const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);})
+  .map(f=>[f.code,f.name,f.amc,f.tax,f.asset,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),f.chg[RANGE].toFixed(2),f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)]);
+ rows.push([t('totalWord'),'','','','','','','','',T.value.toFixed(2),'100',T.chg[RANGE].toFixed(2),T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
+ const csv='﻿'+[head,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ a.download='portfolio_'+(T.as_of||new Date().toISOString().slice(0,10))+'.csv';a.click();
+ toast(t('csvSaved'),'ok');
+}
+
 /* ---------- fund detail modal (live fetch) ---------- */
 async function openFund(code){
  const f=ALL.find(x=>x.code===code);const bg=document.getElementById('modalBg'),m=document.getElementById('modal');
@@ -2056,7 +2280,7 @@ async function openFund(code){
    <div class="m-stat"><div class="l">Market Value</div><div class="v">฿${fmt0(f.value)}</div></div>
    <div class="m-stat"><div class="l">Unrealized</div><div class="v ${cls(f.unreal)}">${sign(f.unreal_pct,1)}%</div></div>
    <div class="m-stat"><div class="l">Weight</div><div class="v">${fmt(f.value/ALL.reduce((s,x)=>s+x.value,0)*100,1)}%</div></div>
-  </div><div id="mdyn"><div class="skel"><span class="spin" style="display:inline-block;vertical-align:middle"></span> Loading fund details from Finnomena…</div></div></div>`;
+  </div><div id="mdyn"><div class="skel"><span class="spin" style="display:inline-block;vertical-align:middle"></span> ${t('mLoading')}</div></div></div>`;
  let d=DETAILS[code]||DETCACHE[code];
  if(d){renderModalDyn(code,d);return;}
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
@@ -2073,29 +2297,29 @@ function renderModalDyn(code,d){
  const na=v=>!v?'—':(v>=1e9?'฿'+fmt(v/1e9,2)+'B':(v>=1e6?'฿'+fmt(v/1e6,1)+'M':'฿'+fmt0(v)));
  const dv=s=>!s?'—':(String(s).indexOf('ไม่จ่าย')>=0?'ไม่จ่าย (No)':'จ่าย (Yes)');
  let h='';
- h+=`<div class="m-sec"><h4>NAV Total Return</h4><div class="retbars">
+ h+=`<div class="m-sec"><h4>${t('mNAVret')}</h4><div class="retbars">
   <div class="retb"><div class="l">3M</div><div class="v ${(d.r3m||0)>=0?'pos':'neg'}">${ret(d.r3m)}</div></div>
   <div class="retb"><div class="l">6M</div><div class="v ${(d.r6m||0)>=0?'pos':'neg'}">${ret(d.r6m)}</div></div>
   <div class="retb"><div class="l">1Y</div><div class="v ${(d.r1y||0)>=0?'pos':'neg'}">${ret(d.r1y)}</div></div>
   <div class="retb"><div class="l">3Y</div><div class="v ${(d.r3y||0)>=0?'pos':'neg'}">${ret(d.r3y)}</div></div></div></div>`;
- h+=`<div class="m-sec"><h4>Profile</h4><div class="feegrid">
+ h+=`<div class="m-sec"><h4>${t('mProfile')}</h4><div class="feegrid">
   <div class="fee"><span>AMC</span><span>${d.amc||f.amc||'—'}</span></div>
   <div class="fee"><span>Category</span><span>${d.catTh||d.cat||'—'}</span></div>
   <div class="fee"><span>Risk level</span><span>${d.risk||'—'} / 8</span></div>
   <div class="fee"><span>Dividend policy</span><span>${dv(d.div)}</span></div>
   <div class="fee"><span>Inception</span><span>${d.inc||'—'}</span></div>
   <div class="fee"><span>Net assets</span><span>${na(d.na)}</span></div></div></div>`;
- h+=`<div class="m-sec"><h4>Fees</h4><div class="feegrid">
+ h+=`<div class="m-sec"><h4>${t('mFees')}</h4><div class="feegrid">
   <div class="fee"><span>Management fee</span><span>${fee(d.mgmt)}</span></div>
   <div class="fee"><span>Total expense ratio</span><span>${fee(d.exp)}</span></div>
   <div class="fee"><span>Front-end</span><span>${fee(d.front)}</span></div>
   <div class="fee"><span>Back-end</span><span>${fee(d.back)}</span></div></div></div>`;
  const th=(d.top||[]).filter(x=>x&&x[0]);
  if(th.length){const mx=Math.max(...th.map(x=>x[1]||0),1);
-  h+=`<div class="m-sec"><h4>Top 5 Holdings</h4>`+th.map(x=>`<div class="hold-row"><div class="hold-bar" style="width:${Math.max(3,(x[1]||0)/mx*110)}px"></div><div class="hn">${x[0]}</div><div class="hp">${fmt(x[1]||0,2)}%</div></div>`).join('')+`</div>`;}
- if(d.feeder)h+=`<div class="m-sec"><h4>Master Fund</h4><div class="m-strategy">${d.feeder}</div></div>`;
- if(d.strat)h+=`<div class="m-sec"><h4>Investment Strategy</h4><div class="m-strategy">${d.strat}</div></div>`;
- h+=`<div class="m-sec" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}" target="_blank">Full details ↗</a><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}/portfolio" target="_blank">Portfolio ↗</a><button class="btn ghost" onclick="closeModal();openTxn('${code.replace(/'/g,"\\'")}')">+ Buy / Sell</button></div>`;
+  h+=`<div class="m-sec"><h4>${t('mTop5')}</h4>`+th.map(x=>`<div class="hold-row"><div class="hold-bar" style="width:${Math.max(3,(x[1]||0)/mx*110)}px"></div><div class="hn">${x[0]}</div><div class="hp">${fmt(x[1]||0,2)}%</div></div>`).join('')+`</div>`;}
+ if(d.feeder)h+=`<div class="m-sec"><h4>${t('mMaster')}</h4><div class="m-strategy">${d.feeder}</div></div>`;
+ if(d.strat)h+=`<div class="m-sec"><h4>${t('mStrategy')}</h4><div class="m-strategy">${d.strat}</div></div>`;
+ h+=`<div class="m-sec" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}" target="_blank">${t('mFull')}</a><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}/portfolio" target="_blank">${t('mPort')}</a><button class="btn ghost" onclick="closeModal();openTxn('${code.replace(/'/g,"\\'")}')">${t('mBuySell')}</button></div>`;
  el.innerHTML=h;
 }
 function closeModal(){document.getElementById('modalBg').classList.remove('show');}
@@ -2104,7 +2328,7 @@ document.getElementById('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeM
 /* ---------- self update / import / export ---------- */
 function toast(msg,type){const t=document.getElementById('toast');t.innerHTML=msg;t.className='toast show '+(type||'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast '+(type||''),5500);}
 async function updateNAV(){
- const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class=”spin”></span>';document.getElementById('updTxt').textContent='Syncing…';
+ const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class=”spin”></span>';document.getElementById('updTxt').textContent=t('syncing');
  const codes=Object.keys(HOLDINGS);let ok=0,added=0,fail=0;
 
  // Fetch ALL funds in parallel (much faster - 10-15 sec vs 2+ min sequential)
@@ -2123,7 +2347,7 @@ async function updateNAV(){
  );
  await Promise.all(promises);
 
- document.getElementById('updIco').textContent='↻';document.getElementById('updTxt').textContent='Update NAV';btn.disabled=false;
+ document.getElementById('updIco').textContent='↻';document.getElementById('updTxt').textContent=t('updNav');btn.disabled=false;
  if(ok===0){toast('⚠️ Update blocked (CORS + proxies unavailable). Type “update NAV” in Claude chat to refresh, or use Import below.','err');return;}
  try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));localStorage.setItem('kkp_lastNavFetch',Date.now().toString());}catch(e){}
  await saveNAVtoSupabase();
@@ -2162,7 +2386,7 @@ function renderTxnModal(preCode){
 }
 function renderTxnList(){const el=document.getElementById('tx-list');if(!el)return;
  if(!TXNS.length){el.innerHTML='<div class="skel">No transactions yet</div>';return;}
- el.innerHTML=[...TXNS].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(t=>`<div class="txn-row"><span class="txn-act ${t.action}">${t.action.toUpperCase()}</span><span class="txn-c">${t.code}</span><span class="txn-d">${t.date}</span><span class="txn-u">${fmt(t.units,2)} @ ฿${fmt(t.price,4)}</span><button class="txn-del" data-id="${t.ts}">✕</button></div>`).join('');
+ el.innerHTML=[...TXNS].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(t=>`<div class="txn-row"><span class="txn-act ${t.action}">${(t.sw?'⇌ ':'')+t.action.toUpperCase()}</span><span class="txn-c">${t.code}</span><span class="txn-d">${t.date}</span><span class="txn-u">${fmt(t.units,2)} @ ฿${fmt(t.price,4)}</span><button class="txn-del" data-id="${t.ts}">✕</button></div>`).join('');
  el.querySelectorAll('.txn-del').forEach(b=>b.onclick=()=>{TXNS=TXNS.filter(x=>String(x.ts)!==b.dataset.id);saveTxns();renderAll();renderTxnList();toast('Transaction removed','ok');});
 }
 function addTxn(){
@@ -2176,6 +2400,75 @@ function addTxn(){
  toast('✅ '+t.action.toUpperCase()+' '+code+' recorded'+(NAVDB[code]?'':' · run Update NAV to fetch history'),'ok');
 }
 
+/* ---------- fund switch ---------- */
+function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
+function openSw(){document.getElementById('swBg').classList.add('show');renderSwModal();}
+function closeSw(){document.getElementById('swBg').classList.remove('show');}
+function swMsg(m,ok){const e=document.getElementById('sw-msg');if(e){e.textContent=m;e.style.color=ok?'var(--pos)':'var(--neg)';}}
+function renderSwModal(){
+ const codes=Object.keys(HOLDINGS).sort();
+ const today=new Date().toISOString().slice(0,10);
+ const outOpts=codes.map(c=>`<option value="${c}">${c}</option>`).join('');
+ const inOpts=codes.map(c=>`<option value="${c}">${c}</option>`).join('')+`<option value="__NEW__">${t('swNewOpt')}</option>`;
+ document.getElementById('swModal').innerHTML=`<div class="modal-h"><div><div class="code">${t('swTitle')}</div><div class="nm">${t('swSub')}</div></div><button class="modal-x" onclick="closeSw()">✕</button></div>
+ <div class="modal-b"><div class="txn-form">
+  <div class="m-sec" style="margin-bottom:6px"><h4 style="color:var(--neg)">↑ ${t('swOut')}</h4>
+   <div class="tf"><label>${t('thFund')}</label><select id="sw-out">${outOpts}</select><div id="sw-held" style="font-size:11px;color:var(--muted2);margin-top:3px"></div></div>
+   <div class="tf2" style="margin-top:9px"><div class="tf"><label>${t('swOutDate')}</label><input id="sw-outdate" type="date" value="${today}"></div>
+    <div class="tf"><label>${t('swUnits')}</label><input id="sw-outunits" type="number" step="any" placeholder="0"></div></div></div>
+  <div class="m-sec" style="margin-bottom:6px"><h4 style="color:var(--pos)">↓ ${t('swIn')}</h4>
+   <div class="tf"><label>${t('thFund')}</label><select id="sw-in">${inOpts}</select></div>
+   <div id="sw-newwrap" style="display:none;flex-direction:column;gap:9px;margin-top:9px">
+    <div class="tf"><label>${t('swNewCode')}</label><input id="sw-newcode" placeholder="e.g. K-USA-A(A)"></div>
+    <div class="tf2"><div class="tf"><label>${t('assetLbl')}</label><select id="sw-newasset"><option>Foreign Equity</option><option>Thai Equity</option><option>Mixed</option><option>Fixed Income / MM</option></select></div>
+     <div class="tf"><label>${t('taxLbl')}</label><select id="sw-newtax"><option>General</option><option>SSF</option><option>RMF</option><option>ThaiESG</option><option>ThaiESGX</option><option>LTF</option></select></div></div></div>
+   <div class="tf2" style="margin-top:9px"><div class="tf"><label>${t('swInDate')}</label><input id="sw-indate" type="date" value="${today}"></div>
+    <div class="tf"><label>${t('swUnits')}</label><input id="sw-inunits" type="number" step="any" placeholder="0"></div></div></div>
+  <button class="btn" id="sw-do" style="width:100%;justify-content:center">${t('swDo')}</button>
+  <div id="sw-msg" style="font-size:12px;min-height:16px"></div>
+ </div></div>`;
+ const heldInfo=()=>{const h=HOLDINGS[_v('sw-out')];document.getElementById('sw-held').textContent=h?`${t('swHeld')}: ${fmt(h.units,2)} · avg ฿${fmt(h.avg,4)}`:'';};
+ document.getElementById('sw-out').onchange=heldInfo;heldInfo();
+ document.getElementById('sw-in').onchange=e=>{document.getElementById('sw-newwrap').style.display=e.target.value==='__NEW__'?'flex':'none';};
+ document.getElementById('sw-do').onclick=doSwitch;
+}
+async function doSwitch(){
+ const oc=_v('sw-out'),od=_v('sw-outdate'),ou=+_v('sw-outunits');
+ let ic=_v('sw-in');const idt=_v('sw-indate'),iu=+_v('sw-inunits');
+ if(ic==='__NEW__')ic=(_v('sw-newcode')||'').trim();
+ if(!oc||!ic||!od||!idt||!(ou>0)||!(iu>0)){swMsg(t('swInvalid'));return;}
+ if(oc===ic){swMsg(t('swSame'));return;}
+ const h=HOLDINGS[oc];
+ if(!h||h.units<ou-1e-6){swMsg(t('swTooMany'));return;}
+ const btn=document.getElementById('sw-do');btn.disabled=true;
+ let meta=null;const isNew=!HOLDINGS[ic];
+ if(isNew){
+  swMsg(t('swFetch'),true);
+  if(!NAVDB[ic]||Object.keys((NAVDB[ic]||{}).navs||{}).length<2){
+   try{const j=await fetchJSON(API(ic)+'/nav/q?range=1Y');
+    if(j&&j.data&&j.data.navs&&j.data.navs.length){NAVDB[ic]=NAVDB[ic]||{navs:{}};j.data.navs.forEach(n=>{NAVDB[ic].navs[n.date.slice(0,10)]=n.value;});}
+    else throw new Error('no navs');}
+   catch(e){swMsg(t('swFetchFail')+': '+ic);btn.disabled=false;return;}
+  }
+  try{const j2=await fetchJSON(API(ic));const a=j2&&j2.data;
+   if(a)meta={name:a.name_th||a.name_en||ic,amc:(a.amc_name_en||'Other').replace(/\s*(Asset|Fund)\s*Management.*$/i,'').trim()||'Other'};}catch(e){}
+ }
+ const po=navAt(oc,od);if(!po){swMsg(t('swNoNav')+' '+oc);btn.disabled=false;return;}
+ const pi=navAt(ic,idt);if(!pi){swMsg(t('swNoNav')+' '+ic);btn.disabled=false;return;}
+ const realized=ou*(po-h.avg);
+ const ts=Date.now();
+ TXNS.push({action:'sell',code:oc,date:od,units:ou,price:po,ts,sw:1});
+ const bt={action:'buy',code:ic,date:idt,units:iu,price:pi,ts:ts+1,sw:1};
+ if(isNew){bt.name=(meta&&meta.name)||ic;bt.amc=(meta&&meta.amc)||'Other';bt.tax=_v('sw-newtax')||'General';bt.asset=_v('sw-newasset')||'Foreign Equity';}
+ TXNS.push(bt);
+ saveTxns();
+ try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}
+ saveNAVtoSupabase();
+ if(SB&&USER){try{SB.from('fund_universe').upsert({code:ic},{onConflict:'code'});}catch(e){}}
+ renderAll();closeSw();
+ toast(`✅ ${t('swDone')} ${oc} → ${ic} · ${t('swNavOut')} ฿${fmt(po,4)} / ${t('swNavIn')} ฿${fmt(pi,4)} · ${t('realWord')} <b class="${cls(realized)}">฿${sign(realized)}</b>`,'ok');
+}
+
 /* ---------- wire ---------- */
 document.querySelectorAll('#pills button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pills button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RANGE=b.dataset.r;renderTL();renderMovers();renderTable();});
 document.querySelectorAll('th.sortable').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderTable();});
@@ -2183,23 +2476,46 @@ document.querySelectorAll('.ms-modes button[data-m]').forEach(b=>b.onclick=()=>{
 document.querySelectorAll('#msSortBtns button').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histSort=b.dataset.s;renderMSList();renderHist();});
 document.getElementById('txnBtn').onclick=()=>openTxn('');
 document.getElementById('txnBg').onclick=e=>{if(e.target.id==='txnBg')closeTxn();};
+document.getElementById('swBtn').onclick=openSw;
+document.getElementById('swBg').onclick=e=>{if(e.target.id==='swBg')closeSw();};
 document.getElementById('msSearch').oninput=e=>{msFilter=e.target.value.toLowerCase().trim();renderMSList();};
 document.getElementById('msPort').onclick=()=>{histSel=new Set(['__PORT__']);renderMSList();renderHist();};
 document.getElementById('msNone').onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 document.getElementById('updBtn').onclick=updateNAV;
 document.getElementById('expBtn').onclick=exportDB;
+/* timeframe pills + custom range */
+document.querySelectorAll('#tfBtns button').forEach(b=>{
+ if(b.dataset.tf===histTF)b.classList.add('on');else b.classList.remove('on');
+ b.onclick=()=>{document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  histTF=b.dataset.tf;histFrom='';histTo='';localStorage.setItem('kkp_histtf',histTF);renderHist();renderRisk();};});
+document.getElementById('tfApply').onclick=()=>{
+ const f=document.getElementById('tfFrom').value,to=document.getElementById('tfTo').value;
+ if(!f&&!to)return;
+ histTF='CUSTOM';histFrom=f;histTo=to;
+ document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));
+ renderHist();renderRisk();};
+/* benchmark */
+document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
+/* CSV + print */
+document.getElementById('csvBtn').onclick=exportCSV;
+document.getElementById('printBtn').onclick=()=>window.print();
+/* language toggle */
+document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
 function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTxn();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTxn();closeSw();}});
+/* keep filter bar pinned right below the header */
+(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.filterbar');
+ if(hdr&&fb){const adj=()=>{fb.style.top=(hdr.offsetHeight+6)+'px';};adj();window.addEventListener('resize',adj);}})();
 
 function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);}}
 function renderAll(){
  buildHoldings();computeAll();applyFilter();
  safe(buildFilters);safe(renderHeader);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
- safe(renderDonuts);safe(renderHist);
+ safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);
 }
 /* ---------- auth + cloud sync ---------- */
 function _v(id){return (document.getElementById(id)||{}).value||'';}
@@ -2207,11 +2523,11 @@ function sbReady(){const u=SB_BAKED.url||localStorage.getItem('sb_url'),k=SB_BAK
 function openAuth(){document.getElementById('authBg').classList.add('show');renderAuth();}
 function closeAuth(){document.getElementById('authBg').classList.remove('show');}
 function authMsg(m){const e=document.getElementById('au-msg');if(e)e.textContent=m;}
-function updateAuthUI(){const b=document.getElementById('authBtn');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):'☁ Sign in';}
+function updateAuthUI(){const b=document.getElementById('authBtn');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):t('signIn');}
 function renderAuth(){const m=document.getElementById('authModal');
  if(USER){m.innerHTML=`<div class="modal-h"><div><div class="code">Account</div><div class="nm">${USER.email}</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">Your portfolio is synced to the cloud and follows you on any device you sign in to.</p><button class="btn" style="width:100%;justify-content:center" onclick="doLogout()">Sign out</button></div>`;return;}
- if(!sbReady()){m.innerHTML=`<div class="modal-h"><div><div class="code">Connect cloud</div><div class="nm">One-time setup · paste your Supabase keys</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Supabase Project URL</label><input id="cf-url" placeholder="https://xxxx.supabase.co"></div><div class="tf"><label>anon public key</label><input id="cf-key" placeholder="eyJ..."></div><button class="btn" style="justify-content:center" onclick="saveCfg()">Connect</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div></div></div>`;return;}
- m.innerHTML=`<div class="modal-h"><div><div class="code">Sign in</div><div class="nm">Access your portfolio on any device</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Email</label><input id="au-email" type="email" placeholder="you@email.com"></div><div class="tf"><label>Password (min 6 chars)</label><input id="au-pass" type="password" placeholder="••••••"></div><div style="display:flex;gap:8px"><button class="btn" style="flex:1;justify-content:center" onclick="doSignIn()">Sign in</button><button class="btn ghost" style="flex:1;justify-content:center" onclick="doSignUp()">Create account</button></div><div id="au-msg" style="color:var(--neg);font-size:12px"></div><div style="font-size:11px;color:var(--muted2);cursor:pointer;text-decoration:underline;margin-top:2px" onclick="resetCfg()">Wrong project? Reset connection</div></div></div>`;}
+ if(!sbReady()){m.innerHTML=`<div class="modal-h"><div><div class="code">Connect cloud</div><div class="nm">One-time setup · paste your Supabase keys</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Supabase Project URL</label><input id="cf-url" placeholder="https://xxxx.supabase.co" onkeydown="if(event.key==='Enter')saveCfg()"></div><div class="tf"><label>anon public key</label><input id="cf-key" placeholder="eyJ..." onkeydown="if(event.key==='Enter')saveCfg()"></div><button class="btn" style="justify-content:center" onclick="saveCfg()">Connect</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div></div></div>`;return;}
+ m.innerHTML=`<div class="modal-h"><div><div class="code">Sign in</div><div class="nm">Access your portfolio on any device</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Email</label><input id="au-email" type="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doSignIn()"></div><div class="tf"><label>Password (min 6 chars)</label><input id="au-pass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doSignIn()"></div><div style="display:flex;gap:8px"><button class="btn" style="flex:1;justify-content:center" onclick="doSignIn()">Sign in</button><button class="btn ghost" style="flex:1;justify-content:center" onclick="doSignUp()">Create account</button></div><div id="au-msg" style="color:var(--neg);font-size:12px"></div><div style="font-size:11px;color:var(--muted2);cursor:pointer;text-decoration:underline;margin-top:2px" onclick="resetCfg()">Wrong project? Reset connection</div></div></div>`;}
 function cleanUrl(u){u=(u||'').trim();let m=u.match(/dashboard\/project\/([a-z0-9]+)/i);if(m)return 'https://'+m[1]+'.supabase.co';m=u.match(/([a-z0-9]{8,})\.supabase\.co/i);if(m)return 'https://'+m[1]+'.supabase.co';return u.replace(/\/+$/,'');}
 function saveCfg(){const u=cleanUrl(_v('cf-url')),k=_v('cf-key').trim();if(!/^https:\/\/[a-z0-9]+\.supabase\.co$/i.test(u)){authMsg('URL must look like https://xxxx.supabase.co');return;}if(k.length<20){authMsg('anon key looks too short — paste the long anon/public key');return;}localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);SB=null;sbReady();renderAuth();}
 function resetCfg(){localStorage.removeItem('sb_url');localStorage.removeItem('sb_key');SB=null;USER=null;renderAuth();}
@@ -2283,10 +2599,10 @@ async function autoFetchNAV(){
  }catch(e){}
 }
 
+applyLang();
 renderAll();
 loadMarket();
 autoFetchNAV();
 </script>
 </body>
 </html>
-
