@@ -98,7 +98,7 @@ async function syncSlice(env, sliceIdx) {
     if (nav && nav.navs) { navOk++; nav.navs.forEach(n => navRecords.push({ code, date: n.date.slice(0, 10), nav: n.value })); }
     else navFail++;
 
-    if (a || b || c || fe) {
+    if (a) { // only store complete records; partial failures retry next cycle
       const feeArr = (fe && fe.fees) || [];
       const feeOf = kw => {
         const x = feeArr.find(f => (f.description || '').includes(kw));
@@ -109,7 +109,7 @@ async function syncSlice(env, sliceIdx) {
       detRecords.push({ code, data: {
         mgmtA: feeOf('ค่าธรรมเนียมการจัดการ'), terA: feeOf('รวมทั้งหมด'),
         amc: a && a.amc_name_en, cat: a && a.aimc_category_name_en, catTh: a && a.aimc_category_name_th,
-        risk: a && a.risk_level, div: a && a.dividend_policy,
+        risk: a && (a.risk_level || parseInt(a.risk_spectrum) || null), div: a && a.dividend_policy,
         mgmt: a && a.real_management_fee, exp: a && a.net_expense_ratio,
         front: a && a.real_front_end_fee, back: a && a.real_back_end_fee,
         inc: ((a && a.inception_date) || '').slice(0, 10),

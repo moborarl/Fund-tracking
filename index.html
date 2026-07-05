@@ -2285,12 +2285,12 @@ async function openFund(code){
    <div class="m-stat"><div class="l">Weight</div><div class="v">${fmt(f.value/ALL.reduce((s,x)=>s+x.value,0)*100,1)}%</div></div>
   </div><div id="mdyn"><div class="skel"><span class="spin" style="display:inline-block;vertical-align:middle"></span> ${t('mLoading')}</div></div></div>`;
  let d=DETAILS[code]||DETCACHE[code];
- if(d&&d.mgmtA===undefined)d=null; // refetch to get actual (เก็บจริง) fees
+ if(d&&(d.mgmtA===undefined||d.cat==null))d=null; // stale/incomplete cache -> refetch
  if(d){renderModalDyn(code,d);return;}
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
  const [a,b,c,fe]=await Promise.all([grab(API(code)),grab(API(code)+'/performance'),grab(API(code)+'/portfolio'),grab(API(code)+'/fee')]);
  const feeArr=(fe&&fe.fees)||[];const feeOf=kw=>{const x=feeArr.find(f=>(f.description||'').includes(kw));if(!x||x.actual_value===''||x.actual_value==null)return null;const v=parseFloat(x.actual_value);return isNaN(v)?null:v;};
- if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&a.risk_level,div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}
+ if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&(a.risk_level||parseInt(a.risk_spectrum)||null),div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};if(a){DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}}
  renderModalDyn(code,d);
 }
 function renderModalDyn(code,d){
