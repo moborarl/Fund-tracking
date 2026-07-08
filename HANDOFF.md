@@ -41,7 +41,8 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 | Domain | Points to |
 |---|---|
 | `fundtracking.yourpower.today` | Cloudflare Pages (dashboard, GitHub-connected) |
-|  `api.yourpower.today` | should point to Worker `fund-nav-sync` (proxy + sync) — verify in CF dashboard |
+| `fund-nav-sync.nupark.workers.dev` | Worker `fund-nav-sync` — **canonical URL; dashboard proxy uses this** |
+| `api.yourpower.today` | was attached to Pages by mistake; no longer needed (workers.dev URL used instead) |
 | `fund.yourpower.today` | legacy — old Worker `yourpower-fund` (old dashboard); safe to retire |
 
 ## Features (v2.x)
@@ -99,10 +100,10 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 
 ## Known issues / gotchas
 
-1.  `api.yourpower.today` was at one point attached to the Pages project
-   instead of the worker — if `/sync` returns HTML instead of JSON, re-attach
-   the domain to Worker `fund-nav-sync`. Dashboard proxy default is
-   `https://api.yourpower.today` (override via localStorage `kkp_proxy`).
+1. Dashboard proxy default is `https://fund-nav-sync.nupark.workers.dev`
+   (override via localStorage `kkp_proxy`). `api.yourpower.today` ended up
+   attached to the Pages project — if any URL returns HTML where JSON is
+   expected, you're hitting the dashboard, not the worker.
 2. Old Worker `yourpower-fund` + domain `fund.yourpower.today` still exist;
    delete when convenient.
 3. `KKP_Portfolio_Dashboard.html` and `template3.html` were removed from the
@@ -130,5 +131,4 @@ HANDOFF.md                 this file
 - `d0c555a` fees: actual collected (เก็บจริง) only
 - `9f5dac1` server-side sync worker + client speedups (delta upsert, parallel modal)
 - `87edcec` worker: fund-details sync, free-plan slice rotation
-- `dcc7a6e` fix incomplete detail caching + risk_spectrum fallback
-- `675b0e4` Google sign-in (Supabase OAuth)
+- `dcc7a6e`
