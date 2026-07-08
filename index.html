@@ -2579,7 +2579,7 @@ if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=d
  SB.auth.onAuthStateChange((ev,session)=>{if(ev==='SIGNED_IN'&&session&&(!USER||USER.id!==session.user.id)){USER=session.user;afterLogin();}});}
 
 async function loadMarket(){ if(!sbReady())return; try{
- const r1=await SB.from('nav_history').select('code,date,nav'); const nv=r1.data;
+ let nv=[];for(let from=0;;from+=1000){const r1=await SB.from('nav_history').select('code,date,nav').range(from,from+999);if(r1.error||!r1.data)break;nv=nv.concat(r1.data);if(r1.data.length<1000)break;}
  if(nv&&nv.length){const m={};nv.forEach(r=>{(m[r.code]=m[r.code]||{})[r.date]=r.nav;});for(const c in m){NAVDB[c]=NAVDB[c]||{navs:{}};Object.assign(NAVDB[c].navs,m[c]);}}
  const r2=await SB.from('fund_details').select('code,data'); const fd=r2.data;
  if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});}

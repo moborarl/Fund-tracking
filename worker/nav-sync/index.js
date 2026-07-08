@@ -48,6 +48,11 @@ export default {
       });
     }
 
+    if (url.pathname === '/backfill') {
+      const out = await backfill(env, parseInt(url.searchParams.get('slice') || '0', 10));
+      return new Response(JSON.stringify(out, null, 2), { headers: { ...CORS, 'content-type': 'application/json' } });
+    }
+
     if (url.pathname === '/sync') {
       const sliceParam = url.searchParams.get('slice');
       const out = await syncSlice(env, sliceParam === null ? null : parseInt(sliceParam, 10));
@@ -57,6 +62,51 @@ export default {
     return new Response('fund-nav-sync · /fn/<finnomena-path> proxy · /sync[?slice=N]', { headers: CORS });
   },
 };
+
+async function allCodes(env) {
+  // fund_details has exactly one row per fund; nav_history latest page catches brand-new funds
+  const [r1, r2] = await Promise.all([
+    sbFetch(env, 'fund_details?select=code'),
+    sbFetch(env, 'nav_history?select=code&order=date.desc&limit=1000'),
+  ]);
+  if (!r1.ok && !r2.ok) return { error: 'cannot read fund codes' };
+  const set = new Set();
+  if (r1.ok) (await r1.json()).forEach(r => set.add(r.code));
+  if (r2.ok) (await r2.json()).forEach(r => set.add(r.code));
+  return [...set].sort();
+}
+
+/**
+ * One-time backfill: fetch 1 YEAR of NAV history (covers since Jan 1).
+ * 25 funds per slice to stay under the free-plan subrequest limit.
+ * Call /backfill?slice=0 then 1 then 2 (until "funds" list is empty).
+ */
+async function backfill(env, sliceIdx) {
+  const BF = 25;
+  const codes = await allCodes(env);
+  if (codes.error) return codes;
+  const nSlices = Math.max(1, Math.ceil(codes.length / BF));
+  const slice = codes.slice(sliceIdx * BF, (sliceIdx + 1) * BF);
+  let ok = 0, fail = 0;
+  const records = [];
+  await Promise.all(slice.map(async code => {
+    try {
+      const r = await fetch(FN + encodeURIComponent(code) + '/nav/q?range=1Y', { headers: { accept: 'application/json' } });
+      const j = await r.json();
+      if (j && j.data && j.data.navs) { ok++; j.data.navs.forEach(nn => records.push({ code, date: nn.date.slice(0, 10), nav: nn.value })); }
+      else fail++;
+    } catch (e) { fail++; }
+  }));
+  let upserted = 0;
+  for (let i = 0; i < records.length; i += 800) {
+    const b = records.slice(i, i + 800);
+    const r = await sbFetch(env, 'nav_history?on_conflict=code,date', {
+      method: 'POST', headers: { prefer: 'resolution=merge-duplicates' }, body: JSON.stringify(b),
+    });
+    if (r.ok) upserted += b.length;
+  }
+  return { backfill: '1Y', slice: sliceIdx, of: nSlices, funds: slice, ok, fail, upserted, at: new Date().toISOString() };
+}
 
 function sbFetch(env, path, init = {}) {
   return fetch(env.SUPABASE_URL + '/rest/v1/' + path, {
@@ -71,10 +121,8 @@ function sbFetch(env, path, init = {}) {
 }
 
 async function syncSlice(env, sliceIdx) {
-  // 1) All known fund codes
-  const res = await sbFetch(env, 'nav_history?select=code');
-  if (!res.ok) return { error: 'cannot read nav_history: ' + res.status };
-  const codes = [...new Set((await res.json()).map(r => r.code))].sort();
+  const codes = await allCodes(env);
+  if (codes.error) return codes;
   const nSlices = Math.max(1, Math.ceil(codes.length / SLICE_SIZE));
   // Stateless rotation: slice advances every 15 minutes
   if (sliceIdx === null || isNaN(sliceIdx)) sliceIdx = Math.floor(Date.now() / 900000) % nSlices;
