@@ -2507,7 +2507,7 @@ document.getElementById('printBtn').onclick=()=>window.print();
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
-function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
+function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTxn();closeSw();}});
