@@ -2182,9 +2182,9 @@ function renderHist(){
  if(charts.hist){charts.hist.data=cfg;charts.hist.options.scales.y.ticks.callback=yfmt;charts.hist.update();return;}
  charts.hist=new Chart(document.getElementById('histChart'),{type:'line',data:cfg,options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
   plugins:{legend:{display:true,labels:{boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'rectRounded',font:{size:11},color:C.muted}},
-   tooltip:{callbacks:{title:i=>new Date(i[0].label).toLocaleDateString('en-GB',{day:'numeric',month:'short'}),
+   tooltip:{callbacks:{title:i=>new Date(i[0].label).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}),
     label:c=>c.parsed.y==null?null:' '+c.dataset.label+': '+(histMode==='norm'?sign(c.parsed.y)+'%':(histMode==='nav'?c.parsed.y.toFixed(4):'฿'+fmt0(c.parsed.y)))}}},
-  scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,callback:function(v){return new Date(this.getLabelForValue(v)).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}}},
+  scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,callback:function(v){const ls=this.chart.data.labels||[];const multi=ls.length>1&&ls[0].slice(0,4)!==ls[ls.length-1].slice(0,4);return new Date(this.getLabelForValue(v)).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',multi?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'short'});}}},
    y:{grid:{color:C.grid},ticks:{callback:yfmt}}}}});
 }
 
