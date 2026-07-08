@@ -41,7 +41,7 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 | Domain | Points to |
 |---|---|
 | `fundtracking.yourpower.today` | Cloudflare Pages (dashboard, GitHub-connected) |
-| `api.yourpower.today` | should point to Worker `fund-nav-sync` (proxy + sync) — verify in CF dashboard |
+|  `api.yourpower.today` | should point to Worker `fund-nav-sync` (proxy + sync) — verify in CF dashboard |
 | `fund.yourpower.today` | legacy — old Worker `yourpower-fund` (old dashboard); safe to retire |
 
 ## Features (v2.x)
@@ -99,7 +99,7 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 
 ## Known issues / gotchas
 
-1. `api.yourpower.today` was at one point attached to the Pages project
+1.  `api.yourpower.today` was at one point attached to the Pages project
    instead of the worker — if `/sync` returns HTML instead of JSON, re-attach
    the domain to Worker `fund-nav-sync`. Dashboard proxy default is
    `https://api.yourpower.today` (override via localStorage `kkp_proxy`).

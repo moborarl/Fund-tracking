@@ -25,14 +25,14 @@ npx wrangler secret put SUPABASE_SERVICE_KEY  # service_role key (Supabase → S
 
 ## Domain
 
-Attach `api.yourpower.today` to THIS worker (Cloudflare → fund-nav-sync →
+Attach `api.yourpower.today` to THIS worker (optional — dashboard already uses the workers.dev URL) (Cloudflare → fund-nav-sync →
 Settings → Domains & Routes → Add custom domain). If that domain is attached
 to the dashboard project, remove it there first. The dashboard uses
 `https://api.yourpower.today/fn/...` as its fast proxy.
 
 ## Test
 
-Open `https://api.yourpower.today/sync` (or the worker's .workers.dev URL + /sync):
+Open `https://fund-nav-sync.nupark.workers.dev/sync` (or the worker's .workers.dev URL + /sync):
 
 ```
 { "slice":3, "of":9, "funds":[...8 codes...],
