@@ -108,6 +108,7 @@ async function syncSlice(env, sliceIdx) {
       detOk++;
       detRecords.push({ code, data: {
         mgmtA: feeOf('ค่าธรรมเนียมการจัดการ'), terA: feeOf('รวมทั้งหมด'),
+        taxType: (a && (a.fund_tax_type || a.tax_saving_fund)) || '',
         amc: a && a.amc_name_en, cat: a && a.aimc_category_name_en, catTh: a && a.aimc_category_name_th,
         risk: a && (a.risk_level || parseInt(a.risk_spectrum) || null), div: a && a.dividend_policy,
         mgmt: a && a.real_management_fee, exp: a && a.net_expense_ratio,

@@ -103,7 +103,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:rgba(77,141,255,.06)}
 .amcb{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--line);color:var(--muted)}
 .tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px}
 .tag.SSF{background:rgba(77,141,255,.16);color:#7dabff}.tag.ThaiESG{background:rgba(31,210,134,.16);color:#43e3a0}
-.tag.ThaiESGX{background:rgba(155,123,255,.16);color:#b39bff}.tag.General{background:rgba(133,147,168,.16);color:#a4b0c2}.tag.LTF{background:rgba(240,185,93,.16);color:#f0b95d}
+.tag.ThaiESGX{background:rgba(155,123,255,.16);color:#b39bff}.tag.RMF{background:rgba(57,214,224,.16);color:#39d6e0}.tag.General{background:rgba(133,147,168,.16);color:#a4b0c2}.tag.LTF{background:rgba(240,185,93,.16);color:#f0b95d}
 .wbar{display:inline-block;height:5px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-left:6px}
 .tfoot-row td{background:var(--panel2);font-weight:800;border-top:2px solid var(--line2)}
 .foot{font-size:11px;color:var(--muted2);text-align:center;margin-top:24px;line-height:1.7}
@@ -1914,7 +1914,7 @@ const cls=n=>n>=0?'pos':'neg';
 const RANGES={d1:{d:1,l:'1 Day'},w1:{d:7,l:'1 Week'},d15:{d:15,l:'15 Days'},m1:{d:30,l:'1 Month'}};
 const C={pos:'#1fd286',neg:'#ff5a6a',accent:'#4d8dff',gold:'#f0b95d',violet:'#9b7bff',muted:'#8593a8',grid:'#1d2840',panel:'#101829'};
 const ASSET_COL={'Foreign Equity':'#4d8dff','Thai Equity':'#1fd286','Mixed':'#f0b95d','Fixed Income / MM':'#39d6e0'};
-const TAX_COL={'SSF':'#4d8dff','ThaiESG':'#1fd286','ThaiESGX':'#9b7bff','General':'#8593a8','LTF':'#f0b95d'};
+const TAX_COL={'SSF':'#4d8dff','ThaiESG':'#1fd286','ThaiESGX':'#9b7bff','General':'#8593a8','LTF':'#f0b95d','RMF':'#39d6e0'};
 const AMC_COL={'KKP':'#4d8dff','SCB':'#9b7bff','UOB':'#f0b95d','Bualuang':'#1fd286','K-Fund':'#ff7a90','Eastspring':'#39d6e0','LH Fund':'#c2e25a','ONE':'#ff9f45'};
 const PALETTE=['#4d8dff','#1fd286','#f0b95d','#9b7bff','#ff5a6a','#39d6e0','#ff9f45','#e368d8','#7dd957','#6c8bff','#ffce54','#5ad1b0','#ff7a90','#8c7bff','#48c0ff'];
 
@@ -2008,6 +2008,8 @@ const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=v
 function computeAll(){
  ALL=[];
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
+  if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
+   if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
   const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
   const last=vs[vs.length-1],prev=vs[vs.length-2]||last,ld=ds[ds.length-1];
   const rv=n=>refLE(ds,vs,daysBefore(ld,n));
@@ -2290,7 +2292,7 @@ async function openFund(code){
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
  const [a,b,c,fe]=await Promise.all([grab(API(code)),grab(API(code)+'/performance'),grab(API(code)+'/portfolio'),grab(API(code)+'/fee')]);
  const feeArr=(fe&&fe.fees)||[];const feeOf=kw=>{const x=feeArr.find(f=>(f.description||'').includes(kw));if(!x||x.actual_value===''||x.actual_value==null)return null;const v=parseFloat(x.actual_value);return isNaN(v)?null:v;};
- if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&(a.risk_level||parseInt(a.risk_spectrum)||null),div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};if(a){DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}}
+ if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),taxType:(a&&(a.fund_tax_type||a.tax_saving_fund))||'',amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&(a.risk_level||parseInt(a.risk_spectrum)||null),div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};if(a){DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}}
  renderModalDyn(code,d);
 }
 function renderModalDyn(code,d){
@@ -2507,7 +2509,7 @@ document.getElementById('printBtn').onclick=()=>window.print();
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
-function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
+function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;}HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTxn();closeSw();}});
