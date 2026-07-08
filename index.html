@@ -284,6 +284,7 @@ input[type=file]{display:none}
   <button class="btn ghost" id="expBtn" data-i18n="expBtn">⬇ Download nav_history.json</button>
   <button class="btn ghost" id="impBtn" data-i18n="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
   <button class="btn ghost" id="impHoldBtn" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
+  <button class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>
   <div style="margin-top:9px" data-i18n="disclaimer">For portfolio tracking only — not investment advice.</div>
  </div>
 </div>
@@ -1947,7 +1948,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',
  csvSaved:'✅ CSV exported',
- mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',
+ mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',promptBtn:'📋 Copy AI import prompt',promptCopied:'✅ Prompt copied — paste it into any AI together with photos of your fund statements, then import the JSON it returns',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
  swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
@@ -1974,7 +1975,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',
  csvSaved:'✅ ส่งออก CSV แล้ว',
- mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',
+ mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',promptBtn:'📋 คัดลอกพรอมป์ต AI สำหรับนำเข้าพอร์ต',promptCopied:'✅ คัดลอกแล้ว — นำไปวางใน AI พร้อมรูป statement กองทุน แล้วนำ JSON ที่ได้มากดนำเข้าพอร์ต',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
  swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
@@ -2502,6 +2503,36 @@ document.getElementById('tfApply').onclick=()=>{
  renderHist();renderRisk();};
 /* benchmark */
 document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
+/* AI import prompt */
+const AI_PROMPT=[
+'I will give you screenshots (or PDF) of my Thai mutual fund portfolio statements.',
+'Convert them into a single JSON file called holdings.json with EXACTLY this structure:',
+'',
+'{',
+'  "FUND CODE": { "units": 1234.5678, "avg": 10.5000, "realized": 0 }',
+'}',
+'',
+'RULES',
+'1. The JSON key must be the fund\'s official short code as used on finnomena.com',
+'   (e.g. "KKP ACT EQ-SSF", "K-CHANGE-SSF", "SCBGOLDHRMF"). If the statement shows a',
+'   long Thai fund name, find its short code. Preserve exact spacing, hyphens and',
+'   suffixes like -SSF, -A, (A), -H. If unsure of the exact code, add "_verify": true',
+'   inside that fund\'s object.',
+'2. "units" = number of units held (\u0e2b\u0e19\u0e48\u0e27\u0e22\u0e25\u0e07\u0e17\u0e38\u0e19\u0e04\u0e07\u0e40\u0e2b\u0e25\u0e37\u0e2d), decimal number.',
+'3. "avg" = average cost per unit in THB. If only total cost is shown, compute',
+'   avg = total cost / units, keep 4 decimals.',
+'4. "realized" = cumulative realized profit in THB from past redemptions if shown, else 0.',
+'5. Do NOT include tax type, asset class, AMC or fund name - the dashboard fills those automatically.',
+'6. Numbers only (no commas, no currency symbols).',
+'7. If the same fund appears on multiple statements, sum units and recompute weighted average cost.',
+'8. Output ONLY the raw JSON - no explanations, no markdown fences.',
+'',
+'Here are my statements:'].join('\n');
+document.getElementById('promptBtn').onclick=async()=>{
+ try{await navigator.clipboard.writeText(AI_PROMPT);}
+ catch(e){const ta=document.createElement('textarea');ta.value=AI_PROMPT;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+ toast(t('promptCopied'),'ok');
+};
 /* CSV + print */
 document.getElementById('csvBtn').onclick=exportCSV;
 document.getElementById('printBtn').onclick=()=>window.print();
