@@ -20,19 +20,33 @@ First time only, also set secrets:
 ```
 npx wrangler login
 npx wrangler secret put SUPABASE_URL          # https://pmfqjnheavnbqpsdnffm.supabase.co
-npx wrangler secret put SUPABASE_SERVICE_KEY  # service_role key (Supabase → Settings → API)
+npx wrangler secret put SUPABASE_SERVICE_KEY  # dedicated sb_secret key (Supabase → Settings → API Keys)
+npx wrangler secret put SYNC_TOKEN             # long random bearer token for manual syncs
 ```
 
 ## Domain
 
-Attach `api.yourpower.today` to THIS worker (Cloudflare → fund-nav-sync →
-Settings → Domains & Routes → Add custom domain). If that domain is attached
-to the dashboard project, remove it there first. The dashboard uses
-`https://api.yourpower.today/fn/...` as its fast proxy.
+`wrangler.toml` declares `api.yourpower.today` as this Worker's custom domain.
+If the domain is attached to the Pages dashboard project, remove it there
+before deploying the Worker. The dashboard continues to use the workers.dev
+URL until the custom domain returns the Worker health JSON.
 
 ## Test
 
-Open `https://api.yourpower.today/sync` (or the worker's .workers.dev URL + /sync):
+Health check (no authentication required):
+
+```
+GET https://api.yourpower.today/health
+```
+
+Manual syncs are authenticated `POST` requests:
+
+```
+curl -X POST "https://api.yourpower.today/sync?slice=0" \
+  -H "Authorization: Bearer $SYNC_TOKEN"
+```
+
+Successful response:
 
 ```
 { "slice":3, "of":9, "funds":[...8 codes...],
@@ -40,10 +54,11 @@ Open `https://api.yourpower.today/sync` (or the worker's .workers.dev URL + /syn
   "details":{"ok":8,"fail":0,"upserted":8}, ... }
 ```
 
-Each call/cron run does one slice. `/sync?slice=0` … `?slice=N` to force a
-specific slice. After ~2 hours of cron runs, all funds are covered.
+Each manual call or cron run does one slice. `/sync?slice=0` … `?slice=N`
+forces a specific slice. After ~2 hours of cron runs, all funds are covered.
 
 ## Security
 
-The service_role key bypasses Supabase RLS. It lives only as an encrypted
-Worker secret — never put it in index.html (public page source).
+The dedicated `sb_secret_...` key bypasses Supabase RLS. It lives only as an
+encrypted Worker secret — never put it in index.html (public page source). `/sync` and
+`/backfill` require `SYNC_TOKEN`; the scheduled handler does not.

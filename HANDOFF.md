@@ -1,308 +1,151 @@
-# 🚀 Fund Tracking Dashboard - Project Handoff
+# 🚀 Fund Tracking Dashboard — Project Handoff
 
-**Project:** Multi-AMC Portfolio Monitor with NAV Tracking  
-**Status:** ✅ Production Ready  
-**Last Updated:** 2026-07-04  
-**Deployed at:** https://fund.yourpower.today/
-
----
-
-## 📊 What Was Built
-
-A professional dark-themed portfolio tracking dashboard that:
-- Displays real-time fund holdings with NAV-based valuation
-- Tracks portfolio performance across multiple fund managers (AMC)
-- Syncs data across all browsers via Supabase
-- Auto-updates NAV (Net Asset Value) from Finnomena API
-- Provides transaction history and P/L analysis
+**Project:** Multi-AMC Portfolio Monitor (v2.x)
+**Last Updated:** 2026-07-13
+**Live:** https://fundtracking.yourpower.today/
+**Repo:** https://github.com/moborarl/Fund-tracking (branch `main`, auto-deploys via Cloudflare Pages)
 
 ---
 
-## 🐛 Issues Found & Fixed
+## What this is
 
-### 1. **Security: Hardcoded Portfolio Data**
-**Problem:** Index.html contained 74KB of hardcoded fund details  
-**Impact:** Portfolio information visible in source code  
-**Fix:** Removed `DETAILS` and `HOLDINGS_BASE` objects  
-**Commits:** `342abed`, `a32e928`, `bfa077d`
-
-### 2. **Data Sync: Inconsistent NAV Across Browsers**
-**Problem:**
-- Local browser: 1721 NAV points (30 Jun 2026)
-- Online browser: 1689 NAV points (29 Jun 2026)
-- Root cause: Each browser had separate localStorage, Supabase was outdated
-
-**Fix:** 
-- Implemented centralized sync: Finnomena API → Supabase → All browsers
-- Added `saveNAVtoSupabase()` to persist fresh data
-- Added SQL policies to allow database writes
-
-### 3. **Performance: Slow "Update NAV"**
-**Problem:** Update took 2+ minutes (sequential API calls for 65 funds)  
-**Fix:** Changed to parallel Promise.all() fetching  
-**Result:** 10-15 seconds instead of 2+ minutes
-
-### 4. **UX: Flash of Old Cached Data**
-**Problem:** Old value (2,314,113.97) briefly showed on page refresh  
-**Fix:** Clear display on page load, wait for fresh data fetch
+A single-file (`index.html`) dark-theme portfolio dashboard for Thai mutual funds
+across multiple AMCs, backed by Supabase and a Cloudflare Worker that syncs data
+from the Finnomena public API.
 
 ---
 
-## 🏗️ Architecture
-
-### Data Flow
+## Architecture (current)
 
 ```
-┌─────────────────────────────────────────┐
-│ Finnomena API (Live NAV Prices)         │
-└────────────┬────────────────────────────┘
-             │ Fetch every 6 hours
-             ▼
-┌─────────────────────────────────────────┐
-│ Browser localStorage (Cache)             │
-│ • NAVDB (fund prices)                    │
-│ • Transactions (user edits)              │
-└────────────┬────────────────────────────┘
-             │ Save on Update NAV
-             ▼
-┌─────────────────────────────────────────┐
-│ Supabase Cloud (Centralized)            │
-│ • nav_history (NAV points)              │
-│ • fund_details (metadata)               │
-│ • portfolios (user holdings)            │
-└─────────────────────────────────────────┘
+Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
+                        │  rotating slices of 8 funds
+                        ▼
+                  Supabase (Postgres)
+                   ├─ nav_history   (code, date, nav)      ← NAV prices
+                   ├─ fund_details  (code, data JSONB)     ← returns/fees/holdings/strategy
+                   └─ portfolios    (user_id, holdings, transactions)
+                        ▲                    ▲
+                        │ read on load       │ auth (email/password + Google OAuth)
+                        ▼                    ▼
+                  index.html  ← Cloudflare Pages ← GitHub push (auto-deploy)
 ```
 
-### Key Functions
+- Browser reads NAV/details only for held, transacted, and benchmark funds;
+  market-data writes remain Worker-owned.
+- Client only fetches Finnomena directly if server data is >3 days old, via
+  proxy chain: private Worker proxy → public CORS proxies → direct.
+- Worker exposes `/fn/<path>` (origin-restricted Finnomena proxy). Manual
+  `/sync?slice=N` and `/backfill?slice=N` are authenticated `POST` endpoints.
 
-| Function | Purpose | Trigger |
-|----------|---------|---------|
-| `autoFetchNAV()` | Auto-sync from API, skip if <6hrs | Page load |
-| `updateNAV()` | Force refresh from Finnomena | "Update NAV" button |
-| `saveNAVtoSupabase()` | Persist to database | After fetch |
-| `loadMarket()` | Load from Supabase | Page load |
-| `computeAll()` | Calculate portfolio totals | Whenever data changes |
+## Domains
 
----
+| Domain | Points to |
+|---|---|
+| `fundtracking.yourpower.today` | Cloudflare Pages (dashboard, GitHub-connected) |
+| `api.yourpower.today` | Worker `fund-nav-sync` custom domain — **canonical URL; dashboard proxy uses this** |
+| `fund-nav-sync.nupark.workers.dev` | Disabled; Wrangler serves the Worker only through the custom domain |
+| `fund.yourpower.today` | legacy — old Worker `yourpower-fund` (old dashboard); safe to retire |
 
-## 🔧 Deployment
+## Features (v2.x)
 
-**Hosted on:** Cloudflare Pages  
-**Auto-deploy:** Yes (from GitHub on push)  
-**Repository:** https://github.com/moborarl/Fund-tracking  
-**Domain:** fund.yourpower.today (via Cloudflare)
+- TH/EN language switch (persisted), including dynamic modals/status/error copy
+- Historical comparison chart: ledger-adjusted Value / TWR / NAV modes,
+  timeframes 1W · 1M · 3M · 6M · 1Y · YTD · MAX + custom date range
+- Benchmark overlay: any Finnomena fund as dashed reference line
+- Risk & Performance: ledger-adjusted TWR, estimated XIRR, annualized
+  volatility, max drawdown, return/volatility, best/worst day
+- Fund switch (⇌): sell one fund / buy another with independent dates;
+  incoming units derive from net sale proceeds after an optional switching fee
+- Append-only transaction corrections: the UI appends `void` records and never
+  deletes or mutates prior buy/sell/switch entries
+- Fund detail modal: served instantly from `fund_details`;
+  fees show ONLY actual collected (เก็บจริง): management fee + TER
+- CSV export (filter/sort aware, BOM for Thai Excel) + print stylesheet
+- Per-fund NAV freshness, valuation coverage, stale-data badges, and proper
+  zero-portfolio empty state
+- Responsive mobile action menu; keyboard-operable fund rows, focus-trapped
+  dialogs, accessible labels, and escaped external/imported strings
+- Auth: email/password + **Google OAuth** (Supabase provider)
 
-**Deploy Flow:**
-```
-Local → git push → GitHub → Cloudflare Pages (auto-deploy)
-```
+## Auth / accounts
 
----
+- Google provider enabled in Supabase (Google Cloud OAuth client).
+- Supabase Auth URL Configuration: Site URL + Redirect URLs must be
+  `https://fundtracking.yourpower.today/**` (localhost default causes
+  ERR_CONNECTION_REFUSED after Google login).
+- Portfolio moved from old email account `a848c932-…` (nupark.jr@gmail.com)
+  to Google account `f073cdc7-…` (nuparkjr@gmail.com) via SQL upsert on
+  `portfolios`. Old account can be deleted once verified.
 
-## 📝 Recent Changes
+## Worker: `worker/nav-sync/`
 
-### Latest Commits (most recent first)
+- Free-plan friendly: 8 funds per invocation (≈44 subrequests < 50 limit),
+  cron `*/15 * * * *`, stateless time-based slice rotation → full refresh ~2 h.
+- Syncs NAV (range 1M) + full details incl. actual fees (mgmtA/terA parsed
+  from the Thai `/fee` endpoint descriptions).
+- Details stored only when the main info endpoint succeeds (no partial cache).
+- Secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (dedicated `sb_secret_...`
+  key named `fund_nav_sync_v2`), and
+  `SYNC_TOKEN` (manual endpoint bearer token) — Worker secrets only.
+- Manual sync/backfill require `POST` + `Authorization: Bearer <SYNC_TOKEN>`;
+  scheduled sync does not require the token.
+- Structured Workers logs and Wrangler observability are enabled.
+- Deploy: `cd worker/nav-sync && npx wrangler deploy`
 
-```
-(HEAD → main, origin/main) Feature: Sync fresh NAV data to Supabase
-  - Added saveNAVtoSupabase() function
-  - Calls after every NAV fetch
-  - Updates nav_history table in Supabase
+## Deploy flows
 
-Optimize: Parallel NAV fetching - 10x faster
-  - Changed from sequential to Promise.all()
-  - Update NAV: 2+ min → 10-15 sec
-  - Auto-sync: Same optimization
+- **Dashboard:** edit `index.html` → `git push` → Cloudflare Pages auto-deploys.
+- **Worker:** `npx wrangler deploy` from `worker/nav-sync/` (git push does NOT deploy the worker).
 
-Fix: Clear display values on page load
-  - Prevents old cached values from showing
-  - Waits for fresh data before rendering
+## Data & client caches
 
-Security hardening: Remove DETAILS and HOLDINGS_BASE
-  - Removed 74KB of hardcoded fund data
-  - Removed hardcoded portfolio data
-  - Added NAVDB sync to Supabase
-```
+- localStorage keys: `kkp_navdb_v2` (NAV), `kkp_funddet_v2` (details),
+  `kkp_txns_v1` (ledger), `kkp_holdings`, `kkp_lang`, `kkp_histtf`,
+  `kkp_bench`, `kkp_proxy` (override proxy URL), `kkp_lastNavFetch`.
+- Client refetches a fund's details if cached entry is incomplete
+  (missing category / mgmtA) — fixes stuck “—” fields.
+- Risk level falls back to parsing `risk_spectrum` when `risk_level` is null
+  (e.g. SCBGOLDHRMF).
 
----
+## Known issues / gotchas
 
-## 🔑 Database Setup
+1. Production Worker is live at `https://api.yourpower.today`; `/health`
+   returns JSON and authenticated slice syncs passed 8/8 for NAV and details.
+   The Pages association and stale `api` CNAME were removed before attaching
+   the Worker custom domain. `workers.dev` is disabled.
+2. Legacy Worker `yourpower-fund` and `fund.yourpower.today` are already gone.
+3. The old email auth user `a848c932-…` has not been deleted: the 2026-07-13
+   REST audit could not see private `portfolios` rows in that API context, so
+   portfolio parity with Google user `f073cdc7-…` remains unverified.
+4. `KKP_Portfolio_Dashboard.html` and `template3.html` were removed from the
+   repo (old dashboards, confusing + exposed stale data). They remain in git
+   history only.
+5. Workers free plan: 50 subrequests/invocation — don't raise SLICE_SIZE
+   above ~9 without a paid plan.
+6. Buy/Sell + Switch ledger lives in `portfolios.transactions`; corrections
+   append `action: "void"` rows. `buildHoldings()` ignores voided originals and
+   recomputes holdings/average cost/realized P/L from the effective ledger.
+6. Ledger-adjusted history treats imported `HOLDINGS_BASE` as the opening
+   position before the first recorded transaction. XIRR treats the opening
+   market value as the initial cash flow for the selected window.
 
-### Supabase Tables
-
-```sql
--- nav_history: NAV price history
-CREATE TABLE public.nav_history (
-  code TEXT PRIMARY KEY,
-  date DATE,
-  nav DOUBLE PRECISION
-);
-
--- fund_details: Fund metadata
-CREATE TABLE public.fund_details (
-  code TEXT PRIMARY KEY,
-  data JSONB
-);
-
--- portfolios: User holdings
-CREATE TABLE public.portfolios (
-  user_id UUID PRIMARY KEY,
-  holdings JSONB,
-  transactions JSONB
-);
-```
-
-### Required Policies (Added)
-
-```sql
--- Allow authenticated users to write NAV data
-CREATE POLICY "nav write" ON public.nav_history 
-  FOR INSERT TO authenticated WITH CHECK (true);
-  
-CREATE POLICY "nav update" ON public.nav_history 
-  FOR UPDATE TO authenticated USING (true);
-```
-
----
-
-## 🧪 How to Test
-
-### Test Fresh Data Sync
-1. Go to https://fund.yourpower.today/
-2. Click "Update NAV" button (top right)
-3. Should complete in 10-15 seconds
-4. Check Supabase: Dashboard → Table Editor → nav_history
-5. Should see new records with today's date ✅
-
-### Test Across Browsers
-1. Open dashboard in 2 different browsers
-2. On Browser A: Click "Update NAV"
-3. On Browser B: Refresh page
-4. Both should show same NAV points ✅
-
-### Test Auto-Sync
-1. Close dashboard
-2. Wait 6+ hours
-3. Re-open dashboard
-4. Should auto-fetch fresh NAV data ✅
-
----
-
-## 📈 Performance Metrics
-
-| Metric | Before | After |
-|--------|--------|-------|
-| Update NAV time | 2+ minutes | 10-15 seconds |
-| API calls | Sequential | Parallel |
-| Concurrent requests | 1 | 65 |
-| Cloudflare deployment | Manual | Auto |
-| Data consistency | Per-browser | Centralized |
-
----
-
-## 🚨 Known Limitations
-
-1. **Finnomena API Rate Limit**
-   - ~65 funds = ~65 API calls per update
-   - May hit rate limits if updating frequently
-   - Mitigated by 6-hour auto-sync cooldown
-
-2. **Network Dependency**
-   - Requires active internet for fresh data
-   - localStorage fallback works offline
-   - Supabase fallback if API fails
-
-3. **Supabase Free Tier**
-   - Row count: ~2000 NAV points × 65 funds
-   - API rate limits apply
-   - May need upgrade if scaling
-
----
-
-## 🔐 Security Notes
-
-✅ **Secure:**
-- No hardcoded portfolio data in HTML
-- Supabase RLS policies enforce access control
-- Authentication required for writes
-- Finnomena API calls from browser (user-initiated)
-
-⚠️ **To Consider:**
-- Public Supabase key in HTML (read-only by design)
-- Consider backend API for large-scale writes
-- Monitor CORS proxy usage (fallback chain)
-
----
-
-## 📚 File Structure
+## File map
 
 ```
-Fund value tracking/
-├── index.html                    # Main dashboard (production)
-├── KKP_Portfolio_Dashboard.html  # Backup/reference
-├── HANDOFF.md                    # This file
-├── PROJECT_BRIEF.md              # Project overview
-├── DEPLOYMENT_GUIDE.md           # Deployment instructions
-└── .git/                          # Git repository
-    └── [commit history]
+index.html                 dashboard (single file: CSS + HTML + JS, ~2,620 lines)
+worker/nav-sync/           Cloudflare Worker (sync + proxy) + README + wrangler.toml
+supabase_*.sql             historical schema/setup scripts
+holdings.json / *.json     sample & seed data (dashboard no longer depends on them)
+HANDOFF.md                 this file
 ```
 
----
+## History of major commits
 
-## 🎯 Next Steps / Future Improvements
-
-### High Priority
-- [ ] Monitor API rate limits in production
-- [ ] Set up alerts for failed syncs
-- [ ] Add error logging to track issues
-- [ ] Test with larger portfolio (100+ funds)
-
-### Medium Priority
-- [ ] Backend API endpoint for NAV writes (reduce client load)
-- [ ] Implement cron job for automatic daily syncs
-- [ ] Add data export (CSV, PDF)
-- [ ] Mobile app version
-
-### Low Priority
-- [ ] Multi-currency support
-- [ ] Tax-loss harvesting analysis
-- [ ] Advanced charting (candlesticks, volume)
-- [ ] ML-based fund recommendations
-
----
-
-## 🆘 Troubleshooting
-
-### Problem: "Update NAV" takes too long
-**Solution:** Check internet connection, Finnomena API status
-
-### Problem: Supabase shows stale data
-**Solution:** Click "Update NAV" to force sync, check write policies exist
-
-### Problem: Different values on different browsers
-**Solution:** Click "Update NAV" on each browser to sync from Finnomena API
-
-### Problem: "Syncing NAV..." message stuck
-**Solution:** Refresh page, check browser console for errors
-
----
-
-## 📞 Key Contacts / Resources
-
-**Repository:** https://github.com/moborarl/Fund-tracking  
-**Live Dashboard:** https://fund.yourpower.today/  
-**Supabase Project:** https://supabase.com/dashboard/project/pmfqjnheavnbqpsdnffm  
-**Finnomena API:** https://finnomena.com/api/
-
----
-
-## ✨ Summary
-
-This project successfully transformed a local portfolio tracker into a **production-ready, cloud-synced, real-time dashboard** with:
-- ✅ Secure architecture (no hardcoded data)
-- ✅ Fast performance (10x speedup)
-- ✅ Centralized data (consistent across devices)
-- ✅ Automated sync (every 6 hours)
-- ✅ Professional UI (dark theme, responsive)
-
-**Ready for deployment and daily use!** 🚀
+- `bd6b4f3` v2.0: TH/EN, adjustable timeframe chart, benchmark, risk metrics, CSV, sticky filters
+- `757d907` / `83a2b1b` remove legacy HTML dashboards
+- `d0c555a` fees: actual collected (เก็บจริง) only
+- `9f5dac1` server-side sync worker + client speedups (delta upsert, parallel modal)
+- `87edcec` worker: fund-details sync, free-plan slice rotation
+- `dcc7a6e` fix incomplete detail caching + risk_spectrum fallback
+- `675b0e4` Google sign-in (Supabase OAuth)

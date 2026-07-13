@@ -1,6 +1,12 @@
 name = "fund-nav-sync"
 main = "index.js"
-compatibility_date = "2026-07-01"
+compatibility_date = "2026-07-13"
+compatibility_flags = ["nodejs_compat"]
+routes = [{ pattern = "api.yourpower.today", custom_domain = true }]
+
+[observability]
+enabled = true
+head_sampling_rate = 1
 
 # Rotating slice sync every 15 min (all funds fully refreshed ~every 2h)
 [triggers]

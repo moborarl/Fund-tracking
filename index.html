@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-6u8E0ilPNloW6RuFflhC+gtFXsEy96nCms0SMHtlnQo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +14,7 @@
 <style>
 :root{--bg:#070b14;--panel:#101829;--panel2:#0d1422;--line:#1d2840;--line2:#28354f;
 --txt:#e8eef7;--muted:#8593a8;--muted2:#5d6b82;--pos:#1fd286;--neg:#ff5a6a;--accent:#4d8dff;--gold:#f0b95d;--violet:#9b7bff;--shadow:0 8px 30px rgba(0,0,0,.45)}
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;letter-spacing:0!important}
 body{background:radial-gradient(1200px 600px at 80% -10%,#13203a 0%,transparent 55%),var(--bg);color:var(--txt);font-family:'Inter','IBM Plex Sans Thai',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45;padding-bottom:60px}
 .wrap{max-width:1340px;margin:0 auto;padding:0 22px}
 .mono{font-variant-numeric:tabular-nums}.pos{color:var(--pos)}.neg{color:var(--neg)}
@@ -27,6 +29,8 @@ header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);backgroun
 .btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.6;cursor:default}
 .btn.ghost{background:var(--panel);border:1px solid var(--line2);box-shadow:none;color:var(--muted);font-size:11px;padding:6px 11px}
 .btn.ghost:hover{color:var(--txt)}
+.btn:focus-visible,.fchip:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #8fb6ff;outline-offset:2px}
+.mobile-only{display:none}
 .spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--panel);border:1px solid var(--line2);color:var(--txt);padding:13px 20px;border-radius:11px;font-size:13px;box-shadow:var(--shadow);z-index:200;transition:.3s;max-width:90vw}
@@ -39,6 +43,12 @@ header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);backgroun
 .fchip:hover{color:var(--txt)}.fchip.on{color:#fff;border-color:transparent}
 .fstatus{margin-left:auto;font-size:11.5px;color:var(--muted2)}
 .fstatus b{color:var(--txt)}
+.confidence{margin-top:10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.conf-item{display:flex;align-items:center;gap:8px;min-width:0;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:11.5px;color:var(--muted)}
+.conf-item b{color:var(--txt);font-weight:700;white-space:nowrap}.conf-dot{width:7px;height:7px;border-radius:50%;background:var(--pos);flex:0 0 auto}.conf-dot.warn{background:var(--gold)}.conf-dot.bad{background:var(--neg)}
+.empty-state{margin:28px 0 0;border:1px solid var(--line);background:var(--panel);padding:34px 24px;text-align:center;border-radius:12px}
+.empty-state h2{font-size:18px}.empty-state p{max-width:560px;margin:8px auto 18px;color:var(--muted);font-size:13px}.empty-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .confidence{display:none}
 /* hero */
 .hero{padding:18px 0 4px}.hero-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
 @media(max-width:880px){.hero-grid{grid-template-columns:1fr}}
@@ -103,7 +113,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:rgba(77,141,255,.06)}
 .amcb{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--line);color:var(--muted)}
 .tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px}
 .tag.SSF{background:rgba(77,141,255,.16);color:#7dabff}.tag.ThaiESG{background:rgba(31,210,134,.16);color:#43e3a0}
-.tag.ThaiESGX{background:rgba(155,123,255,.16);color:#b39bff}.tag.General{background:rgba(133,147,168,.16);color:#a4b0c2}.tag.LTF{background:rgba(240,185,93,.16);color:#f0b95d}
+.tag.ThaiESGX{background:rgba(155,123,255,.16);color:#b39bff}.tag.RMF{background:rgba(57,214,224,.16);color:#39d6e0}.tag.General{background:rgba(133,147,168,.16);color:#a4b0c2}.tag.LTF{background:rgba(240,185,93,.16);color:#f0b95d}
 .wbar{display:inline-block;height:5px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-left:6px}
 .tfoot-row td{background:var(--panel2);font-weight:800;border-top:2px solid var(--line2)}
 .foot{font-size:11px;color:var(--muted2);text-align:center;margin-top:24px;line-height:1.7}
@@ -134,6 +144,7 @@ input[type=file]{display:none}
 .fee{display:flex;justify-content:space-between;font-size:12px;padding:7px 11px;background:var(--panel2);border:1px solid var(--line);border-radius:8px}
 .fee span:first-child{color:var(--muted)}.fee span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
 .skel{color:var(--muted2);font-size:12.5px;padding:20px 0;text-align:center}
+.stale-badge{display:inline-flex;align-items:center;font-size:9px;font-weight:700;color:#ffd17b;background:rgba(240,185,93,.14);border:1px solid rgba(240,185,93,.25);border-radius:4px;padding:1px 5px;margin-left:5px}
 .retbars{display:flex;gap:8px;flex-wrap:wrap}
 .retb{flex:1;min-width:70px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center}
 .retb .l{font-size:10px;color:var(--muted2);font-weight:600}.retb .v{font-size:14px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
@@ -144,7 +155,7 @@ input[type=file]{display:none}
 .txn-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}
 .txn-act{font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px}.txn-act.buy{background:rgba(31,210,134,.16);color:var(--pos)}.txn-act.sell{background:rgba(255,90,106,.16);color:var(--neg)}
 .txn-c{font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.txn-d{color:var(--muted2)}.txn-u{font-variant-numeric:tabular-nums;color:var(--muted)}
-.txn-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:13px}.txn-del:hover{color:var(--neg)}
+.txn-del{background:none;border:1px solid var(--line2);border-radius:6px;color:var(--muted);cursor:pointer;font-size:10.5px;padding:3px 7px}.txn-del:hover{color:var(--neg)}.txn-del:disabled{cursor:default;opacity:.55;color:var(--muted2)}
 /* timeframe pills + custom range */
 .tf-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .tf-custom{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)}
@@ -164,6 +175,16 @@ input[type=file]{display:none}
 .risk-tbl th:first-child,.risk-tbl td:first-child{text-align:left}
 .risk-tbl td{padding:8px 11px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
 .risk-tbl tr:last-child td{border-bottom:none}
+@media(max-width:720px){
+ body{overflow-x:hidden;padding-bottom:32px}.wrap{padding:0 14px}
+ .top-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;padding:10px 14px;gap:8px}.brand{min-width:0}.brand>div:last-child{min-width:0}.brand .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .mobile-only{display:inline-flex}.menu-btn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}
+ .upd{display:none;grid-column:1/-1;width:100%;gap:8px;padding-top:8px;border-top:1px solid var(--line);flex-wrap:wrap}.upd.open{display:flex}.upd .asof{width:100%;text-align:left}.upd .btn{flex:1 1 calc(50% - 4px);justify-content:center;min-height:40px}
+ .filterbar{top:61px;margin-top:10px;border-radius:8px;padding:10px 11px;gap:10px}.fgroup{width:100%}.fstatus{width:100%;margin-left:0}
+ .confidence{grid-template-columns:1fr}.hero{padding-top:12px}.hero-main,.card{padding:16px}.totval{font-size:34px}.hero-sub{gap:14px}.hero-side{gap:12px}
+ section{margin-top:20px}.sec-head{align-items:flex-start}.sec-head .hint{width:100%}.ms-top>*{max-width:100%}.ms-search{width:100%;flex-basis:100%}.ms-modes{max-width:100%;overflow-x:auto}.tf-row{align-items:stretch}.tf-custom{width:100%}.tf-custom input{min-width:0;width:100%}.bench-sel{max-width:none;width:100%;margin-left:0!important}.chart-box{height:280px}
+ .modal-bg{padding:12px 8px}.modal{border-radius:10px}.modal-h,.modal-b{padding:16px}.tf2{grid-template-columns:1fr}.txn-row{align-items:flex-start;flex-wrap:wrap}.txn-c{flex-basis:55%}.risk-kpis{grid-template-columns:1fr 1fr;gap:8px}
+}
 /* print */
 @media print{header.top,.filterbar,.ms-top,.ms-list,.tf-row,.foot,#pills,.btn,.range-pills{display:none!important}
  body{background:#fff;color:#000;padding-bottom:0}
@@ -174,12 +195,13 @@ input[type=file]{display:none}
 <body>
 <header class="top"><div class="top-inner">
  <div class="brand"><div class="logo">PORT</div><div><h1>Portfolio Monitor</h1><div class="sub" data-i18n="brandSub">Multi-AMC · NAV-based valuation</div></div></div>
- <div class="upd"><div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
+ <button class="btn ghost mobile-only menu-btn" id="mobileMenuBtn" type="button" aria-expanded="false" aria-controls="headerActions" data-i18n-aria="menuBtn">☰</button>
+ <div class="upd" id="headerActions"><div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
   <button class="btn ghost" id="langBtn" style="font-size:13px;padding:9px 13px;min-width:52px;justify-content:center">ไทย</button>
   <button class="btn ghost" id="authBtn" style="font-size:13px;padding:9px 13px">☁ Sign in</button>
   <button class="btn ghost" id="txnBtn" style="font-size:13px;padding:9px 13px" data-i18n="txnBtn">⇄ Buy / Sell</button>
   <button class="btn ghost" id="swBtn" style="font-size:13px;padding:9px 13px" data-i18n="swBtn">⇌ Switch</button>
-  <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt">Update NAV</span></button></div>
+  <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt" data-i18n="updNav">Update NAV</span></button></div>
 </div></header>
 
 <div class="wrap">
@@ -188,6 +210,18 @@ input[type=file]{display:none}
   <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
   <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
   <div class="fstatus" id="fstatus"></div>
+ </div>
+
+ <div class="confidence" id="confidenceBar" aria-live="polite">
+  <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
+  <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
+  <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
+ </div>
+
+ <div class="empty-state" id="emptyState" hidden>
+  <h2 data-i18n="emptyTitle">Build your portfolio view</h2>
+  <p data-i18n="emptyBody">Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.</p>
+  <div class="empty-actions"><button class="btn" id="emptySignIn" type="button" data-i18n="emptySignIn">Sign in</button><button class="btn ghost" id="emptyImport" type="button" data-i18n="emptyImport">Import portfolio</button></div>
  </div>
 
  <div class="hero"><div class="hero-grid">
@@ -284,15 +318,16 @@ input[type=file]{display:none}
   <button class="btn ghost" id="expBtn" data-i18n="expBtn">⬇ Download nav_history.json</button>
   <button class="btn ghost" id="impBtn" data-i18n="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
   <button class="btn ghost" id="impHoldBtn" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
+  <button class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>
   <div style="margin-top:9px" data-i18n="disclaimer">For portfolio tracking only — not investment advice.</div>
  </div>
 </div>
 
-<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
-<div class="modal-bg" id="txnBg"><div class="modal" id="txnModal"></div></div>
-<div class="modal-bg" id="swBg"><div class="modal" id="swModal" style="max-width:600px"></div></div>
-<div class="modal-bg" id="authBg"><div class="modal" id="authModal" style="max-width:430px"></div></div>
-<div class="toast" id="toast"></div>
+<div class="modal-bg" id="modalBg" aria-hidden="true"><div class="modal" id="modal" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="modal-bg" id="txnBg" aria-hidden="true"><div class="modal" id="txnModal" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="modal-bg" id="swBg" aria-hidden="true"><div class="modal" id="swModal" role="dialog" aria-modal="true" tabindex="-1" style="max-width:600px"></div></div>
+<div class="modal-bg" id="authBg" aria-hidden="true"><div class="modal" id="authModal" role="dialog" aria-modal="true" tabindex="-1" style="max-width:430px"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 let NAVDB={
@@ -1891,9 +1926,13 @@ let SB=null, USER=null, _saveT=null;
 function persist(){ try{localStorage.setItem('kkp_holdings',JSON.stringify(HOLDINGS_BASE));localStorage.setItem(LS_TXN,JSON.stringify(TXNS));}catch(e){} if(SB&&USER){clearTimeout(_saveT);_saveT=setTimeout(saveCloud,800);} }
 async function saveCloud(){ if(!SB||!USER)return; try{const{error}=await SB.from('portfolios').upsert({user_id:USER.id,holdings:HOLDINGS_BASE,transactions:TXNS,updated_at:new Date().toISOString()});if(error)console.error('cloud save',error);}catch(e){console.error(e);} }
 function saveTxns(){persist();}
+function effectiveTxns(){
+ const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
+ return TXNS.filter(x=>x&&x.action!=='void'&&!voided.has(String(x.ts))).sort((a,b)=>((a.date||'').localeCompare(b.date||''))||((a.ts||0)-(b.ts||0)));
+}
 function buildHoldings(){
  HOLDINGS=JSON.parse(JSON.stringify(HOLDINGS_BASE));
- const tx=[...TXNS].sort((a,b)=>((a.date||'').localeCompare(b.date||''))||((a.ts||0)-(b.ts||0)));
+ const tx=effectiveTxns();
  for(const t of tx){
   let h=HOLDINGS[t.code];
   if(!h){ if(t.action!=='buy')continue;
@@ -1902,7 +1941,7 @@ function buildHoldings(){
   }
   const u=+t.units||0,pr=+t.price||0;
   if(t.action==='buy'){const nu=h.units+u; h.avg=nu>0?(h.units*h.avg+u*pr)/nu:pr; h.units=nu;}
-  else if(t.action==='sell'){const su=Math.min(u,h.units); h.realized=(h.realized||0)+su*(pr-h.avg); h.units-=su; if(h.units<1e-6&&h._added)delete HOLDINGS[t.code];}
+  else if(t.action==='sell'){const su=Math.min(u,h.units); h.realized=(h.realized||0)+su*(pr-h.avg)-(+t.fee||0); h.units-=su; if(h.units<1e-6&&h._added)delete HOLDINGS[t.code];}
  }
 }
 buildHoldings();
@@ -1911,10 +1950,13 @@ const fmt=(n,d=2)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFrac
 const fmt0=n=>n.toLocaleString('en-US',{maximumFractionDigits:0});
 const sign=(n,d=2)=>(n>=0?'+':'')+fmt(n,d);
 const cls=n=>n>=0?'pos':'neg';
+const escHTML=v=>String(v==null?'':v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const escAttr=escHTML;
+const isoDayDiff=(a,b)=>Math.round((new Date(a+'T00:00:00Z')-new Date(b+'T00:00:00Z'))/86400000);
 const RANGES={d1:{d:1,l:'1 Day'},w1:{d:7,l:'1 Week'},d15:{d:15,l:'15 Days'},m1:{d:30,l:'1 Month'}};
 const C={pos:'#1fd286',neg:'#ff5a6a',accent:'#4d8dff',gold:'#f0b95d',violet:'#9b7bff',muted:'#8593a8',grid:'#1d2840',panel:'#101829'};
 const ASSET_COL={'Foreign Equity':'#4d8dff','Thai Equity':'#1fd286','Mixed':'#f0b95d','Fixed Income / MM':'#39d6e0'};
-const TAX_COL={'SSF':'#4d8dff','ThaiESG':'#1fd286','ThaiESGX':'#9b7bff','General':'#8593a8','LTF':'#f0b95d'};
+const TAX_COL={'SSF':'#4d8dff','ThaiESG':'#1fd286','ThaiESGX':'#9b7bff','General':'#8593a8','LTF':'#f0b95d','RMF':'#39d6e0'};
 const AMC_COL={'KKP':'#4d8dff','SCB':'#9b7bff','UOB':'#f0b95d','Bualuang':'#1fd286','K-Fund':'#ff7a90','Eastspring':'#39d6e0','LH Fund':'#c2e25a','ONE':'#ff9f45'};
 const PALETTE=['#4d8dff','#1fd286','#f0b95d','#9b7bff','#ff5a6a','#39d6e0','#ff9f45','#e368d8','#7dd957','#6c8bff','#ffce54','#5ad1b0','#ff7a90','#8c7bff','#48c0ff'];
 
@@ -1927,17 +1969,17 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 
 /* ---------- i18n ---------- */
 const I18N={
-en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',
+en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
  lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
- secHist:'Historical Comparison',histHint:'Select portfolio & multiple funds · switch Value / % Change / NAV',searchPh:'Search funds to add…',
+ secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
  portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
  benchNone:'Benchmark: none',benchAdd:'+ Add benchmark fund code…',benchPrompt:'Enter a Finnomena fund code to use as benchmark (e.g. SCBSET50, K-SET50-A):',benchFetch:'Fetching benchmark',benchFail:'❌ Could not fetch benchmark',
  secAlloc:'Allocation',allocHint:'Reflects current filter',byAsset:'By Asset Class',byAssetSub:'Asset allocation',byAMC:'By AMC',byAMCSub:'Asset management company',byTax:'By Tax Benefit',
  topGainers:'Top Gainers',topLosers:'Top Losers',bestPerf:'Best performers',weakPerf:'Weakest performers',rvu:'Realized vs Unrealized',plBreak:'P/L breakdown',unrealWord:'Unrealized',realWord:'Realized',
- secRisk:'Risk & Performance',riskHint:'Computed from NAV history · follows chart timeframe above',
- rhRet:'Return',rhVol:'Volatility (ann.)',rhDD:'Max Drawdown',rhRR:'Return / Risk',rhBest:'Best Day',rhWorst:'Worst Day',portWord:'Portfolio',
- rkRet:'Period Return',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return / Risk',rkWorst:'Worst Day',noData:'Not enough NAV history in this window',
+ secRisk:'Risk & Performance',riskHint:'Portfolio uses ledger-adjusted TWR · follows chart timeframe above',
+ rhRet:'Return',rhVol:'Volatility (ann.)',rhDD:'Max Drawdown',rhRR:'Return ÷ Volatility',rhBest:'Best Day',rhWorst:'Worst Day',portWord:'Portfolio',
+ rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Baseline cost is treated as an opening cash flow',noData:'Not enough NAV history in this window',
  secHold:'Holdings',holdHint:'Click any row for fund details · click headers to sort · change column follows selected range',
  csvBtn:'⬇ Export CSV',printBtn:'🖨 Print',thFund:'Fund',thUnits:'Units',thValue:'Market Value',thWeight:'Weight',thChange:'Change',thUnreal:'Unrealized',thReal:'Realized',totalWord:'Total',fundsWord:'funds',
  footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
@@ -1945,26 +1987,30 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  r_d1:'1 Day',r_w1:'1 Week',r_d15:'15 Days',r_m1:'1 Month',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
  plFoot:'Total P/L <b style="color:var(--txt)">฿{t}</b> — unrealized gains on paper make up the majority; realized P/L ฿{r} comes from past partial redemptions.',
  wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
- mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',
+ mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',mMarket:'Market Value',mUnreal:'Unrealized',mWeight:'Weight',mCategory:'Category',mRisk:'Risk level',mDividend:'Dividend policy',mInception:'Inception',mNetAssets:'Net assets',divYes:'Pays dividends',divNo:'No dividends',
  csvSaved:'✅ CSV exported',
- mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',
+ mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',promptBtn:'📋 Copy AI import prompt',promptCopied:'Prompt copied — paste it into any AI together with photos of your fund statements, then import the JSON it returns',
+ confCoverage:'Valuation coverage',confRange:'NAV date range',confStale:'Stale funds',confFresh:'All current',navPoints:'{n} NAV points stored',noAsOf:'No valuation yet',navDate:'NAV',stale:'stale',updateBlocked:'NAV update is unavailable. Check the Worker domain or import a NAV database.',syncDone:'Synced {ok}/{total} funds · {added} new NAV points',syncFailed:'{n} failed',dbImported:'NAV database imported',portfolioImported:'Portfolio imported',invalidFile:'Invalid file',urlInvalid:'Use a URL like https://xxxx.supabase.co',keyInvalid:'The anon public key looks too short',
+ emptyTitle:'Build your portfolio view',emptyBody:'Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.',missingNavTitle:'Portfolio loaded · waiting for NAV',missingNavBody:'The holdings ledger is available, but no current NAV is loaded yet. Update NAV or verify the Worker connection.',emptySignIn:'Sign in',emptyImport:'Import portfolio',noFunds:'No funds',
+ txnTitle:'Buy / Sell',txnSub:'Append-only ledger · holdings, cost and realized P/L are recomputed',txnFund:'Fund',txnNewFund:'+ New fund (not listed)…',txnNewCode:'New fund code (must match Finnomena)',txnName:'Display name',txnAmc:'AMC',txnAsset:'Asset class',txnTax:'Tax benefit',txnAction:'Action',txnDate:'Date',txnUnits:'Units',txnPrice:'Price / NAV (฿)',txnAdd:'Add transaction',txnHistory:'History',txnEmpty:'No transactions yet',txnCorrect:'Reverse',txnCorrected:'Reversed',txnVoid:'Correction',txnEnterCode:'Enter a fund code',txnInvalid:'Enter valid units and price',txnRecorded:'recorded',txnNeedsNav:'run Update NAV to fetch history',buyWord:'Buy',sellWord:'Sell',
+ accountTitle:'Account',accountSub:'Your portfolio is synced to the cloud and follows you on every signed-in device.',signOut:'Sign out',connectTitle:'Connect cloud',connectSub:'One-time Supabase connection setup',projectUrl:'Supabase project URL',anonKey:'Anon public key',connectBtn:'Connect',signInTitle:'Sign in',signInSub:'Access your portfolio on any device',emailLbl:'Email',passwordLbl:'Password (min 6 chars)',createAccount:'Create account',resetConnection:'Wrong project? Reset connection',redirectGoogle:'Redirecting to Google…',signingIn:'Signing in…',creatingAccount:'Creating account…',accountCreated:'Account created. Confirm your email if required, then sign in.',signedOut:'Signed out',signedIn:'Signed in as',detailsUnavailable:'Details unavailable for this fund.',openFinnomena:'Open on Finnomena ↗',closeBtn:'Close',correctedToast:'Correction appended to the ledger',assetForeign:'Foreign Equity',assetThai:'Thai Equity',assetMixed:'Mixed',assetFixed:'Fixed Income / MM',taxGeneral:'General',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
- swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',
+ swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',swFee:'Switching fee (฿)',swUnitsAuto:'Units are calculated from net proceeds',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
  swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
- swTooMany:'Not enough units held',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'❌ Could not fetch fund',
+ swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
  swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
-th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',
+th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
- secHist:'เปรียบเทียบย้อนหลัง',histHint:'เลือกพอร์ตและหลายกองทุน · สลับ มูลค่า / % เปลี่ยนแปลง / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
+ secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
  portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
  benchNone:'เกณฑ์เปรียบเทียบ: ไม่มี',benchAdd:'+ เพิ่มรหัสกองทุนเกณฑ์เทียบ…',benchPrompt:'ใส่รหัสกองทุน Finnomena เพื่อใช้เป็นเกณฑ์เทียบ (เช่น SCBSET50, K-SET50-A):',benchFetch:'กำลังดึงข้อมูลเกณฑ์เทียบ',benchFail:'❌ ดึงข้อมูลเกณฑ์เทียบไม่สำเร็จ',
  secAlloc:'สัดส่วนการลงทุน',allocHint:'ตามตัวกรองปัจจุบัน',byAsset:'ตามประเภทสินทรัพย์',byAssetSub:'การจัดสรรสินทรัพย์',byAMC:'ตาม บลจ.',byAMCSub:'บริษัทหลักทรัพย์จัดการกองทุน',byTax:'ตามสิทธิประโยชน์ภาษี',
  topGainers:'ปรับขึ้นสูงสุด',topLosers:'ปรับลงมากสุด',bestPerf:'ผลงานดีที่สุด',weakPerf:'ผลงานอ่อนแอที่สุด',rvu:'รับรู้แล้ว vs ยังไม่รับรู้',plBreak:'สรุปกำไรขาดทุน',unrealWord:'ยังไม่รับรู้',realWord:'รับรู้แล้ว',
- secRisk:'ความเสี่ยงและผลตอบแทน',riskHint:'คำนวณจากประวัติ NAV · ตามช่วงเวลาของกราฟด้านบน',
- rhRet:'ผลตอบแทน',rhVol:'ความผันผวน (ต่อปี)',rhDD:'ขาดทุนสะสมสูงสุด',rhRR:'ผลตอบแทน/ความเสี่ยง',rhBest:'วันที่ดีที่สุด',rhWorst:'วันแย่ที่สุด',portWord:'พอร์ตรวม',
- rkRet:'ผลตอบแทนช่วงเวลา',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน/ความเสี่ยง',rkWorst:'วันแย่ที่สุด',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',
+ secRisk:'ความเสี่ยงและผลตอบแทน',riskHint:'พอร์ตใช้ TWR ที่ปรับตามรายการซื้อขาย · ตามช่วงเวลาของกราฟด้านบน',
+ rhRet:'ผลตอบแทน',rhVol:'ความผันผวน (ต่อปี)',rhDD:'ขาดทุนสะสมสูงสุด',rhRR:'ผลตอบแทน ÷ ความผันผวน',rhBest:'วันที่ดีที่สุด',rhWorst:'วันแย่ที่สุด',portWord:'พอร์ตรวม',
+ rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้ต้นทุนพอร์ตตั้งต้นเป็นกระแสเงินสดวันแรก',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',
  secHold:'กองทุนที่ถือครอง',holdHint:'คลิกแถวเพื่อดูรายละเอียด · คลิกหัวตารางเพื่อเรียง · คอลัมน์เปลี่ยนแปลงตามช่วงเวลาที่เลือก',
  csvBtn:'⬇ ส่งออก CSV',printBtn:'🖨 พิมพ์',thFund:'กองทุน',thUnits:'หน่วย',thValue:'มูลค่าตลาด',thWeight:'น้ำหนัก',thChange:'เปลี่ยนแปลง',thUnreal:'ยังไม่รับรู้',thReal:'รับรู้แล้ว',totalWord:'รวม',fundsWord:'กองทุน',
  footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
@@ -1972,14 +2018,18 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  r_d1:'1 วัน',r_w1:'1 สัปดาห์',r_d15:'15 วัน',r_m1:'1 เดือน',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
  plFoot:'กำไร/ขาดทุนรวม <b style="color:var(--txt)">฿{t}</b> — ส่วนใหญ่เป็นกำไรที่ยังไม่รับรู้ · กำไรรับรู้แล้ว ฿{r} จากการขายคืนบางส่วนที่ผ่านมา',
  wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
- mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',
+ mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',mMarket:'มูลค่าตลาด',mUnreal:'กำไร/ขาดทุนยังไม่รับรู้',mWeight:'น้ำหนัก',mCategory:'ประเภทกองทุน',mRisk:'ระดับความเสี่ยง',mDividend:'นโยบายปันผล',mInception:'วันจัดตั้งกองทุน',mNetAssets:'สินทรัพย์สุทธิ',divYes:'จ่ายปันผล',divNo:'ไม่จ่ายปันผล',
  csvSaved:'✅ ส่งออก CSV แล้ว',
- mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',
+ mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',promptBtn:'📋 คัดลอกพรอมป์ต AI สำหรับนำเข้าพอร์ต',promptCopied:'คัดลอกแล้ว — นำไปวางใน AI พร้อมรูป statement กองทุน แล้วนำ JSON ที่ได้มากดนำเข้าพอร์ต',
+ confCoverage:'ความครอบคลุมมูลค่า',confRange:'ช่วงวันที่ NAV',confStale:'กองทุนข้อมูลล่าช้า',confFresh:'ข้อมูลเป็นปัจจุบันทั้งหมด',navPoints:'เก็บ NAV แล้ว {n} จุด',noAsOf:'ยังไม่มีมูลค่าพอร์ต',navDate:'NAV',stale:'ล่าช้า',updateBlocked:'อัปเดต NAV ไม่สำเร็จ กรุณาตรวจโดเมน Worker หรือนำเข้าฐานข้อมูล NAV',syncDone:'ซิงค์ {ok}/{total} กองทุน · NAV ใหม่ {added} จุด',syncFailed:'ล้มเหลว {n} กองทุน',dbImported:'นำเข้าฐานข้อมูล NAV แล้ว',portfolioImported:'นำเข้าพอร์ตแล้ว',invalidFile:'ไฟล์ไม่ถูกต้อง',urlInvalid:'กรุณาใช้ URL รูปแบบ https://xxxx.supabase.co',keyInvalid:'Anon public key สั้นเกินไป',
+ emptyTitle:'เริ่มสร้างมุมมองพอร์ต',emptyBody:'เข้าสู่ระบบเพื่อโหลดพอร์ตจากคลาวด์ หรือนำเข้าไฟล์ holdings เพื่อเริ่มติดตามมูลค่า ผลตอบแทน และความเสี่ยง',missingNavTitle:'โหลดพอร์ตแล้ว · รอข้อมูล NAV',missingNavBody:'มีบัญชีรายการพอร์ตแล้ว แต่ยังไม่มี NAV ปัจจุบัน กรุณาอัปเดต NAV หรือตรวจการเชื่อมต่อ Worker',emptySignIn:'เข้าสู่ระบบ',emptyImport:'นำเข้าพอร์ต',noFunds:'ไม่มีกองทุน',
+ txnTitle:'ซื้อ / ขาย',txnSub:'บัญชีรายการแบบเพิ่มอย่างเดียว · คำนวณหน่วย ต้นทุน และกำไรรับรู้ใหม่ทุกครั้ง',txnFund:'กองทุน',txnNewFund:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',txnNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',txnName:'ชื่อที่แสดง',txnAmc:'บลจ.',txnAsset:'ประเภทสินทรัพย์',txnTax:'สิทธิประโยชน์ภาษี',txnAction:'รายการ',txnDate:'วันที่',txnUnits:'จำนวนหน่วย',txnPrice:'ราคา / NAV (฿)',txnAdd:'เพิ่มรายการ',txnHistory:'ประวัติ',txnEmpty:'ยังไม่มีรายการ',txnCorrect:'กลับรายการ',txnCorrected:'กลับรายการแล้ว',txnVoid:'รายการแก้ไข',txnEnterCode:'กรุณาใส่รหัสกองทุน',txnInvalid:'กรุณาใส่จำนวนหน่วยและราคาให้ถูกต้อง',txnRecorded:'บันทึกแล้ว',txnNeedsNav:'กดอัปเดต NAV เพื่อดึงประวัติราคา',buyWord:'ซื้อ',sellWord:'ขาย',
+ accountTitle:'บัญชี',accountSub:'พอร์ตซิงค์บนคลาวด์และติดตามคุณไปทุกอุปกรณ์ที่เข้าสู่ระบบ',signOut:'ออกจากระบบ',connectTitle:'เชื่อมต่อคลาวด์',connectSub:'ตั้งค่าการเชื่อมต่อ Supabase ครั้งเดียว',projectUrl:'URL โปรเจกต์ Supabase',anonKey:'Anon public key',connectBtn:'เชื่อมต่อ',signInTitle:'เข้าสู่ระบบ',signInSub:'เข้าถึงพอร์ตได้จากทุกอุปกรณ์',emailLbl:'อีเมล',passwordLbl:'รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)',createAccount:'สร้างบัญชี',resetConnection:'โปรเจกต์ไม่ถูกต้อง? ตั้งค่าใหม่',redirectGoogle:'กำลังไปยัง Google…',signingIn:'กำลังเข้าสู่ระบบ…',creatingAccount:'กำลังสร้างบัญชี…',accountCreated:'สร้างบัญชีแล้ว หากระบบกำหนดให้ยืนยันอีเมล กรุณายืนยันก่อนเข้าสู่ระบบ',signedOut:'ออกจากระบบแล้ว',signedIn:'เข้าสู่ระบบในชื่อ',detailsUnavailable:'ไม่มีรายละเอียดของกองทุนนี้',openFinnomena:'เปิดใน Finnomena ↗',closeBtn:'ปิด',correctedToast:'เพิ่มรายการแก้ไขในบัญชีรายการแล้ว',assetForeign:'หุ้นต่างประเทศ',assetThai:'หุ้นไทย',assetMixed:'กองทุนผสม',assetFixed:'ตราสารหนี้ / ตลาดเงิน',taxGeneral:'ทั่วไป',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
- swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',
+ swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',swFee:'ค่าธรรมเนียมสับเปลี่ยน (฿)',swUnitsAuto:'จำนวนหน่วยคำนวณจากเงินรับสุทธิ',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
  swDo:'ยืนยันการสับเปลี่ยน',swHeld:'ถืออยู่',swInvalid:'กรุณากรอกข้อมูลให้ครบถ้วน',swSame:'กองทุนออกและเข้าต้องต่างกัน',
- swTooMany:'จำนวนหน่วยที่ถือไม่เพียงพอ',swFetch:'กำลังดึงข้อมูลกองทุนจาก Finnomena…',swFetchFail:'❌ ดึงข้อมูลกองทุนไม่สำเร็จ',
+ swTooMany:'จำนวนหน่วยที่ถือไม่เพียงพอ',swDateOrder:'วันที่สับเปลี่ยนเข้าต้องไม่อยู่ก่อนวันที่สับเปลี่ยนออก',swFetch:'กำลังดึงข้อมูลกองทุนจาก Finnomena…',swFetchFail:'ดึงข้อมูลกองทุนไม่สำเร็จ',
  swNoNav:'ไม่มีข้อมูล NAV ณ วันที่เลือกสำหรับ',swDone:'สับเปลี่ยนแล้ว',swNavOut:'NAV ขาออก',swNavIn:'NAV ขาเข้า'}
 };
 const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
@@ -1988,6 +2038,7 @@ function applyLang(){
  document.documentElement.lang=LANG;
  document.querySelectorAll('[data-i18n]').forEach(el=>{el.innerHTML=t(el.dataset.i18n);});
  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.dataset.i18nPh);});
+ document.querySelectorAll('[data-i18n-aria]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAria));});
  const lb=document.getElementById('langBtn');if(lb)lb.textContent=LANG==='en'?'ไทย':'EN';
  updateAuthUI();renderBenchSel();
 }
@@ -2008,12 +2059,14 @@ const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=v
 function computeAll(){
  ALL=[];
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
+  if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
+   if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
   const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
   const last=vs[vs.length-1],prev=vs[vs.length-2]||last,ld=ds[ds.length-1];
   const rv=n=>refLE(ds,vs,daysBefore(ld,n));
   const value=h.units*last,cost=h.units*h.avg;
   const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:last,nav_date:ld,
-   value,cost,unreal:value-cost,unreal_pct:(value-cost)/cost*100,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
+   value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
   for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
   ALL.push(o);}
  ALL.sort((a,b)=>b.value-a.value);
@@ -2023,16 +2076,19 @@ function applyFilter(){
  const S=k=>F.reduce((s,f)=>s+f[k],0);
  T={value:S('value'),cost:S('cost'),unreal:S('unreal'),realized:S('realized')};
  T.unreal_pct=T.cost?T.unreal/T.cost*100:0;T.chg={};T.pct={};
- for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);T.pct[k]=T.chg[k]/(T.value-T.chg[k])*100;}
+ for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);const base=T.value-T.chg[k];T.pct[k]=base?T.chg[k]/base*100:0;}
  T.as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
+ const active=F.filter(f=>f.units>1e-8&&f.value!==0);const eligible=Object.values(HOLDINGS).filter(h=>h.units>1e-8&&(filterAMC.size===0||filterAMC.has(h.amc))&&(filterTax.size===0||filterTax.has(h.tax)));
+ T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3).length;
+ T.covered=active.length;T.total_active=eligible.length;
 }
 
 /* ---------- filters UI ---------- */
 function buildFilters(){
  const amcs=[...new Set(ALL.map(f=>f.amc))];
  const taxes=[...new Set(ALL.map(f=>f.tax))];
- document.getElementById('amcFilter').innerHTML=amcs.map(a=>`<span class="fchip amc ${filterAMC.has(a)?'on':''}" data-a="${a}" style="${filterAMC.has(a)?`background:${AMC_COL[a]||'#4d8dff'};color:#0b111e`:''}">${a}</span>`).join('');
- document.getElementById('taxFilter').innerHTML=taxes.map(t=>`<span class="fchip tax ${filterTax.has(t)?'on':''}" data-t="${t}" style="${filterTax.has(t)?`background:${TAX_COL[t]||'#4d8dff'};color:#0b111e`:''}">${t}</span>`).join('');
+ document.getElementById('amcFilter').innerHTML=amcs.map(a=>`<button type="button" class="fchip amc ${filterAMC.has(a)?'on':''}" data-a="${escAttr(a)}" style="${filterAMC.has(a)?`background:${AMC_COL[a]||'#4d8dff'};color:#0b111e`:''}">${escHTML(a)}</button>`).join('');
+ document.getElementById('taxFilter').innerHTML=taxes.map(x=>`<button type="button" class="fchip tax ${filterTax.has(x)?'on':''}" data-t="${escAttr(x)}" style="${filterTax.has(x)?`background:${TAX_COL[x]||'#4d8dff'};color:#0b111e`:''}">${escHTML(x)}</button>`).join('');
  document.querySelectorAll('.fchip.amc').forEach(c=>c.onclick=()=>{const a=c.dataset.a;filterAMC.has(a)?filterAMC.delete(a):filterAMC.add(a);renderAll();});
  document.querySelectorAll('.fchip.tax').forEach(c=>c.onclick=()=>{const t=c.dataset.t;filterTax.has(t)?filterTax.delete(t):filterTax.add(t);renderAll();});
  document.getElementById('fstatus').innerHTML=t('showing').replace('{a}',F.length).replace('{b}',ALL.length);
@@ -2040,9 +2096,9 @@ function buildFilters(){
 
 /* ---------- header / KPIs ---------- */
 function renderHeader(){
- document.getElementById('asof').textContent=new Date(T.as_of).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+ document.getElementById('asof').textContent=T.as_of?new Date(T.as_of+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}):t('noAsOf');
  const pts=Object.values(NAVDB).reduce((s,v)=>s+Object.keys(v.navs||{}).length,0);
- document.getElementById('srcline').textContent=pts+' NAV points stored';
+ document.getElementById('srcline').textContent=t('navPoints').replace('{n}',fmt0(pts));
  document.getElementById('h-value').textContent=fmt(T.value);
  document.getElementById('h-cost').textContent='฿'+fmt0(T.cost);
  document.getElementById('h-unreal').textContent=sign(T.unreal);document.getElementById('h-unreal').className='mono '+cls(T.unreal);
@@ -2051,6 +2107,15 @@ function renderHeader(){
  document.getElementById('m-unreal-pct').textContent=sign(T.unreal_pct)+'%';
  document.getElementById('m-real').textContent='฿'+sign(T.realized);document.getElementById('m-real').className='val mono '+cls(T.realized);
 }
+function renderConfidence(){
+ const coverage=document.getElementById('confCoverage'),range=document.getElementById('confRange'),stale=document.getElementById('confStale');if(!coverage)return;
+ coverage.textContent=`${T.covered||0}/${T.total_active||0}`;
+ range.textContent=T.as_of?(T.oldest_as_of&&T.oldest_as_of!==T.as_of?`${fmtD(T.oldest_as_of)} – ${fmtD(T.as_of)}`:fmtD(T.as_of)):'—';
+ stale.textContent=T.stale?String(T.stale):t('confFresh');
+ document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
+ document.getElementById('rangeDot').className='conf-dot'+(T.stale?' warn':'');document.getElementById('staleDot').className='conf-dot'+(T.stale?' bad':'');
+}
+function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
  const b=T.chg[RANGE],p=T.pct[RANGE];
  document.getElementById('tl-baht').textContent='฿'+sign(b);document.getElementById('tl-baht').className='big mono '+cls(b);
@@ -2061,10 +2126,10 @@ function renderTL(){
 }
 function renderMovers(){
  const s=[...F].sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
- const row=(f,i)=>`<div class="mover" onclick="openFund('${f.code.replace(/'/g,"\\'")}')"><div class="rank">${i+1}</div>
-  <div class="nm"><div class="c">${f.code}</div><div class="t">${f.amc} · ${f.name}</div></div>
+ const row=(f,i)=>`<div class="mover" role="button" tabindex="0" data-fund="${escAttr(f.code)}"><div class="rank">${i+1}</div>
+  <div class="nm"><div class="c">${escHTML(f.code)}</div><div class="t">${escHTML(f.amc)} · ${escHTML(f.name)}</div></div>
   <div style="text-align:right"><div class="pct ${cls(f.pct[RANGE])}">${sign(f.pct[RANGE])}%</div><div class="baht">฿${sign(f.chg[RANGE])}</div></div></div>`;
- document.getElementById('gainers').innerHTML=s.slice(0,6).map(row).join('')||'<div class="skel">No funds</div>';
+ document.getElementById('gainers').innerHTML=s.slice(0,6).map(row).join('')||`<div class="skel">${t('noFunds')}</div>`;
  document.getElementById('losers').innerHTML=s.slice(-6).reverse().map(row).join('')||'';
 }
 function renderPL(){
@@ -2086,7 +2151,7 @@ function donut(id,labels,vals,colors){
   options:{maintainAspectRatio:false,cutout:'64%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' ฿'+fmt0(c.parsed)+' ('+fmt(c.parsed/T.value*100,1)+'%)'}}}}});
 }
 function agg(key){const m={};F.forEach(f=>m[f[key]]=(m[f[key]]||0)+f.value);return Object.entries(m).sort((a,b)=>b[1]-a[1]);}
-function legend(id,rows,colmap){document.getElementById(id).innerHTML=rows.map(x=>`<div class="row"><span class="sw" style="background:${colmap[x[0]]||'#888'}"></span><span class="nm">${x[0]}</span><span class="amt">฿${fmt0(x[1])}</span><span class="pp">${fmt(x[1]/T.value*100,1)}%</span></div>`).join('');}
+function legend(id,rows,colmap){document.getElementById(id).innerHTML=rows.map(x=>`<div class="row"><span class="sw" style="background:${colmap[x[0]]||'#888'}"></span><span class="nm">${escHTML(x[0])}</span><span class="amt">฿${fmt0(x[1])}</span><span class="pp">${fmt(T.value?x[1]/T.value*100:0,1)}%</span></div>`).join('');}
 function renderDonuts(){
  const a=agg('asset'),m=agg('amc'),t=agg('tax');
  legend('assetLegend',a,ASSET_COL);legend('amcLegend',m,AMC_COL);legend('taxLegend',t,TAX_COL);
@@ -2099,10 +2164,10 @@ function renderDonuts(){
 function valOf(f,k){if(k==='weight')return f.value;if(k==='chg')return f.pct[RANGE];if(k==='code')return f.code;return f[k];}
 function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
- const maxW=Math.max(...F.map(f=>f.value),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=f.value/T.value*100,chg=f.chg[RANGE],cp=f.pct[RANGE];
-  return `<tr onclick="openFund('${f.code.replace(/'/g,"\\'")}')">
-   <td><div class="fname"><span class="c">${f.code} <span class="amcb">${f.amc}</span> <span class="tag ${f.tax}">${f.tax}</span></span><span class="t">${f.name}</span></div></td>
+ const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3;
+  return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
+   <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
    <td>${fmt(f.nav,4)}</td><td>${fmt(f.units,2)}</td><td><b>฿${fmt0(f.value)}</b></td>
    <td>${fmt(w,1)}%<span class="wbar" style="width:${Math.max(2,w/maxW*45)}px"></span></td>
    <td class="${cls(chg)}">฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span></td>
@@ -2121,23 +2186,55 @@ function renderMSList(){
  let html='';
  const selFunds=F.filter(f=>histSel.has(f.code)).sort(msSortFn);
  if(histSel.has('__PORT__')||selFunds.length){
-  html+=`<div class="ms-grp">${t('selWord')} <span class="ga" data-clear="1">${t('clearAll')}</span></div><div class="ms-chips">`;
-  if(histSel.has('__PORT__'))html+=`<span class="ms-chip on" data-id="__PORT__" style="background:#fff">${t('wholePort')} ✕</span>`;
-  html+=selFunds.map(f=>`<span class="ms-chip on" data-id="${f.code}" style="background:${AMC_COL[f.amc]||'#4d8dff'}">${f.code.replace('KKP ','')} ✕</span>`).join('');
+  html+=`<div class="ms-grp">${t('selWord')} <button type="button" class="ga" data-clear="1">${t('clearAll')}</button></div><div class="ms-chips">`;
+  if(histSel.has('__PORT__'))html+=`<button type="button" class="ms-chip on" data-id="__PORT__" style="background:#fff">${t('wholePort')} ✕</button>`;
+  html+=selFunds.map(f=>`<button type="button" class="ms-chip on" data-id="${escAttr(f.code)}" style="background:${AMC_COL[f.amc]||'#4d8dff'}">${escHTML(f.code.replace('KKP ',''))} ✕</button>`).join('');
   html+=`</div>`;}
- html+=`<div class="ms-grp">${t('portWord')}</div><div class="ms-chips"><span class="ms-chip ${histSel.has('__PORT__')?'on':''}" data-id="__PORT__" style="${histSel.has('__PORT__')?'background:#fff':''}">${t('wholePort')}</span></div>`;
+ html+=`<div class="ms-grp">${t('portWord')}</div><div class="ms-chips"><button type="button" class="ms-chip ${histSel.has('__PORT__')?'on':''}" data-id="__PORT__" style="${histSel.has('__PORT__')?'background:#fff':''}">${t('wholePort')}</button></div>`;
  for(const amc of Object.keys(byAmc)){
   const list=byAmc[amc].filter(f=>!msFilter||f.code.toLowerCase().includes(msFilter)||f.name.toLowerCase().includes(msFilter)).sort(msSortFn);
   if(!list.length)continue;
-  html+=`<div class="ms-grp">${amc} <span class="ga" data-amc="${amc}">${t('allWord')}</span></div><div class="ms-chips">`;
-  html+=list.map(f=>{const on=histSel.has(f.code);return `<span class="ms-chip ${on?'on':''}" data-id="${f.code}" style="${on?`background:${AMC_COL[amc]||'#4d8dff'}`:''}">${f.code.replace('KKP ','')}</span>`;}).join('');
+  html+=`<div class="ms-grp">${escHTML(amc)} <button type="button" class="ga" data-amc="${escAttr(amc)}">${t('allWord')}</button></div><div class="ms-chips">`;
+  html+=list.map(f=>{const on=histSel.has(f.code);return `<button type="button" class="ms-chip ${on?'on':''}" data-id="${escAttr(f.code)}" style="${on?`background:${AMC_COL[amc]||'#4d8dff'}`:''}">${escHTML(f.code.replace('KKP ',''))}</button>`;}).join('');
   html+=`</div>`;}
  document.getElementById('msList').innerHTML=html;
  document.querySelectorAll('#msList .ms-chip').forEach(c=>c.onclick=()=>{const id=c.dataset.id;histSel.has(id)?histSel.delete(id):histSel.add(id);renderMSList();renderHist();});
  document.querySelectorAll('#msList .ga[data-amc]').forEach(g=>g.onclick=()=>{byAmc[g.dataset.amc].forEach(f=>histSel.add(f.code));renderMSList();renderHist();});
  const clr=document.querySelector('#msList .ga[data-clear]');if(clr)clr.onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 }
-function fundMap(f){const m={};f.dates.forEach((d,i)=>m[d]=f.units*f.vvals[i]);return m;}
+function seriesMeta(code){
+ const base=HOLDINGS_BASE[code]||HOLDINGS[code];if(base)return base;
+ const tx=[...effectiveTxns()].reverse().find(x=>x.code===code);return tx||{amc:'Other',tax:'General',asset:'Foreign Equity'};
+}
+function seriesIncluded(code){const m=seriesMeta(code);return(filterAMC.size===0||filterAMC.has(m.amc))&&(filterTax.size===0||filterTax.has(m.tax));}
+function portfolioSeries(){
+ const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&NAVDB[c]&&seriesIncluded(c));
+ const dates=[...new Set(codes.flatMap(c=>Object.keys((NAVDB[c]||{}).navs||{})))].sort();
+ const units={};codes.forEach(c=>units[c]=+(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].units)||0);
+ const tx=effectiveTxns().filter(x=>codes.includes(x.code));let ti=0,cash=0,prev=null,twr=100;
+ const rows=[];
+ for(const date of dates){let flow=0;
+  while(ti<tx.length&&(tx[ti].date||'')<=date){const x=tx[ti++],amount=(+x.units||0)*(+x.price||0);units[x.code]=units[x.code]||0;
+   if(x.action==='buy')units[x.code]+=+x.units||0;else if(x.action==='sell')units[x.code]=Math.max(0,units[x.code]-(+x.units||0));
+   if(x.sw){cash+=x.action==='sell'?amount:-amount;if(x.fee)cash-=+x.fee||0;}else flow+=x.action==='buy'?amount:-amount;
+  }
+  let value=cash;for(const code of codes)value+=(units[code]||0)*(navAt(code,date)||0);
+  if(prev!=null&&prev>0){const r=(value-flow)/prev-1;if(Number.isFinite(r))twr*=1+r;}
+  rows.push({date,value,twr,flow});prev=value;
+ }
+ return rows;
+}
+function fundLedgerMap(code,dates,mode){
+ const m={},nav=(NAVDB[code]||{}).navs||{},units0=+(HOLDINGS_BASE[code]&&HOLDINGS_BASE[code].units)||0,tx=effectiveTxns().filter(x=>x.code===code);let units=units0,ti=0;
+ dates.forEach(d=>{while(ti<tx.length&&(tx[ti].date||'')<=d){const x=tx[ti++];units=Math.max(0,units+(x.action==='buy'?1:-1)*(+x.units||0));}const n=navAt(code,d);m[d]=n==null?null:(mode==='nav'?n:units*n);});return m;
+}
+function xirr(cashflows){
+ const cf=cashflows.filter(x=>Number.isFinite(x.amount)&&x.amount!==0).sort((a,b)=>a.date.localeCompare(b.date));if(cf.length<2||!cf.some(x=>x.amount<0)||!cf.some(x=>x.amount>0))return null;
+ const t0=new Date(cf[0].date+'T00:00:00Z');const npv=r=>cf.reduce((s,x)=>s+x.amount/Math.pow(1+r,(new Date(x.date+'T00:00:00Z')-t0)/31557600000),0);
+ let lo=-.9999,hi=10,flo=npv(lo),fhi=npv(hi);while(flo*fhi>0&&hi<1e6){hi*=10;fhi=npv(hi);}if(!Number.isFinite(flo)||!Number.isFinite(fhi)||flo*fhi>0)return null;
+ for(let i=0;i<120;i++){const mid=(lo+hi)/2,fm=npv(mid);if(Math.abs(fm)<1e-7)return mid*100;if(flo*fm<=0){hi=mid;fhi=fm;}else{lo=mid;flo=fm;}}
+ return((lo+hi)/2)*100;
+}
 /* timeframe window: filter sorted date array to the selected range */
 function tfWindow(dates){
  if(!dates.length)return dates;
@@ -2151,16 +2248,15 @@ function tfWindow(dates){
  return dates.filter(d=>d>=from);
 }
 function buildHist(){
- const dateSet=new Set();F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
+ const ps=portfolioSeries();const dateSet=new Set(ps.map(x=>x.date));F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
  if(BENCH&&NAVDB[BENCH])Object.keys(NAVDB[BENCH].navs||{}).forEach(d=>dateSet.add(d));
  const dates=tfWindow([...dateSet].sort());
  const ent=[];
  if(histSel.has('__PORT__')&&histMode!=='nav'){
-  const m={};dates.forEach(d=>{let tv=0;F.forEach(f=>{let v=0;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=f.units*f.vvals[i];}tv+=v;});m[d]=tv;});
+  const byDate=Object.fromEntries(ps.map(x=>[x.date,x]));const m={};dates.forEach(d=>m[d]=byDate[d]?(histMode==='norm'?byDate[d].twr:byDate[d].value):null);
   ent.push({label:t('portWord'),color:'#ffffff',map:m,bold:true});}
  let ci=0;
- [...F].sort(msSortFn).forEach(f=>{if(histSel.has(f.code)){const m={};
-   dates.forEach(d=>{let v=null;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=(histMode==='nav'?f.vvals[i]:f.units*f.vvals[i]);}m[d]=v;});
+ [...F].sort(msSortFn).forEach(f=>{if(histSel.has(f.code)){const m=fundLedgerMap(f.code,dates,histMode);
    ent.push({label:f.code.replace('KKP ',''),color:PALETTE[ci%PALETTE.length],map:m});ci++;}});
  /* benchmark overlay (dashed) — shown in % Change and NAV modes */
  if(BENCH&&NAVDB[BENCH]&&histMode!=='value'){
@@ -2168,7 +2264,7 @@ function buildHist(){
   if(bds.length){const m={};dates.forEach(d=>{let v=null;for(let i=0;i<bds.length;i++){if(bds[i]<=d)v=bn[bds[i]];else break;}m[d]=v;});
    ent.push({label:'◆ '+BENCH,color:'#f0b95d',map:m,dash:true});}}
  const ds=ent.map(e=>{let base=null;for(const d of dates){if(e.map[d]!=null){base=e.map[d];break;}}
-  const data=dates.map(d=>{const v=e.map[d];if(v==null)return null;return histMode==='norm'?(v/base-1)*100:v;});
+  const data=dates.map(d=>{const v=e.map[d];if(v==null)return null;return histMode==='norm'&&base?(v/base-1)*100:v;});
   return{label:e.label,data,borderColor:e.color,borderWidth:e.bold?2.6:1.7,borderDash:e.dash?[6,4]:undefined,tension:.3,pointRadius:0,pointHoverRadius:4,fill:false,spanGaps:true};});
  return{dates,ds};
 }
@@ -2179,9 +2275,9 @@ function renderHist(){
  if(charts.hist){charts.hist.data=cfg;charts.hist.options.scales.y.ticks.callback=yfmt;charts.hist.update();return;}
  charts.hist=new Chart(document.getElementById('histChart'),{type:'line',data:cfg,options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
   plugins:{legend:{display:true,labels:{boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'rectRounded',font:{size:11},color:C.muted}},
-   tooltip:{callbacks:{title:i=>new Date(i[0].label).toLocaleDateString('en-GB',{day:'numeric',month:'short'}),
+   tooltip:{callbacks:{title:i=>new Date(i[0].label).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}),
     label:c=>c.parsed.y==null?null:' '+c.dataset.label+': '+(histMode==='norm'?sign(c.parsed.y)+'%':(histMode==='nav'?c.parsed.y.toFixed(4):'฿'+fmt0(c.parsed.y)))}}},
-  scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,callback:function(v){return new Date(this.getLabelForValue(v)).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}}},
+  scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,callback:function(v){const ls=this.chart.data.labels||[];const multi=ls.length>1&&ls[0].slice(0,4)!==ls[ls.length-1].slice(0,4);return new Date(this.getLabelForValue(v)).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',multi?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'short'});}}},
    y:{grid:{color:C.grid},ticks:{callback:yfmt}}}}});
 }
 
@@ -2191,8 +2287,8 @@ function renderBenchSel(){
  const held=new Set(Object.keys(HOLDINGS));
  const extra=Object.keys(NAVDB).filter(c=>!held.has(c)).sort();
  let h=`<option value="">${t('benchNone')}</option>`;
- if(extra.length)h+='<optgroup label="Benchmark">'+extra.map(c=>`<option value="${c}" ${BENCH===c?'selected':''}>${c}</option>`).join('')+'</optgroup>';
- h+='<optgroup label="Portfolio">'+[...held].sort().map(c=>`<option value="${c}" ${BENCH===c?'selected':''}>${c}</option>`).join('')+'</optgroup>';
+ if(extra.length)h+='<optgroup label="Benchmark">'+extra.map(c=>`<option value="${escAttr(c)}" ${BENCH===c?'selected':''}>${escHTML(c)}</option>`).join('')+'</optgroup>';
+ h+='<optgroup label="Portfolio">'+[...held].sort().map(c=>`<option value="${escAttr(c)}" ${BENCH===c?'selected':''}>${escHTML(c)}</option>`).join('')+'</optgroup>';
  h+=`<option value="__ADD__">${t('benchAdd')}</option>`;
  sel.innerHTML=h;
 }
@@ -2228,21 +2324,19 @@ function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF win
  const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)){ds.push(d);vs.push(vals[i]);}});
  return{ds,vs};
 }
-function fmtD(d){return d?new Date(d).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short'}):'—';}
+function fmtD(d){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short'}):'—';}
 function renderRisk(){
  const kp=document.getElementById('riskKpis'),tb=document.getElementById('riskBody');if(!kp||!tb)return;
- // portfolio series over TF window
- const dateSet=new Set();F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
- const dates=tfWindow([...dateSet].sort());
- const pv=dates.map(d=>{let tv=0;F.forEach(f=>{let v=0;for(let i=0;i<f.dates.length;i++){if(f.dates[i]<=d)v=f.units*f.vvals[i];}tv+=v;});return tv;});
- const P=riskStats(dates,pv);
+ const ps=portfolioSeries(),dates=tfWindow(ps.map(x=>x.date)),dateSet=new Set(dates),windowRows=ps.filter(x=>dateSet.has(x.date));
+ const P=riskStats(dates,windowRows.map(x=>x.twr));
  if(!P){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t('noData')}</div>`;tb.innerHTML='';return;}
+ const cashflows=windowRows.map((x,i)=>({date:x.date,amount:i===0?-x.value:-x.flow}));if(cashflows.length)cashflows[cashflows.length-1].amount+=windowRows[windowRows.length-1].value;const irr=xirr(cashflows);
  const kpi=(l,v,c,m)=>`<div class="rk"><div class="l">${l}</div><div class="v ${c||''}">${v}</div>${m?`<div class="m">${m}</div>`:''}</div>`;
  kp.innerHTML=
   kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?fmtD(dates[0])+' → '+fmtD(dates[dates.length-1]):'')+
+  kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst'))+
   kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+
   kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'','peak-to-trough')+
-  kpi(t('rkRR'),fmt(P.rr,2),cls(P.rr),LANG==='th'?'ยิ่งสูงยิ่งดี':'higher is better')+
   kpi(t('rkWorst'),sign(P.worst.r)+'%','neg',fmtD(P.worst.d));
  // per-fund rows (+ benchmark if set)
  const rows=[];
@@ -2253,10 +2347,10 @@ function renderRisk(){
  rows.push(mkRow('◼ '+t('portWord'),P,true));
  if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();
   const w=windowSeries(bds,bds.map(d=>bn[d]));const B=riskStats(w.ds,w.vs);
-  if(B)rows.push(mkRow('◆ '+BENCH,B,true));}
+  if(B)rows.push(mkRow('◆ '+escHTML(BENCH),B,true));}
  [...F].sort((a,b)=>b.value-a.value).forEach(f=>{
   const w=windowSeries(f.dates,f.vvals);const st=riskStats(w.ds,w.vs);
-  if(st)rows.push(mkRow(`${f.code} <span class="amcb">${f.amc}</span>`,st));});
+  if(st)rows.push(mkRow(`${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span>`,st));});
  tb.innerHTML=rows.join('');
 }
 
@@ -2274,33 +2368,36 @@ function exportCSV(){
 }
 
 /* ---------- fund detail modal (live fetch) ---------- */
+let LAST_FOCUS=null;
+function showDialog(id){const bg=document.getElementById(id);LAST_FOCUS=document.activeElement;bg.classList.add('show');bg.setAttribute('aria-hidden','false');requestAnimationFrame(()=>{const m=bg.querySelector('.modal');if(m)m.focus();});}
+function hideDialog(id){const bg=document.getElementById(id);bg.classList.remove('show');bg.setAttribute('aria-hidden','true');if(LAST_FOCUS&&LAST_FOCUS.focus)LAST_FOCUS.focus();}
 async function openFund(code){
  const f=ALL.find(x=>x.code===code);const bg=document.getElementById('modalBg'),m=document.getElementById('modal');
- bg.classList.add('show');
- m.innerHTML=`<div class="modal-h"><div><div class="code">${code} <span class="amcb">${f.amc}</span> <span class="tag ${f.tax}">${f.tax}</span></div><div class="nm">${f.name}</div></div><button class="modal-x" onclick="closeModal()">✕</button></div>
+ if(!f)return;showDialog('modalBg');const total=ALL.reduce((s,x)=>s+x.value,0);
+ m.innerHTML=`<div class="modal-h"><div><div class="code">${escHTML(code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></div><div class="nm">${escHTML(f.name)}</div></div><button class="modal-x" type="button" data-close="modalBg" aria-label="${escAttr(t('closeBtn'))}">✕</button></div>
   <div class="modal-b"><div class="m-row">
    <div class="m-stat"><div class="l">NAV</div><div class="v">${fmt(f.nav,4)}</div></div>
-   <div class="m-stat"><div class="l">Market Value</div><div class="v">฿${fmt0(f.value)}</div></div>
-   <div class="m-stat"><div class="l">Unrealized</div><div class="v ${cls(f.unreal)}">${sign(f.unreal_pct,1)}%</div></div>
-   <div class="m-stat"><div class="l">Weight</div><div class="v">${fmt(f.value/ALL.reduce((s,x)=>s+x.value,0)*100,1)}%</div></div>
+   <div class="m-stat"><div class="l">${t('mMarket')}</div><div class="v">฿${fmt0(f.value)}</div></div>
+   <div class="m-stat"><div class="l">${t('mUnreal')}</div><div class="v ${cls(f.unreal)}">${sign(f.unreal_pct,1)}%</div></div>
+   <div class="m-stat"><div class="l">${t('mWeight')}</div><div class="v">${fmt(total?f.value/total*100:0,1)}%</div></div>
   </div><div id="mdyn"><div class="skel"><span class="spin" style="display:inline-block;vertical-align:middle"></span> ${t('mLoading')}</div></div></div>`;
  let d=DETAILS[code]||DETCACHE[code];
- if(d&&d.mgmtA===undefined)d=null; // refetch to get actual (เก็บจริง) fees
+ if(d&&(d.mgmtA===undefined||d.cat==null))d=null; // stale/incomplete cache -> refetch
  if(d){renderModalDyn(code,d);return;}
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
  const [a,b,c,fe]=await Promise.all([grab(API(code)),grab(API(code)+'/performance'),grab(API(code)+'/portfolio'),grab(API(code)+'/fee')]);
  const feeArr=(fe&&fe.fees)||[];const feeOf=kw=>{const x=feeArr.find(f=>(f.description||'').includes(kw));if(!x||x.actual_value===''||x.actual_value==null)return null;const v=parseFloat(x.actual_value);return isNaN(v)?null:v;};
- if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&a.risk_level,div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}
+ if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),taxType:(a&&(a.fund_tax_type||a.tax_saving_fund))||'',amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&(a.risk_level||parseInt(a.risk_spectrum)||null),div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};if(a){DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}}
  renderModalDyn(code,d);
 }
 function renderModalDyn(code,d){
  const el=document.getElementById('mdyn');if(!el)return;
- if(!d){el.innerHTML=`<div class="skel">⚠️ Details unavailable for this fund.<br>Open <a href="https://www.finnomena.com/fund/${encodeURIComponent(code)}" target="_blank" style="color:var(--accent)">on Finnomena ↗</a></div>`;return;}
+ if(!d){el.innerHTML=`<div class="skel">${t('detailsUnavailable')}<br><a href="https://www.finnomena.com/fund/${encodeURIComponent(code)}" target="_blank" rel="noopener" style="color:var(--accent)">${t('openFinnomena')}</a></div>`;return;}
  const f=ALL.find(x=>x.code===code)||{};
  const ret=v=>(v==null||isNaN(v))?'—':sign(v,2)+'%';
  const fee=v=>(v==null||isNaN(v))?'—':fmt(v,3)+'%';
  const na=v=>!v?'—':(v>=1e9?'฿'+fmt(v/1e9,2)+'B':(v>=1e6?'฿'+fmt(v/1e6,1)+'M':'฿'+fmt0(v)));
- const dv=s=>!s?'—':(String(s).indexOf('ไม่จ่าย')>=0?'ไม่จ่าย (No)':'จ่าย (Yes)');
+ const dv=s=>!s?'—':(String(s).indexOf('ไม่จ่าย')>=0?t('divNo'):t('divYes'));
  let h='';
  h+=`<div class="m-sec"><h4>${t('mNAVret')}</h4><div class="retbars">
   <div class="retb"><div class="l">3M</div><div class="v ${(d.r3m||0)>=0?'pos':'neg'}">${ret(d.r3m)}</div></div>
@@ -2308,31 +2405,31 @@ function renderModalDyn(code,d){
   <div class="retb"><div class="l">1Y</div><div class="v ${(d.r1y||0)>=0?'pos':'neg'}">${ret(d.r1y)}</div></div>
   <div class="retb"><div class="l">3Y</div><div class="v ${(d.r3y||0)>=0?'pos':'neg'}">${ret(d.r3y)}</div></div></div></div>`;
  h+=`<div class="m-sec"><h4>${t('mProfile')}</h4><div class="feegrid">
-  <div class="fee"><span>AMC</span><span>${d.amc||f.amc||'—'}</span></div>
-  <div class="fee"><span>Category</span><span>${d.catTh||d.cat||'—'}</span></div>
-  <div class="fee"><span>Risk level</span><span>${d.risk||'—'} / 8</span></div>
-  <div class="fee"><span>Dividend policy</span><span>${dv(d.div)}</span></div>
-  <div class="fee"><span>Inception</span><span>${d.inc||'—'}</span></div>
-  <div class="fee"><span>Net assets</span><span>${na(d.na)}</span></div></div></div>`;
+  <div class="fee"><span>AMC</span><span>${escHTML(d.amc||f.amc||'—')}</span></div>
+  <div class="fee"><span>${t('mCategory')}</span><span>${escHTML((LANG==='th'&&d.catTh)||d.cat||d.catTh||'—')}</span></div>
+  <div class="fee"><span>${t('mRisk')}</span><span>${escHTML(d.risk||'—')} / 8</span></div>
+  <div class="fee"><span>${t('mDividend')}</span><span>${escHTML(dv(d.div))}</span></div>
+  <div class="fee"><span>${t('mInception')}</span><span>${escHTML(d.inc||'—')}</span></div>
+  <div class="fee"><span>${t('mNetAssets')}</span><span>${na(d.na)}</span></div></div></div>`;
  const feeA=v=>(v==null||isNaN(v))?'—':fmt(v,2)+(LANG==='th'?'% ต่อปี':'% p.a.');
  h+=`<div class="m-sec"><h4>${t('mFees')} <span style="font-weight:500;color:var(--muted2);text-transform:none">· ${t('mFeeActual')}</span></h4><div class="feegrid">
   <div class="fee"><span>${t('mFeeMgmt')}</span><span>${feeA(d.mgmtA)}</span></div>
   <div class="fee"><span>${t('mFeeTER')}</span><span>${feeA(d.terA!=null?d.terA:d.exp)}</span></div></div></div>`;
  const th=(d.top||[]).filter(x=>x&&x[0]);
  if(th.length){const mx=Math.max(...th.map(x=>x[1]||0),1);
-  h+=`<div class="m-sec"><h4>${t('mTop5')}</h4>`+th.map(x=>`<div class="hold-row"><div class="hold-bar" style="width:${Math.max(3,(x[1]||0)/mx*110)}px"></div><div class="hn">${x[0]}</div><div class="hp">${fmt(x[1]||0,2)}%</div></div>`).join('')+`</div>`;}
- if(d.feeder)h+=`<div class="m-sec"><h4>${t('mMaster')}</h4><div class="m-strategy">${d.feeder}</div></div>`;
- if(d.strat)h+=`<div class="m-sec"><h4>${t('mStrategy')}</h4><div class="m-strategy">${d.strat}</div></div>`;
- h+=`<div class="m-sec" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}" target="_blank">${t('mFull')}</a><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}/portfolio" target="_blank">${t('mPort')}</a><button class="btn ghost" onclick="closeModal();openTxn('${code.replace(/'/g,"\\'")}')">${t('mBuySell')}</button></div>`;
+  h+=`<div class="m-sec"><h4>${t('mTop5')}</h4>`+th.map(x=>`<div class="hold-row"><div class="hold-bar" style="width:${Math.max(3,(+x[1]||0)/mx*110)}px"></div><div class="hn">${escHTML(x[0])}</div><div class="hp">${fmt(+x[1]||0,2)}%</div></div>`).join('')+`</div>`;}
+ if(d.feeder)h+=`<div class="m-sec"><h4>${t('mMaster')}</h4><div class="m-strategy">${escHTML(d.feeder)}</div></div>`;
+ if(d.strat)h+=`<div class="m-sec"><h4>${t('mStrategy')}</h4><div class="m-strategy">${escHTML(d.strat)}</div></div>`;
+ h+=`<div class="m-sec" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}" target="_blank" rel="noopener">${t('mFull')}</a><a class="btn ghost" href="https://www.finnomena.com/fund/${encodeURIComponent(code)}/portfolio" target="_blank" rel="noopener">${t('mPort')}</a><button class="btn ghost" type="button" data-open-txn="${escAttr(code)}">${t('mBuySell')}</button></div>`;
  el.innerHTML=h;
 }
-function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+function closeModal(){hideDialog('modalBg');}
 document.getElementById('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeModal();};
 
 /* ---------- self update / import / export ---------- */
-function toast(msg,type){const t=document.getElementById('toast');t.innerHTML=msg;t.className='toast show '+(type||'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast '+(type||''),5500);}
+function toast(msg,type){const el=document.getElementById('toast');el.textContent=String(msg);el.className='toast show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.className='toast '+(type||''),5500);}
 async function updateNAV(){
- const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class=”spin”></span>';document.getElementById('updTxt').textContent=t('syncing');
+ const btn=document.getElementById('updBtn');btn.disabled=true;document.getElementById('updIco').innerHTML='<span class="spin"></span>';document.getElementById('updTxt').textContent=t('syncing');
  const codes=Object.keys(HOLDINGS);let ok=0,added=0,fail=0;const newRecs=[];
 
  // Fetch ALL funds in parallel (much faster - 10-15 sec vs 2+ min sequential)
@@ -2352,69 +2449,70 @@ async function updateNAV(){
  await Promise.all(promises);
 
  document.getElementById('updIco').textContent='↻';document.getElementById('updTxt').textContent=t('updNav');btn.disabled=false;
- if(ok===0){toast('⚠️ Update blocked (CORS + proxies unavailable). Type “update NAV” in Claude chat to refresh, or use Import below.','err');return;}
+ if(ok===0){toast(t('updateBlocked'),'err');return;}
  try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));localStorage.setItem('kkp_lastNavFetch',Date.now().toString());}catch(e){}
- await saveNAVtoSupabase(newRecs);
- renderAll();toast(`✅ Synced ${ok}/${codes.length} funds · ${added} new NAV points`+(fail?` · ${fail} failed`:''),'ok');
+ renderAll();toast(t('syncDone').replace('{ok}',ok).replace('{total}',codes.length).replace('{added}',added)+(fail?' · '+t('syncFailed').replace('{n}',fail):''),'ok');
 }
 function exportDB(){const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};const b=new Blob([JSON.stringify(st)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='nav_history.json';a.click();}
 function importDB(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){if(!NAVDB[c])NAVDB[c]={navs:{}};Object.assign(NAVDB[c].navs,o[c].navs);}
- try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}renderAll();toast('✅ Database imported','ok');}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
+ try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}renderAll();toast(t('dbImported'),'ok');}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
 
 /* ---------- transactions UI ---------- */
-function openTxn(preCode){document.getElementById('txnBg').classList.add('show');renderTxnModal(preCode||'');}
-function closeTxn(){document.getElementById('txnBg').classList.remove('show');}
+function openTxn(preCode){showDialog('txnBg');renderTxnModal(preCode||'');}
+function closeTxn(){hideDialog('txnBg');}
 function renderTxnModal(preCode){
  const codes=Object.keys(HOLDINGS).sort();
- const opts=codes.map(c=>`<option value="${c}" ${c===preCode?'selected':''}>${c}</option>`).join('');
- document.getElementById('txnModal').innerHTML=`<div class="modal-h"><div><div class="code">Buy / Sell</div><div class="nm">Records adjust units, average cost & realized P/L · saved on this device</div></div><button class="modal-x" onclick="closeTxn()">✕</button></div>
+ const opts=codes.map(c=>`<option value="${escAttr(c)}" ${c===preCode?'selected':''}>${escHTML(c)}</option>`).join('');
+ document.getElementById('txnModal').innerHTML=`<div class="modal-h"><div><div class="code">${t('txnTitle')}</div><div class="nm">${t('txnSub')}</div></div><button class="modal-x" type="button" data-close="txnBg" aria-label="${escAttr(t('closeBtn'))}">✕</button></div>
  <div class="modal-b"><div class="txn-form">
-  <div class="tf"><label>Fund</label><select id="tx-code">${opts}<option value="__NEW__">+ New fund (not listed)…</option></select></div>
+  <div class="tf"><label>${t('txnFund')}</label><select id="tx-code">${opts}<option value="__NEW__">${t('txnNewFund')}</option></select></div>
   <div id="tx-newwrap" style="display:none;flex-direction:column;gap:11px">
-   <div class="tf"><label>New fund code (must match Finnomena)</label><input id="tx-newcode" placeholder="e.g. K-USA-A(A)"></div>
-   <div class="tf"><label>Display name</label><input id="tx-newname" placeholder="name"></div>
-   <div class="tf2"><div class="tf"><label>AMC</label><input id="tx-newamc" placeholder="e.g. K-Fund"></div>
-    <div class="tf"><label>Asset class</label><select id="tx-newasset"><option>Foreign Equity</option><option>Thai Equity</option><option>Mixed</option><option>Fixed Income / MM</option></select></div></div>
-   <div class="tf"><label>Tax benefit</label><select id="tx-newtax"><option>General</option><option>SSF</option><option>RMF</option><option>ThaiESG</option><option>ThaiESGX</option><option>LTF</option></select></div></div>
-  <div class="tf2"><div class="tf"><label>Action</label><select id="tx-action"><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
-   <div class="tf"><label>Date</label><input id="tx-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>
-  <div class="tf2"><div class="tf"><label>Units</label><input id="tx-units" type="number" step="any" placeholder="0"></div>
-   <div class="tf"><label>Price / NAV (฿)</label><input id="tx-price" type="number" step="any" placeholder="0"></div></div>
-  <button class="btn" id="tx-add" style="width:100%;justify-content:center;margin-top:4px">Add transaction</button>
+   <div class="tf"><label>${t('txnNewCode')}</label><input id="tx-newcode" placeholder="e.g. K-USA-A(A)"></div>
+   <div class="tf"><label>${t('txnName')}</label><input id="tx-newname"></div>
+   <div class="tf2"><div class="tf"><label>${t('txnAmc')}</label><input id="tx-newamc" placeholder="e.g. K-Fund"></div>
+    <div class="tf"><label>${t('txnAsset')}</label><select id="tx-newasset"><option value="Foreign Equity">${t('assetForeign')}</option><option value="Thai Equity">${t('assetThai')}</option><option value="Mixed">${t('assetMixed')}</option><option value="Fixed Income / MM">${t('assetFixed')}</option></select></div></div>
+   <div class="tf"><label>${t('txnTax')}</label><select id="tx-newtax"><option value="General">${t('taxGeneral')}</option><option>SSF</option><option>RMF</option><option>ThaiESG</option><option>ThaiESGX</option><option>LTF</option></select></div></div>
+  <div class="tf2"><div class="tf"><label>${t('txnAction')}</label><select id="tx-action"><option value="buy">${t('buyWord')}</option><option value="sell">${t('sellWord')}</option></select></div>
+   <div class="tf"><label>${t('txnDate')}</label><input id="tx-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>
+  <div class="tf2"><div class="tf"><label>${t('txnUnits')}</label><input id="tx-units" type="number" min="0" step="any" placeholder="0"></div>
+   <div class="tf"><label>${t('txnPrice')}</label><input id="tx-price" type="number" min="0" step="any" placeholder="0"></div></div>
+  <button class="btn" id="tx-add" type="button" style="width:100%;justify-content:center;margin-top:4px">${t('txnAdd')}</button>
  </div>
- <div class="m-sec" style="margin-top:18px"><h4>History</h4><div id="tx-list"></div></div></div>`;
+ <div class="m-sec" style="margin-top:18px"><h4>${t('txnHistory')}</h4><div id="tx-list"></div></div></div>`;
  document.getElementById('tx-code').onchange=e=>{document.getElementById('tx-newwrap').style.display=e.target.value==='__NEW__'?'flex':'none';};
  document.getElementById('tx-newwrap').style.display=document.getElementById('tx-code').value==='__NEW__'?'flex':'none';
  document.getElementById('tx-add').onclick=addTxn;
  renderTxnList();
 }
 function renderTxnList(){const el=document.getElementById('tx-list');if(!el)return;
- if(!TXNS.length){el.innerHTML='<div class="skel">No transactions yet</div>';return;}
- el.innerHTML=[...TXNS].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(t=>`<div class="txn-row"><span class="txn-act ${t.action}">${(t.sw?'⇌ ':'')+t.action.toUpperCase()}</span><span class="txn-c">${t.code}</span><span class="txn-d">${t.date}</span><span class="txn-u">${fmt(t.units,2)} @ ฿${fmt(t.price,4)}</span><button class="txn-del" data-id="${t.ts}">✕</button></div>`).join('');
- el.querySelectorAll('.txn-del').forEach(b=>b.onclick=()=>{TXNS=TXNS.filter(x=>String(x.ts)!==b.dataset.id);saveTxns();renderAll();renderTxnList();toast('Transaction removed','ok');});
+ if(!TXNS.length){el.innerHTML=`<div class="skel">${t('txnEmpty')}</div>`;return;}
+ const voided=new Set(TXNS.filter(x=>x.action==='void').map(x=>String(x.voids)));
+ el.innerHTML=[...TXNS].sort((a,b)=>((b.date||'').localeCompare(a.date||''))||((b.ts||0)-(a.ts||0))).map(x=>{if(x.action==='void')return`<div class="txn-row"><span class="txn-act">${t('txnVoid')}</span><span class="txn-c">#${escHTML(x.voids)}</span><span class="txn-d">${escHTML(x.date||'')}</span></div>`;const reversed=voided.has(String(x.ts)),act=x.action==='buy'?t('buyWord'):t('sellWord');return`<div class="txn-row"><span class="txn-act ${escAttr(x.action)}">${x.sw?'⇌ ':''}${act}</span><span class="txn-c">${escHTML(x.code)}</span><span class="txn-d">${escHTML(x.date||'')}</span><span class="txn-u">${fmt(+x.units||0,2)} @ ฿${fmt(+x.price||0,4)}</span><button class="txn-del" type="button" data-correct="${escAttr(x.ts)}" ${reversed?'disabled':''}>${reversed?t('txnCorrected'):t('txnCorrect')}</button></div>`;}).join('');
+ el.querySelectorAll('[data-correct]').forEach(b=>b.onclick=()=>reverseTxn(b.dataset.correct));
 }
-function addTxn(){
+function reverseTxn(id){const target=TXNS.find(x=>String(x.ts)===String(id));if(!target||target.action==='void')return;let group=[target];if(target.sw){group=TXNS.filter(x=>x.action!=='void'&&x.sw&&((target.swGroup&&x.swGroup===target.swGroup)||(!target.swGroup&&Math.abs((+x.ts||0)-(+target.ts||0))<=2)));}const already=new Set(TXNS.filter(x=>x.action==='void').map(x=>String(x.voids))),now=Date.now(),date=new Date().toISOString().slice(0,10);group.filter(x=>!already.has(String(x.ts))).forEach((x,i)=>TXNS.push({action:'void',voids:x.ts,date,ts:now+i,swGroup:x.swGroup||null}));saveTxns();renderAll();renderTxnList();toast(t('correctedToast'),'ok');}
+async function addTxn(){
  let code=document.getElementById('tx-code').value;
- const t={action:document.getElementById('tx-action').value,date:document.getElementById('tx-date').value,units:+document.getElementById('tx-units').value,price:+document.getElementById('tx-price').value,ts:Date.now()};
- if(code==='__NEW__'){code=(document.getElementById('tx-newcode').value||'').trim();if(!code){toast('Enter fund code','err');return;}
-  t.name=(document.getElementById('tx-newname').value||'').trim()||code;t.amc=(document.getElementById('tx-newamc').value||'').trim()||'Other';t.tax=document.getElementById('tx-newtax').value;t.asset=document.getElementById('tx-newasset').value;}
- t.code=code;
- if(!(t.units>0)||!(t.price>0)){toast('Enter valid units and price','err');return;}
- TXNS.push(t);saveTxns();if(SB&&USER&&t.action==='buy'){try{SB.from('fund_universe').upsert({code:t.code},{onConflict:'code'});}catch(e){}}renderAll();renderTxnModal(code);
- toast('✅ '+t.action.toUpperCase()+' '+code+' recorded'+(NAVDB[code]?'':' · run Update NAV to fetch history'),'ok');
+ const txn={action:document.getElementById('tx-action').value,date:document.getElementById('tx-date').value,units:+document.getElementById('tx-units').value,price:+document.getElementById('tx-price').value,ts:Date.now()};
+ if(code==='__NEW__'){code=(document.getElementById('tx-newcode').value||'').trim();if(!code){toast(t('txnEnterCode'),'err');return;}
+  txn.name=(document.getElementById('tx-newname').value||'').trim()||code;txn.amc=(document.getElementById('tx-newamc').value||'').trim()||'Other';txn.tax=document.getElementById('tx-newtax').value;txn.asset=document.getElementById('tx-newasset').value;}
+ txn.code=code;
+ if(!(txn.units>0)||!(txn.price>0)){toast(t('txnInvalid'),'err');return;}
+ TXNS.push(txn);saveTxns();if(SB&&USER&&txn.action==='buy'){try{const{error}=await SB.from('fund_universe').upsert({code:txn.code},{onConflict:'code'});if(error)console.error('fund universe',error);}catch(e){console.error(e);}}renderAll();renderTxnModal(code);
+ toast(`${txn.action==='buy'?t('buyWord'):t('sellWord')} ${code} ${t('txnRecorded')}${NAVDB[code]?'':' · '+t('txnNeedsNav')}`,'ok');
 }
 
 /* ---------- fund switch ---------- */
 function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
-function openSw(){document.getElementById('swBg').classList.add('show');renderSwModal();}
-function closeSw(){document.getElementById('swBg').classList.remove('show');}
+function openSw(){showDialog('swBg');renderSwModal();}
+function closeSw(){hideDialog('swBg');}
 function swMsg(m,ok){const e=document.getElementById('sw-msg');if(e){e.textContent=m;e.style.color=ok?'var(--pos)':'var(--neg)';}}
 function renderSwModal(){
  const codes=Object.keys(HOLDINGS).sort();
  const today=new Date().toISOString().slice(0,10);
- const outOpts=codes.map(c=>`<option value="${c}">${c}</option>`).join('');
- const inOpts=codes.map(c=>`<option value="${c}">${c}</option>`).join('')+`<option value="__NEW__">${t('swNewOpt')}</option>`;
- document.getElementById('swModal').innerHTML=`<div class="modal-h"><div><div class="code">${t('swTitle')}</div><div class="nm">${t('swSub')}</div></div><button class="modal-x" onclick="closeSw()">✕</button></div>
+ const outOpts=codes.map(c=>`<option value="${escAttr(c)}">${escHTML(c)}</option>`).join('');
+ const inOpts=codes.map(c=>`<option value="${escAttr(c)}">${escHTML(c)}</option>`).join('')+`<option value="__NEW__">${t('swNewOpt')}</option>`;
+ document.getElementById('swModal').innerHTML=`<div class="modal-h"><div><div class="code">${t('swTitle')}</div><div class="nm">${t('swSub')}</div></div><button class="modal-x" type="button" data-close="swBg" aria-label="${escAttr(t('closeBtn'))}">✕</button></div>
  <div class="modal-b"><div class="txn-form">
   <div class="m-sec" style="margin-bottom:6px"><h4 style="color:var(--neg)">↑ ${t('swOut')}</h4>
    <div class="tf"><label>${t('thFund')}</label><select id="sw-out">${outOpts}</select><div id="sw-held" style="font-size:11px;color:var(--muted2);margin-top:3px"></div></div>
@@ -2427,7 +2525,8 @@ function renderSwModal(){
     <div class="tf2"><div class="tf"><label>${t('assetLbl')}</label><select id="sw-newasset"><option>Foreign Equity</option><option>Thai Equity</option><option>Mixed</option><option>Fixed Income / MM</option></select></div>
      <div class="tf"><label>${t('taxLbl')}</label><select id="sw-newtax"><option>General</option><option>SSF</option><option>RMF</option><option>ThaiESG</option><option>ThaiESGX</option><option>LTF</option></select></div></div></div>
    <div class="tf2" style="margin-top:9px"><div class="tf"><label>${t('swInDate')}</label><input id="sw-indate" type="date" value="${today}"></div>
-    <div class="tf"><label>${t('swUnits')}</label><input id="sw-inunits" type="number" step="any" placeholder="0"></div></div></div>
+    <div class="tf"><label>${t('swUnits')}</label><input id="sw-inunits" type="text" readonly placeholder="${escAttr(t('swUnitsAuto'))}"></div></div>
+   <div class="tf" style="margin-top:9px"><label>${t('swFee')}</label><input id="sw-fee" type="number" min="0" step="any" value="0"></div></div>
   <button class="btn" id="sw-do" style="width:100%;justify-content:center">${t('swDo')}</button>
   <div id="sw-msg" style="font-size:12px;min-height:16px"></div>
  </div></div>`;
@@ -2438,10 +2537,11 @@ function renderSwModal(){
 }
 async function doSwitch(){
  const oc=_v('sw-out'),od=_v('sw-outdate'),ou=+_v('sw-outunits');
- let ic=_v('sw-in');const idt=_v('sw-indate'),iu=+_v('sw-inunits');
+ let ic=_v('sw-in');const idt=_v('sw-indate'),fee=Math.max(0,+_v('sw-fee')||0);
  if(ic==='__NEW__')ic=(_v('sw-newcode')||'').trim();
- if(!oc||!ic||!od||!idt||!(ou>0)||!(iu>0)){swMsg(t('swInvalid'));return;}
+ if(!oc||!ic||!od||!idt||!(ou>0)){swMsg(t('swInvalid'));return;}
  if(oc===ic){swMsg(t('swSame'));return;}
+ if(idt<od){swMsg(t('swDateOrder'));return;}
  const h=HOLDINGS[oc];
  if(!h||h.units<ou-1e-6){swMsg(t('swTooMany'));return;}
  const btn=document.getElementById('sw-do');btn.disabled=true;
@@ -2459,18 +2559,19 @@ async function doSwitch(){
  }
  const po=navAt(oc,od);if(!po){swMsg(t('swNoNav')+' '+oc);btn.disabled=false;return;}
  const pi=navAt(ic,idt);if(!pi){swMsg(t('swNoNav')+' '+ic);btn.disabled=false;return;}
- const realized=ou*(po-h.avg);
- const ts=Date.now();
- TXNS.push({action:'sell',code:oc,date:od,units:ou,price:po,ts,sw:1});
- const bt={action:'buy',code:ic,date:idt,units:iu,price:pi,ts:ts+1,sw:1};
+ const gross=ou*po,net=gross-fee;if(!(net>0)){swMsg(t('swInvalid'));btn.disabled=false;return;}const iu=net/pi;
+ const realized=ou*(po-h.avg)-fee;
+ const ts=Date.now(),swGroup=crypto.randomUUID();
+ TXNS.push({action:'sell',code:oc,date:od,units:ou,price:po,fee,ts,sw:1,swGroup});
+ const bt={action:'buy',code:ic,date:idt,units:iu,price:pi,ts:ts+1,sw:1,swGroup};
  if(isNew){bt.name=(meta&&meta.name)||ic;bt.amc=(meta&&meta.amc)||'Other';bt.tax=_v('sw-newtax')||'General';bt.asset=_v('sw-newasset')||'Foreign Equity';}
  TXNS.push(bt);
  saveTxns();
  try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}
- saveNAVtoSupabase();
- if(SB&&USER){try{SB.from('fund_universe').upsert({code:ic},{onConflict:'code'});}catch(e){}}
+ // The Worker owns market-data writes; the browser keeps this fetched NAV locally until the next Worker sync.
+ if(SB&&USER){try{const{error}=await SB.from('fund_universe').upsert({code:ic},{onConflict:'code'});if(error)console.error('fund universe',error);}catch(e){console.error(e);}}
  renderAll();closeSw();
- toast(`✅ ${t('swDone')} ${oc} → ${ic} · ${t('swNavOut')} ฿${fmt(po,4)} / ${t('swNavIn')} ฿${fmt(pi,4)} · ${t('realWord')} <b class="${cls(realized)}">฿${sign(realized)}</b>`,'ok');
+ toast(`${t('swDone')} ${oc} → ${ic} · ${t('swNavOut')} ฿${fmt(po,4)} / ${t('swNavIn')} ฿${fmt(pi,4)} · ${fmt(iu,4)} ${t('swUnits')} · ${t('realWord')} ฿${sign(realized)}`,'ok');
 }
 
 /* ---------- wire ---------- */
@@ -2500,6 +2601,36 @@ document.getElementById('tfApply').onclick=()=>{
  renderHist();renderRisk();};
 /* benchmark */
 document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
+/* AI import prompt */
+const AI_PROMPT=[
+'I will give you screenshots (or PDF) of my Thai mutual fund portfolio statements.',
+'Convert them into a single JSON file called holdings.json with EXACTLY this structure:',
+'',
+'{',
+'  "FUND CODE": { "units": 1234.5678, "avg": 10.5000, "realized": 0 }',
+'}',
+'',
+'RULES',
+'1. The JSON key must be the fund\'s official short code as used on finnomena.com',
+'   (e.g. "KKP ACT EQ-SSF", "K-CHANGE-SSF", "SCBGOLDHRMF"). If the statement shows a',
+'   long Thai fund name, find its short code. Preserve exact spacing, hyphens and',
+'   suffixes like -SSF, -A, (A), -H. If unsure of the exact code, add "_verify": true',
+'   inside that fund\'s object.',
+'2. "units" = number of units held (\u0e2b\u0e19\u0e48\u0e27\u0e22\u0e25\u0e07\u0e17\u0e38\u0e19\u0e04\u0e07\u0e40\u0e2b\u0e25\u0e37\u0e2d), decimal number.',
+'3. "avg" = average cost per unit in THB. If only total cost is shown, compute',
+'   avg = total cost / units, keep 4 decimals.',
+'4. "realized" = cumulative realized profit in THB from past redemptions if shown, else 0.',
+'5. Do NOT include tax type, asset class, AMC or fund name - the dashboard fills those automatically.',
+'6. Numbers only (no commas, no currency symbols).',
+'7. If the same fund appears on multiple statements, sum units and recompute weighted average cost.',
+'8. Output ONLY the raw JSON - no explanations, no markdown fences.',
+'',
+'Here are my statements:'].join('\n');
+document.getElementById('promptBtn').onclick=async()=>{
+ try{await navigator.clipboard.writeText(AI_PROMPT);}
+ catch(e){const ta=document.createElement('textarea');ta.value=AI_PROMPT;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+ toast(t('promptCopied'),'ok');
+};
 /* CSV + print */
 document.getElementById('csvBtn').onclick=exportCSV;
 document.getElementById('printBtn').onclick=()=>window.print();
@@ -2507,10 +2638,11 @@ document.getElementById('printBtn').onclick=()=>window.print();
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
-function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
+function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;}HOLDINGS_BASE=o;persist();renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTxn();closeSw();}});
+document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
+document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-bg.show');if(e.key==='Escape'&&bg){hideDialog(bg.id);return;}const fund=e.target.closest&&e.target.closest('[data-fund]');if(fund&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFund(fund.dataset.fund);return;}if(e.key==='Tab'&&bg){const focusable=[...bg.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(!focusable.length){e.preventDefault();return;}const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 /* keep filter bar pinned right below the header */
 (function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.filterbar');
  if(hdr&&fb){const adj=()=>{fb.style.top=(hdr.offsetHeight+6)+'px';};adj();window.addEventListener('resize',adj);}})();
@@ -2518,56 +2650,44 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeT
 function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);}}
 function renderAll(){
  buildHoldings();computeAll();applyFilter();
- safe(buildFilters);safe(renderHeader);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
+ safe(buildFilters);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
  safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);
 }
 /* ---------- auth + cloud sync ---------- */
 function _v(id){return (document.getElementById(id)||{}).value||'';}
 function sbReady(){const u=SB_BAKED.url||localStorage.getItem('sb_url'),k=SB_BAKED.key||localStorage.getItem('sb_key');if(u&&k&&u.indexOf('supabase.co')>0&&window.supabase){if(!SB)SB=window.supabase.createClient(u,k);return true;}return false;}
-function openAuth(){document.getElementById('authBg').classList.add('show');renderAuth();}
-function closeAuth(){document.getElementById('authBg').classList.remove('show');}
+function openAuth(){showDialog('authBg');renderAuth();}
+function closeAuth(){hideDialog('authBg');}
 function authMsg(m){const e=document.getElementById('au-msg');if(e)e.textContent=m;}
 function updateAuthUI(){const b=document.getElementById('authBtn');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):t('signIn');}
 function renderAuth(){const m=document.getElementById('authModal');
- if(USER){m.innerHTML=`<div class="modal-h"><div><div class="code">Account</div><div class="nm">${USER.email}</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">Your portfolio is synced to the cloud and follows you on any device you sign in to.</p><button class="btn" style="width:100%;justify-content:center" onclick="doLogout()">Sign out</button></div>`;return;}
- if(!sbReady()){m.innerHTML=`<div class="modal-h"><div><div class="code">Connect cloud</div><div class="nm">One-time setup · paste your Supabase keys</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Supabase Project URL</label><input id="cf-url" placeholder="https://xxxx.supabase.co" onkeydown="if(event.key==='Enter')saveCfg()"></div><div class="tf"><label>anon public key</label><input id="cf-key" placeholder="eyJ..." onkeydown="if(event.key==='Enter')saveCfg()"></div><button class="btn" style="justify-content:center" onclick="saveCfg()">Connect</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div></div></div>`;return;}
- m.innerHTML=`<div class="modal-h"><div><div class="code">Sign in</div><div class="nm">Access your portfolio on any device</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Email</label><input id="au-email" type="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doSignIn()"></div><div class="tf"><label>Password (min 6 chars)</label><input id="au-pass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doSignIn()"></div><div style="display:flex;gap:8px"><button class="btn" style="flex:1;justify-content:center" onclick="doSignIn()">Sign in</button><button class="btn ghost" style="flex:1;justify-content:center" onclick="doSignUp()">Create account</button></div><div id="au-msg" style="color:var(--neg);font-size:12px"></div><div style="font-size:11px;color:var(--muted2);cursor:pointer;text-decoration:underline;margin-top:2px" onclick="resetCfg()">Wrong project? Reset connection</div></div></div>`;}
+ const close=`<button class="modal-x" type="button" data-close="authBg" aria-label="${escAttr(t('closeBtn'))}">✕</button>`;
+ if(USER){m.innerHTML=`<div class="modal-h"><div><div class="code">${t('accountTitle')}</div><div class="nm">${escHTML(USER.email)}</div></div>${close}</div><div class="modal-b"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">${t('accountSub')}</p><button class="btn" id="auth-logout" type="button" style="width:100%;justify-content:center">${t('signOut')}</button></div>`;document.getElementById('auth-logout').onclick=doLogout;return;}
+ if(!sbReady()){m.innerHTML=`<div class="modal-h"><div><div class="code">${t('connectTitle')}</div><div class="nm">${t('connectSub')}</div></div>${close}</div><div class="modal-b"><div class="txn-form"><div class="tf"><label>${t('projectUrl')}</label><input id="cf-url" placeholder="https://xxxx.supabase.co"></div><div class="tf"><label>${t('anonKey')}</label><input id="cf-key" placeholder="eyJ..."></div><button class="btn" id="cfg-connect" type="button" style="justify-content:center">${t('connectBtn')}</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div></div></div>`;document.getElementById('cfg-connect').onclick=saveCfg;m.querySelectorAll('input').forEach(x=>x.onkeydown=e=>{if(e.key==='Enter')saveCfg();});return;}
+ m.innerHTML=`<div class="modal-h"><div><div class="code">${t('signInTitle')}</div><div class="nm">${t('signInSub')}</div></div>${close}</div><div class="modal-b"><div class="txn-form"><div class="tf"><label>${t('emailLbl')}</label><input id="au-email" type="email" autocomplete="email" placeholder="you@email.com"></div><div class="tf"><label>${t('passwordLbl')}</label><input id="au-pass" type="password" autocomplete="current-password" placeholder="••••••"></div><div style="display:flex;gap:8px"><button class="btn" id="auth-signin" type="button" style="flex:1;justify-content:center">${t('signInTitle')}</button><button class="btn ghost" id="auth-signup" type="button" style="flex:1;justify-content:center">${t('createAccount')}</button></div><div style="display:flex;align-items:center;gap:10px;color:var(--muted2);font-size:11px;margin:2px 0"><span style="flex:1;height:1px;background:var(--line)"></span>${t('orWord')}<span style="flex:1;height:1px;background:var(--line)"></span></div><button class="btn ghost" id="auth-google" type="button" style="width:100%;justify-content:center;gap:9px;font-size:13px;padding:10px"><b aria-hidden="true">G</b>${t('googleBtn')}</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div><button class="btn ghost" id="auth-reset" type="button" style="justify-content:center">${t('resetConnection')}</button></div></div>`;
+ document.getElementById('auth-signin').onclick=doSignIn;document.getElementById('auth-signup').onclick=doSignUp;document.getElementById('auth-google').onclick=doGoogle;document.getElementById('auth-reset').onclick=resetCfg;document.getElementById('au-pass').onkeydown=e=>{if(e.key==='Enter')doSignIn();};}
 function cleanUrl(u){u=(u||'').trim();let m=u.match(/dashboard\/project\/([a-z0-9]+)/i);if(m)return 'https://'+m[1]+'.supabase.co';m=u.match(/([a-z0-9]{8,})\.supabase\.co/i);if(m)return 'https://'+m[1]+'.supabase.co';return u.replace(/\/+$/,'');}
-function saveCfg(){const u=cleanUrl(_v('cf-url')),k=_v('cf-key').trim();if(!/^https:\/\/[a-z0-9]+\.supabase\.co$/i.test(u)){authMsg('URL must look like https://xxxx.supabase.co');return;}if(k.length<20){authMsg('anon key looks too short — paste the long anon/public key');return;}localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);SB=null;sbReady();renderAuth();}
+function saveCfg(){const u=cleanUrl(_v('cf-url')),k=_v('cf-key').trim();if(!/^https:\/\/[a-z0-9]+\.supabase\.co$/i.test(u)){authMsg(t('urlInvalid'));return;}if(k.length<20){authMsg(t('keyInvalid'));return;}localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);SB=null;sbReady();renderAuth();}
 function resetCfg(){localStorage.removeItem('sb_url');localStorage.removeItem('sb_key');SB=null;USER=null;renderAuth();}
-async function doSignIn(){if(!sbReady())return;authMsg('Signing in...');const{data,error}=await SB.auth.signInWithPassword({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}USER=data.user;await afterLogin();}
-async function doSignUp(){if(!sbReady())return;authMsg('Creating account...');const{data,error}=await SB.auth.signUp({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}if(data.session){USER=data.user;await afterLogin();}else{authMsg('Account created. If email confirmation is on, confirm via email then Sign in.');}}
-async function doLogout(){if(SB){try{await SB.auth.signOut();}catch(e){}}USER=null;try{localStorage.removeItem('kkp_holdings');localStorage.removeItem(LS_TXN);}catch(e){}HOLDINGS_BASE={};TXNS=[];updateAuthUI();closeAuth();renderAll();toast('✅ Signed out','ok');}
-async function afterLogin(){updateAuthUI();try{const{data}=await SB.from('portfolios').select('holdings,transactions').eq('user_id',USER.id).maybeSingle();if(data&&data.holdings&&Object.keys(data.holdings).length){HOLDINGS_BASE=data.holdings;TXNS=data.transactions||[];}else{await saveCloud();}}catch(e){console.error(e);}renderAll();closeAuth();toast('✅ Signed in as '+USER.email,'ok');}
+async function doGoogle(){if(!sbReady())return;authMsg(t('redirectGoogle'));const{error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)authMsg(error.message);}
+async function doSignIn(){if(!sbReady())return;authMsg(t('signingIn'));const{data,error}=await SB.auth.signInWithPassword({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}USER=data.user;await afterLogin();}
+async function doSignUp(){if(!sbReady())return;authMsg(t('creatingAccount'));const{data,error}=await SB.auth.signUp({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}if(data.session){USER=data.user;await afterLogin();}else{authMsg(t('accountCreated'));}}
+async function doLogout(){if(SB){try{await SB.auth.signOut();}catch(e){}}USER=null;try{localStorage.removeItem('kkp_holdings');localStorage.removeItem(LS_TXN);}catch(e){}HOLDINGS_BASE={};TXNS=[];updateAuthUI();closeAuth();renderAll();toast(t('signedOut'),'ok');}
+async function afterLogin(){updateAuthUI();try{const{data}=await SB.from('portfolios').select('holdings,transactions').eq('user_id',USER.id).maybeSingle();if(data&&data.holdings&&Object.keys(data.holdings).length){HOLDINGS_BASE=data.holdings;TXNS=data.transactions||[];}else{await saveCloud();}await loadMarket();}catch(e){console.error(e);}renderAll();closeAuth();toast(t('signedIn')+' '+USER.email,'ok');}
 document.getElementById('authBtn').onclick=openAuth;
 document.getElementById('authBg').onclick=e=>{if(e.target.id==='authBg')closeAuth();};
-if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=data.session.user;afterLogin();}else updateAuthUI();});}
+if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=data.session.user;afterLogin();}else updateAuthUI();});
+ SB.auth.onAuthStateChange((ev,session)=>{if(ev==='SIGNED_IN'&&session&&(!USER||USER.id!==session.user.id)){USER=session.user;afterLogin();}});}
 
 async function loadMarket(){ if(!sbReady())return; try{
- const r1=await SB.from('nav_history').select('code,date,nav'); const nv=r1.data;
+ const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...TXNS.map(x=>x.code).filter(Boolean),...(BENCH?[BENCH]:[])])];if(!codes.length){renderAll();return;}
+ let nv=[];for(let from=0;;from+=1000){const r1=await SB.from('nav_history').select('code,date,nav').in('code',codes).range(from,from+999);if(r1.error||!r1.data)break;nv=nv.concat(r1.data);if(r1.data.length<1000)break;}
  if(nv&&nv.length){const m={};nv.forEach(r=>{(m[r.code]=m[r.code]||{})[r.date]=r.nav;});for(const c in m){NAVDB[c]=NAVDB[c]||{navs:{}};Object.assign(NAVDB[c].navs,m[c]);}}
- const r2=await SB.from('fund_details').select('code,data'); const fd=r2.data;
+ const r2=await SB.from('fund_details').select('code,data').in('code',codes); const fd=r2.data;
  if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});}
  renderAll();
 }catch(e){console.error('market load',e);} }
 
-// Save fresh NAV data back to Supabase to keep it up to date
-async function saveNAVtoSupabase(records){
- if(!sbReady())return;
- try{
-  if(!records){ // fallback: full dump (used after fund switch adds a new fund)
-   records=[];
-   for(const code in NAVDB){
-    for(const date in NAVDB[code].navs){
-     records.push({code,date,nav:NAVDB[code].navs[date]});
-    }
-   }
-  }
-  if(records.length>0){
-   await SB.from('nav_history').upsert(records,{onConflict:'code,date'});
-  }
- }catch(e){console.error('save NAV to Supabase',e);}
-}
 // Auto-fetch fresh NAV data on page load (parallel fetching - faster)
 async function autoFetchNAV(){
  const lastFetch=localStorage.getItem('kkp_lastNavFetch');
@@ -2605,12 +2725,14 @@ async function autoFetchNAV(){
    localStorage.setItem(LS_NAV,JSON.stringify(st));
    localStorage.setItem('kkp_lastNavFetch',now.toString());
   }catch(e){}
-  await saveNAVtoSupabase(newRecs);
   renderAll();
  }catch(e){}
 }
 
 applyLang();
+document.getElementById('mobileMenuBtn').onclick=()=>{const a=document.getElementById('headerActions'),b=document.getElementById('mobileMenuBtn'),open=a.classList.toggle('open');b.setAttribute('aria-expanded',String(open));};
+document.getElementById('emptySignIn').onclick=openAuth;
+document.getElementById('emptyImport').onclick=()=>document.getElementById('impHoldFile').click();
 renderAll();
 loadMarket().then(autoFetchNAV);
 </script>
