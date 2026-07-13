@@ -103,7 +103,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:rgba(77,141,255,.06)}
 .amcb{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--line);color:var(--muted)}
 .tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px}
 .tag.SSF{background:rgba(77,141,255,.16);color:#7dabff}.tag.ThaiESG{background:rgba(31,210,134,.16);color:#43e3a0}
-.tag.ThaiESGX{background:rgba(155,123,255,.16);color:#b39bff}.tag.RMF{background:rgba(57,214,224,.16);color:#39d6e0}.tag.General{background:rgba(133,147,168,.16);color:#a4b0c2}.tag.LTF{background:rgba(240,185,93,.16);color:#f0b95d}
+.tag.ThaiESGX{background:rgba(155,123,255,.16);color:#b39bff}.tag.General{background:rgba(133,147,168,.16);color:#a4b0c2}.tag.LTF{background:rgba(240,185,93,.16);color:#f0b95d}
 .wbar{display:inline-block;height:5px;border-radius:3px;background:var(--accent);vertical-align:middle;margin-left:6px}
 .tfoot-row td{background:var(--panel2);font-weight:800;border-top:2px solid var(--line2)}
 .foot{font-size:11px;color:var(--muted2);text-align:center;margin-top:24px;line-height:1.7}
@@ -284,7 +284,6 @@ input[type=file]{display:none}
   <button class="btn ghost" id="expBtn" data-i18n="expBtn">⬇ Download nav_history.json</button>
   <button class="btn ghost" id="impBtn" data-i18n="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
   <button class="btn ghost" id="impHoldBtn" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
-  <button class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>
   <div style="margin-top:9px" data-i18n="disclaimer">For portfolio tracking only — not investment advice.</div>
  </div>
 </div>
@@ -1877,7 +1876,7 @@ const DETAILS={};
 const SB_BAKED={url:"https://pmfqjnheavnbqpsdnffm.supabase.co",key:"sb_publishable_LIvzmoSxnvSXN8MaTkESNw_Bcj0pQim"};  // embedded fund profiles (returns/fees/holdings/strategy)
 const API=c=>`https://www.finnomena.com/fn3/api/fund/v2/public/funds/${encodeURIComponent(c)}`;
 // Finnomena blocks cross-origin (CORS) requests, so fetch via fallback chain: direct -> public CORS proxies.
-const PROXY_WORKER=localStorage.getItem('kkp_proxy')||'https://fund-nav-sync.nupark.workers.dev'; // private Cloudflare Worker proxy (see worker/nav-sync)
+const PROXY_WORKER=localStorage.getItem('kkp_proxy')||'https://api.yourpower.today'; // private Cloudflare Worker proxy (see worker/nav-sync)
 const PROXIES=[u=>PROXY_WORKER+'/fn/'+u.replace(/^https:\/\/www\.finnomena\.com\//,''), u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u), u=>'https://corsproxy.io/?url='+encodeURIComponent(u), u=>u];
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function fetchJSON(url){let last;for(const mk of PROXIES){try{const r=await fetch(mk(url),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();if(j&&j.data)return j;last=new Error('no data');}catch(e){last=e;}}throw last;}
@@ -1915,7 +1914,7 @@ const cls=n=>n>=0?'pos':'neg';
 const RANGES={d1:{d:1,l:'1 Day'},w1:{d:7,l:'1 Week'},d15:{d:15,l:'15 Days'},m1:{d:30,l:'1 Month'}};
 const C={pos:'#1fd286',neg:'#ff5a6a',accent:'#4d8dff',gold:'#f0b95d',violet:'#9b7bff',muted:'#8593a8',grid:'#1d2840',panel:'#101829'};
 const ASSET_COL={'Foreign Equity':'#4d8dff','Thai Equity':'#1fd286','Mixed':'#f0b95d','Fixed Income / MM':'#39d6e0'};
-const TAX_COL={'SSF':'#4d8dff','ThaiESG':'#1fd286','ThaiESGX':'#9b7bff','General':'#8593a8','LTF':'#f0b95d','RMF':'#39d6e0'};
+const TAX_COL={'SSF':'#4d8dff','ThaiESG':'#1fd286','ThaiESGX':'#9b7bff','General':'#8593a8','LTF':'#f0b95d'};
 const AMC_COL={'KKP':'#4d8dff','SCB':'#9b7bff','UOB':'#f0b95d','Bualuang':'#1fd286','K-Fund':'#ff7a90','Eastspring':'#39d6e0','LH Fund':'#c2e25a','ONE':'#ff9f45'};
 const PALETTE=['#4d8dff','#1fd286','#f0b95d','#9b7bff','#ff5a6a','#39d6e0','#ff9f45','#e368d8','#7dd957','#6c8bff','#ffce54','#5ad1b0','#ff7a90','#8c7bff','#48c0ff'];
 
@@ -1948,7 +1947,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',
  csvSaved:'✅ CSV exported',
- mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',promptBtn:'📋 Copy AI import prompt',promptCopied:'✅ Prompt copied — paste it into any AI together with photos of your fund statements, then import the JSON it returns',
+ mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
  swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
@@ -1975,7 +1974,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',
  csvSaved:'✅ ส่งออก CSV แล้ว',
- mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',promptBtn:'📋 คัดลอกพรอมป์ต AI สำหรับนำเข้าพอร์ต',promptCopied:'✅ คัดลอกแล้ว — นำไปวางใน AI พร้อมรูป statement กองทุน แล้วนำ JSON ที่ได้มากดนำเข้าพอร์ต',
+ mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
  swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
@@ -2009,8 +2008,6 @@ const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=v
 function computeAll(){
  ALL=[];
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
-  if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
-   if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
   const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
   const last=vs[vs.length-1],prev=vs[vs.length-2]||last,ld=ds[ds.length-1];
   const rv=n=>refLE(ds,vs,daysBefore(ld,n));
@@ -2182,9 +2179,9 @@ function renderHist(){
  if(charts.hist){charts.hist.data=cfg;charts.hist.options.scales.y.ticks.callback=yfmt;charts.hist.update();return;}
  charts.hist=new Chart(document.getElementById('histChart'),{type:'line',data:cfg,options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
   plugins:{legend:{display:true,labels:{boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'rectRounded',font:{size:11},color:C.muted}},
-   tooltip:{callbacks:{title:i=>new Date(i[0].label).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}),
+   tooltip:{callbacks:{title:i=>new Date(i[0].label).toLocaleDateString('en-GB',{day:'numeric',month:'short'}),
     label:c=>c.parsed.y==null?null:' '+c.dataset.label+': '+(histMode==='norm'?sign(c.parsed.y)+'%':(histMode==='nav'?c.parsed.y.toFixed(4):'฿'+fmt0(c.parsed.y)))}}},
-  scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,callback:function(v){const ls=this.chart.data.labels||[];const multi=ls.length>1&&ls[0].slice(0,4)!==ls[ls.length-1].slice(0,4);return new Date(this.getLabelForValue(v)).toLocaleDateString(LANG==='th'?'th-TH':'en-GB',multi?{day:'numeric',month:'short',year:'2-digit'}:{day:'numeric',month:'short'});}}},
+  scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8,callback:function(v){return new Date(this.getLabelForValue(v)).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}}},
    y:{grid:{color:C.grid},ticks:{callback:yfmt}}}}});
 }
 
@@ -2288,12 +2285,12 @@ async function openFund(code){
    <div class="m-stat"><div class="l">Weight</div><div class="v">${fmt(f.value/ALL.reduce((s,x)=>s+x.value,0)*100,1)}%</div></div>
   </div><div id="mdyn"><div class="skel"><span class="spin" style="display:inline-block;vertical-align:middle"></span> ${t('mLoading')}</div></div></div>`;
  let d=DETAILS[code]||DETCACHE[code];
- if(d&&(d.mgmtA===undefined||d.cat==null))d=null; // stale/incomplete cache -> refetch
+ if(d&&d.mgmtA===undefined)d=null; // refetch to get actual (เก็บจริง) fees
  if(d){renderModalDyn(code,d);return;}
  const grab=async u=>{try{return (await fetchJSON(u)).data||null;}catch(e){return null;}};
  const [a,b,c,fe]=await Promise.all([grab(API(code)),grab(API(code)+'/performance'),grab(API(code)+'/portfolio'),grab(API(code)+'/fee')]);
  const feeArr=(fe&&fe.fees)||[];const feeOf=kw=>{const x=feeArr.find(f=>(f.description||'').includes(kw));if(!x||x.actual_value===''||x.actual_value==null)return null;const v=parseFloat(x.actual_value);return isNaN(v)?null:v;};
- if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),taxType:(a&&(a.fund_tax_type||a.tax_saving_fund))||'',amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&(a.risk_level||parseInt(a.risk_spectrum)||null),div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};if(a){DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}}
+ if(a||b||c||fe){d={mgmtA:feeOf('ค่าธรรมเนียมการจัดการ'),terA:feeOf('รวมทั้งหมด'),amc:a&&a.amc_name_en,cat:a&&a.aimc_category_name_en,catTh:a&&a.aimc_category_name_th,risk:a&&a.risk_level,div:a&&a.dividend_policy,mgmt:a&&a.real_management_fee,exp:a&&a.net_expense_ratio,front:a&&a.real_front_end_fee,back:a&&a.real_back_end_fee,inc:((a&&a.inception_date)||'').slice(0,10),feeder:(a&&a.main_feeder_fund)||'',hedge:(a&&a.exchange_rate_risk_spectrum)||'',strat:(a&&(a.fund_short_desc||a.investment_strategy))||'',r3m:b&&b.total_return_3m,r6m:b&&b.total_return_6m,r1y:b&&b.total_return_1y,r3y:b&&b.total_return_3y,na:b&&b.net_assets,top:((c&&c.top_holdings&&c.top_holdings.elements)||[]).slice(0,5).map(h=>[h.name,h.percent])};DETCACHE[code]=d;try{localStorage.setItem(LS_DET,JSON.stringify(DETCACHE));}catch(e){}}
  renderModalDyn(code,d);
 }
 function renderModalDyn(code,d){
@@ -2503,36 +2500,6 @@ document.getElementById('tfApply').onclick=()=>{
  renderHist();renderRisk();};
 /* benchmark */
 document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
-/* AI import prompt */
-const AI_PROMPT=[
-'I will give you screenshots (or PDF) of my Thai mutual fund portfolio statements.',
-'Convert them into a single JSON file called holdings.json with EXACTLY this structure:',
-'',
-'{',
-'  "FUND CODE": { "units": 1234.5678, "avg": 10.5000, "realized": 0 }',
-'}',
-'',
-'RULES',
-'1. The JSON key must be the fund\'s official short code as used on finnomena.com',
-'   (e.g. "KKP ACT EQ-SSF", "K-CHANGE-SSF", "SCBGOLDHRMF"). If the statement shows a',
-'   long Thai fund name, find its short code. Preserve exact spacing, hyphens and',
-'   suffixes like -SSF, -A, (A), -H. If unsure of the exact code, add "_verify": true',
-'   inside that fund\'s object.',
-'2. "units" = number of units held (\u0e2b\u0e19\u0e48\u0e27\u0e22\u0e25\u0e07\u0e17\u0e38\u0e19\u0e04\u0e07\u0e40\u0e2b\u0e25\u0e37\u0e2d), decimal number.',
-'3. "avg" = average cost per unit in THB. If only total cost is shown, compute',
-'   avg = total cost / units, keep 4 decimals.',
-'4. "realized" = cumulative realized profit in THB from past redemptions if shown, else 0.',
-'5. Do NOT include tax type, asset class, AMC or fund name - the dashboard fills those automatically.',
-'6. Numbers only (no commas, no currency symbols).',
-'7. If the same fund appears on multiple statements, sum units and recompute weighted average cost.',
-'8. Output ONLY the raw JSON - no explanations, no markdown fences.',
-'',
-'Here are my statements:'].join('\n');
-document.getElementById('promptBtn').onclick=async()=>{
- try{await navigator.clipboard.writeText(AI_PROMPT);}
- catch(e){const ta=document.createElement('textarea');ta.value=AI_PROMPT;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
- toast(t('promptCopied'),'ok');
-};
 /* CSV + print */
 document.getElementById('csvBtn').onclick=exportCSV;
 document.getElementById('printBtn').onclick=()=>window.print();
@@ -2540,7 +2507,7 @@ document.getElementById('printBtn').onclick=()=>window.print();
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
-function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;}HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
+function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);HOLDINGS_BASE=o;persist();renderAll();toast('✅ Portfolio imported','ok');}catch(e){toast('❌ Invalid file','err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTxn();closeSw();}});
@@ -2564,22 +2531,20 @@ function updateAuthUI(){const b=document.getElementById('authBtn');if(b)b.textCo
 function renderAuth(){const m=document.getElementById('authModal');
  if(USER){m.innerHTML=`<div class="modal-h"><div><div class="code">Account</div><div class="nm">${USER.email}</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">Your portfolio is synced to the cloud and follows you on any device you sign in to.</p><button class="btn" style="width:100%;justify-content:center" onclick="doLogout()">Sign out</button></div>`;return;}
  if(!sbReady()){m.innerHTML=`<div class="modal-h"><div><div class="code">Connect cloud</div><div class="nm">One-time setup · paste your Supabase keys</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Supabase Project URL</label><input id="cf-url" placeholder="https://xxxx.supabase.co" onkeydown="if(event.key==='Enter')saveCfg()"></div><div class="tf"><label>anon public key</label><input id="cf-key" placeholder="eyJ..." onkeydown="if(event.key==='Enter')saveCfg()"></div><button class="btn" style="justify-content:center" onclick="saveCfg()">Connect</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div></div></div>`;return;}
- m.innerHTML=`<div class="modal-h"><div><div class="code">Sign in</div><div class="nm">Access your portfolio on any device</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Email</label><input id="au-email" type="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doSignIn()"></div><div class="tf"><label>Password (min 6 chars)</label><input id="au-pass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doSignIn()"></div><div style="display:flex;gap:8px"><button class="btn" style="flex:1;justify-content:center" onclick="doSignIn()">Sign in</button><button class="btn ghost" style="flex:1;justify-content:center" onclick="doSignUp()">Create account</button></div><div style="display:flex;align-items:center;gap:10px;color:var(--muted2);font-size:11px;margin:2px 0"><span style="flex:1;height:1px;background:var(--line)"></span>${t('orWord')}<span style="flex:1;height:1px;background:var(--line)"></span></div><button class="btn ghost" style="width:100%;justify-content:center;gap:9px;font-size:13px;padding:10px" onclick="doGoogle()"><svg width="15" height="15" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>${t('googleBtn')}</button><div id="au-msg" style="color:var(--neg);font-size:12px"></div><div style="font-size:11px;color:var(--muted2);cursor:pointer;text-decoration:underline;margin-top:2px" onclick="resetCfg()">Wrong project? Reset connection</div></div></div>`;}
+ m.innerHTML=`<div class="modal-h"><div><div class="code">Sign in</div><div class="nm">Access your portfolio on any device</div></div><button class="modal-x" onclick="closeAuth()">✕</button></div><div class="modal-b"><div class="txn-form"><div class="tf"><label>Email</label><input id="au-email" type="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')doSignIn()"></div><div class="tf"><label>Password (min 6 chars)</label><input id="au-pass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doSignIn()"></div><div style="display:flex;gap:8px"><button class="btn" style="flex:1;justify-content:center" onclick="doSignIn()">Sign in</button><button class="btn ghost" style="flex:1;justify-content:center" onclick="doSignUp()">Create account</button></div><div id="au-msg" style="color:var(--neg);font-size:12px"></div><div style="font-size:11px;color:var(--muted2);cursor:pointer;text-decoration:underline;margin-top:2px" onclick="resetCfg()">Wrong project? Reset connection</div></div></div>`;}
 function cleanUrl(u){u=(u||'').trim();let m=u.match(/dashboard\/project\/([a-z0-9]+)/i);if(m)return 'https://'+m[1]+'.supabase.co';m=u.match(/([a-z0-9]{8,})\.supabase\.co/i);if(m)return 'https://'+m[1]+'.supabase.co';return u.replace(/\/+$/,'');}
 function saveCfg(){const u=cleanUrl(_v('cf-url')),k=_v('cf-key').trim();if(!/^https:\/\/[a-z0-9]+\.supabase\.co$/i.test(u)){authMsg('URL must look like https://xxxx.supabase.co');return;}if(k.length<20){authMsg('anon key looks too short — paste the long anon/public key');return;}localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);SB=null;sbReady();renderAuth();}
 function resetCfg(){localStorage.removeItem('sb_url');localStorage.removeItem('sb_key');SB=null;USER=null;renderAuth();}
-async function doGoogle(){if(!sbReady())return;authMsg('Redirecting to Google…');const{error}=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)authMsg(error.message);}
 async function doSignIn(){if(!sbReady())return;authMsg('Signing in...');const{data,error}=await SB.auth.signInWithPassword({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}USER=data.user;await afterLogin();}
 async function doSignUp(){if(!sbReady())return;authMsg('Creating account...');const{data,error}=await SB.auth.signUp({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}if(data.session){USER=data.user;await afterLogin();}else{authMsg('Account created. If email confirmation is on, confirm via email then Sign in.');}}
 async function doLogout(){if(SB){try{await SB.auth.signOut();}catch(e){}}USER=null;try{localStorage.removeItem('kkp_holdings');localStorage.removeItem(LS_TXN);}catch(e){}HOLDINGS_BASE={};TXNS=[];updateAuthUI();closeAuth();renderAll();toast('✅ Signed out','ok');}
 async function afterLogin(){updateAuthUI();try{const{data}=await SB.from('portfolios').select('holdings,transactions').eq('user_id',USER.id).maybeSingle();if(data&&data.holdings&&Object.keys(data.holdings).length){HOLDINGS_BASE=data.holdings;TXNS=data.transactions||[];}else{await saveCloud();}}catch(e){console.error(e);}renderAll();closeAuth();toast('✅ Signed in as '+USER.email,'ok');}
 document.getElementById('authBtn').onclick=openAuth;
 document.getElementById('authBg').onclick=e=>{if(e.target.id==='authBg')closeAuth();};
-if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=data.session.user;afterLogin();}else updateAuthUI();});
- SB.auth.onAuthStateChange((ev,session)=>{if(ev==='SIGNED_IN'&&session&&(!USER||USER.id!==session.user.id)){USER=session.user;afterLogin();}});}
+if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=data.session.user;afterLogin();}else updateAuthUI();});}
 
 async function loadMarket(){ if(!sbReady())return; try{
- let nv=[];for(let from=0;;from+=1000){const r1=await SB.from('nav_history').select('code,date,nav').range(from,from+999);if(r1.error||!r1.data)break;nv=nv.concat(r1.data);if(r1.data.length<1000)break;}
+ const r1=await SB.from('nav_history').select('code,date,nav'); const nv=r1.data;
  if(nv&&nv.length){const m={};nv.forEach(r=>{(m[r.code]=m[r.code]||{})[r.date]=r.nav;});for(const c in m){NAVDB[c]=NAVDB[c]||{navs:{}};Object.assign(NAVDB[c].navs,m[c]);}}
  const r2=await SB.from('fund_details').select('code,data'); const fd=r2.data;
  if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});}
