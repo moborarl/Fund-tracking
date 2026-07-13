@@ -34,6 +34,16 @@ try {
   if (!missing.en.length && !missing.th.length && !parity.length) ok(`i18n: ${used.size} used keys resolve in both languages`);
 } catch (e) { fail('i18n check error: ' + e.message); }
 
+// ---- CSP hash must match the inline script ----
+try {
+  const crypto = await import('node:crypto');
+  const hash = crypto.createHash('sha256').update(m[1], 'utf8').digest('base64');
+  const meta = html.match(/'sha256-([A-Za-z0-9+/=]+)'/);
+  if (!meta) fail('CSP sha256 token not found');
+  else if (meta[1] !== hash) fail("CSP hash is stale - run: node scripts/update-csp.mjs");
+  else ok('CSP hash matches inline script');
+} catch (e) { fail('CSP check error: ' + e.message); }
+
 // ---- worker parses ----
 try {
   const w = fs.readFileSync('worker/nav-sync/index.js', 'utf8');
