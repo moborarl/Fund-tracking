@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-ttogcaGItzuV+9L2Qs/qAVKovasL0pz3dKrhx0IlQWQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-tFaKEh8P9PsafkYdhcgtkcKlkuR72VnS0ti5nzZWRlo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2416,7 +2416,9 @@ function unlockLots(){
  const birth=localStorage.getItem('kkp_birth')||'';
  const rows=[];
  effectiveTxns().forEach(x=>{if(x.action!=='buy')return;const tax=taxOf(x.code);if(!TAXES.has(tax))return;rows.push({code:x.code,tax,date:x.date||'',units:+x.units||0});});
- for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(!(+h.units>0))continue;const tax=h.tax&&TAXES.has(h.tax)?h.tax:taxOf(c);if(!TAXES.has(tax))continue;rows.push({code:c,tax,date:h.firstBuy||'',units:+h.units||0,base:true});}
+ for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(!(+h.units>0))continue;const tax=h.tax&&TAXES.has(h.tax)?h.tax:taxOf(c);if(!TAXES.has(tax))continue;
+  if(Array.isArray(h.lots)&&h.lots.length){h.lots.forEach(L=>rows.push({code:c,tax,date:L.date,units:+L.units||0,base:true}));}
+  else rows.push({code:c,tax,date:h.firstBuy||'',units:+h.units||0,base:true});}
  rows.forEach(r=>{r.unlock=r.date?unlockDate(r.tax,r.date,birth):null;});
  return rows;
 }
@@ -2754,7 +2756,8 @@ const AI_PROMPT=[
 'Convert them into a single JSON file called holdings.json with EXACTLY this structure:',
 '',
 '{',
-'  "FUND CODE": { "units": 1234.5678, "avg": 10.5000, "realized": 0, "firstBuy": "2021-07-07" }',
+'  "FUND CODE": { "units": 1234.5678, "avg": 10.5000, "realized": 0,',
+'                "lots": [ { "date": "2022-12-31", "units": 500.0, "cost": 5000.00 } ] }',
 '}',
 '',
 'RULES',
@@ -2770,9 +2773,12 @@ const AI_PROMPT=[
 '5. Do NOT include tax type, asset class, AMC or fund name - the dashboard fills those automatically.',
 '6. Numbers only (no commas, no currency symbols).',
 '7. If the same fund appears on multiple statements, sum units and recompute weighted average cost.',
-'8. "firstBuy" = the EARLIEST purchase/trade date of that fund shown on the statement',
-'   (\u0e27\u0e31\u0e19\u0e17\u0e35\u0e48\u0e0b\u0e37\u0e49\u0e2d), format YYYY-MM-DD. This enables SSF/RMF/ThaiESG unlock tracking.',
-'   Omit the field if no date is visible.',
+'8. "lots" = purchase history broken down by year/lot (\u0e1b\u0e35\u0e17\u0e35\u0e48\u0e25\u0e07\u0e17\u0e38\u0e19), one entry per',
+'   vintage year or per purchase shown: date (exact date if shown, otherwise Dec 31',
+'   of the vintage year), units bought in that lot, cost in THB of that lot.',
+'   The lots enable SSF/RMF/ThaiESG unlock tracking and per-year records.',
+'   If the statement shows no yearly breakdown, use "firstBuy": "YYYY-MM-DD"',
+'   (earliest purchase date) instead. Omit both if no dates are visible.',
 '9. Output ONLY the raw JSON - no explanations, no markdown fences.',
 '',
 'Here are my statements:'].join('\n');
@@ -2793,7 +2799,7 @@ document.querySelectorAll('#unlockModes button').forEach(b=>{
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
-function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];delete h._verify;h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;}let merged=o;if(Object.keys(HOLDINGS_BASE).length&&confirm(t('mergeAsk'))){merged={...HOLDINGS_BASE};for(const c in o)merged[c]=o[c];}HOLDINGS_BASE=merged;persist();renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
+function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];delete h._verify;h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;if(Array.isArray(h.lots)){h.lots=h.lots.filter(L=>L&&L.date&&+L.units>0).map(L=>({date:String(L.date),units:+L.units,cost:+L.cost||0}));if(h.lots.length&&!h.firstBuy)h.firstBuy=h.lots.map(L=>L.date).sort()[0];if(!h.lots.length)delete h.lots;}else delete h.lots;}let merged=o;if(Object.keys(HOLDINGS_BASE).length&&confirm(t('mergeAsk'))){merged={...HOLDINGS_BASE};for(const c in o)merged[c]=o[c];}HOLDINGS_BASE=merged;persist();renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
