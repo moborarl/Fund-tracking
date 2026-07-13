@@ -163,7 +163,7 @@ input[type=file]{display:none}
 .bench-sel{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:7px 10px;color:var(--muted);font:inherit;font-size:12px;max-width:230px;cursor:pointer}
 .bench-sel:hover{color:var(--txt)}
 /* risk section */
-.risk-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.risk-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
 @media(max-width:980px){.risk-kpis{grid-template-columns:repeat(2,1fr)}}
 .rk{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .rk .l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted2);font-weight:700}
@@ -190,6 +190,24 @@ input[type=file]{display:none}
  body{background:#fff;color:#000;padding-bottom:0}
  .card,.hero-main,.mini,.tbl-wrap{box-shadow:none;border-color:#bbb;background:#fff;color:#000}
  .hero-main{background:#fff}.hero-main::after{display:none}}
+/* skeleton shimmer */
+.sk{display:inline-block;width:110px;max-width:70%;height:1em;border-radius:6px;background:linear-gradient(90deg,var(--panel2) 25%,var(--line) 50%,var(--panel2) 75%);background-size:200% 100%;animation:skl 1.2s linear infinite;vertical-align:middle}
+@keyframes skl{to{background-position:-200% 0}}
+/* dividend txn tag */
+.txn-act.dividend{background:rgba(240,185,93,.16);color:var(--gold)}
+/* holdings table -> cards on small screens */
+@media(max-width:680px){
+ #tbl thead,#tbl tfoot{display:none}
+ #tbl,#tbl tbody,#tbl tr,#tbl td{display:block;width:100%}
+ table#tbl{min-width:0}
+ #tbl tr{border:1px solid var(--line);border-radius:12px;margin:10px 8px;padding:4px 10px;background:var(--panel2)}
+ #tbl td{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:right;border-bottom:1px dashed var(--line);padding:7px 2px;white-space:normal}
+ #tbl td:last-child{border-bottom:none}
+ #tbl td::before{content:attr(data-l);color:var(--muted2);font-size:10px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+ #tbl td:first-child{display:block;text-align:left;padding-top:9px}
+ #tbl td:first-child::before{content:none}
+ #tbl .wbar{display:none}
+}
 </style>
 </head>
 <body>
@@ -297,6 +315,16 @@ input[type=file]{display:none}
    </tr></thead><tbody id="riskBody"></tbody></table></div>
   </div>
  </section>
+
+ <!-- TAX UNLOCK + LOOK-THROUGH -->
+ <section><div class="grid2">
+  <div class="card"><h3 data-i18n="secUnlock">Tax-Fund Unlock Schedule</h3><div class="csub" data-i18n="unlockHint">SSF 10y · ThaiESG/X 5y · RMF age 55 &amp; 5y from first buy</div>
+   <div class="risk-wrap"><table class="risk-tbl" style="min-width:520px"><thead><tr><th data-i18n="uhFund">Fund</th><th data-i18n="uhBuy">Buy date</th><th data-i18n="uhUnits">Units</th><th data-i18n="uhUnlock">Unlock date</th><th data-i18n="uhStatus">Status</th></tr></thead><tbody id="unlockBody"></tbody></table></div>
+   <div style="margin-top:10px"><button class="btn ghost" id="birthBtn" type="button" data-i18n="setBirth">🎂 Set birth date (for RMF)</button></div></div>
+  <div class="card"><h3 data-i18n="secConc">Look-Through Holdings</h3><div class="csub" data-i18n="concHint">What your funds actually hold, combined</div>
+   <div class="risk-wrap"><table class="risk-tbl" style="min-width:420px"><thead><tr><th data-i18n="chName">Security</th><th data-i18n="chExp">Exposure</th><th data-i18n="chPct">% of port</th><th data-i18n="chVia">Funds</th></tr></thead><tbody id="concBody"></tbody></table></div>
+   <div class="pl-foot" data-i18n="concNote">Estimated from each fund's top-5 holdings — actual exposure can be higher.</div></div>
+ </div></section>
 
  <!-- TABLE -->
  <section>
@@ -1942,6 +1970,7 @@ function buildHoldings(){
   const u=+t.units||0,pr=+t.price||0;
   if(t.action==='buy'){const nu=h.units+u; h.avg=nu>0?(h.units*h.avg+u*pr)/nu:pr; h.units=nu;}
   else if(t.action==='sell'){const su=Math.min(u,h.units); h.realized=(h.realized||0)+su*(pr-h.avg)-(+t.fee||0); h.units-=su; if(h.units<1e-6&&h._added)delete HOLDINGS[t.code];}
+  else if(t.action==='dividend'){h.realized=(h.realized||0)+(+t.amount||0);}
  }
 }
 buildHoldings();
@@ -1994,6 +2023,14 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  emptyTitle:'Build your portfolio view',emptyBody:'Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.',missingNavTitle:'Portfolio loaded · waiting for NAV',missingNavBody:'The holdings ledger is available, but no current NAV is loaded yet. Update NAV or verify the Worker connection.',emptySignIn:'Sign in',emptyImport:'Import portfolio',noFunds:'No funds',
  txnTitle:'Buy / Sell',txnSub:'Append-only ledger · holdings, cost and realized P/L are recomputed',txnFund:'Fund',txnNewFund:'+ New fund (not listed)…',txnNewCode:'New fund code (must match Finnomena)',txnName:'Display name',txnAmc:'AMC',txnAsset:'Asset class',txnTax:'Tax benefit',txnAction:'Action',txnDate:'Date',txnUnits:'Units',txnPrice:'Price / NAV (฿)',txnAdd:'Add transaction',txnHistory:'History',txnEmpty:'No transactions yet',txnCorrect:'Reverse',txnCorrected:'Reversed',txnVoid:'Correction',txnEnterCode:'Enter a fund code',txnInvalid:'Enter valid units and price',txnRecorded:'recorded',txnNeedsNav:'run Update NAV to fetch history',buyWord:'Buy',sellWord:'Sell',
  accountTitle:'Account',accountSub:'Your portfolio is synced to the cloud and follows you on every signed-in device.',signOut:'Sign out',connectTitle:'Connect cloud',connectSub:'One-time Supabase connection setup',projectUrl:'Supabase project URL',anonKey:'Anon public key',connectBtn:'Connect',signInTitle:'Sign in',signInSub:'Access your portfolio on any device',emailLbl:'Email',passwordLbl:'Password (min 6 chars)',createAccount:'Create account',resetConnection:'Wrong project? Reset connection',redirectGoogle:'Redirecting to Google…',signingIn:'Signing in…',creatingAccount:'Creating account…',accountCreated:'Account created. Confirm your email if required, then sign in.',signedOut:'Signed out',signedIn:'Signed in as',detailsUnavailable:'Details unavailable for this fund.',openFinnomena:'Open on Finnomena ↗',closeBtn:'Close',correctedToast:'Correction appended to the ledger',assetForeign:'Foreign Equity',assetThai:'Thai Equity',assetMixed:'Mixed',assetFixed:'Fixed Income / MM',taxGeneral:'General',
+ divWord:'Dividend',divAmount:'Dividend amount (฿)',
+ secUnlock:'Tax-Fund Unlock Schedule',unlockHint:'SSF 10y · ThaiESG/X 5y · RMF age 55 & 5y from first buy · lots from your ledger',
+ uhFund:'Fund',uhBuy:'Buy date',uhUnits:'Units',uhUnlock:'Unlock date',uhStatus:'Status',unlockedWord:'✅ Sellable',inDaysWord:'in {d} days',
+ setBirth:'🎂 Set birth date (for RMF)',birthPrompt:'Enter your birth date (YYYY-MM-DD) to compute RMF unlock:',needBirth:'set birth date',
+ noLots:'No tax-saving lots with known buy dates yet',setDate:'set buy date',buyPrompt:'First purchase date of {c} (YYYY-MM-DD):',
+ secConc:'Look-Through Holdings',concHint:'What your funds actually hold, combined',chName:'Security',chExp:'Exposure',chPct:'% of port',chVia:'Funds',
+ concNote:"Estimated from each fund's top-5 holdings — actual exposure can be higher.",noConcData:'No holdings data yet — fund detail sync fills this automatically',
+ rkAlpha:'TWR vs Benchmark',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
  swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',swFee:'Switching fee (฿)',swUnitsAuto:'Units are calculated from net proceeds',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
@@ -2025,6 +2062,14 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  emptyTitle:'เริ่มสร้างมุมมองพอร์ต',emptyBody:'เข้าสู่ระบบเพื่อโหลดพอร์ตจากคลาวด์ หรือนำเข้าไฟล์ holdings เพื่อเริ่มติดตามมูลค่า ผลตอบแทน และความเสี่ยง',missingNavTitle:'โหลดพอร์ตแล้ว · รอข้อมูล NAV',missingNavBody:'มีบัญชีรายการพอร์ตแล้ว แต่ยังไม่มี NAV ปัจจุบัน กรุณาอัปเดต NAV หรือตรวจการเชื่อมต่อ Worker',emptySignIn:'เข้าสู่ระบบ',emptyImport:'นำเข้าพอร์ต',noFunds:'ไม่มีกองทุน',
  txnTitle:'ซื้อ / ขาย',txnSub:'บัญชีรายการแบบเพิ่มอย่างเดียว · คำนวณหน่วย ต้นทุน และกำไรรับรู้ใหม่ทุกครั้ง',txnFund:'กองทุน',txnNewFund:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',txnNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',txnName:'ชื่อที่แสดง',txnAmc:'บลจ.',txnAsset:'ประเภทสินทรัพย์',txnTax:'สิทธิประโยชน์ภาษี',txnAction:'รายการ',txnDate:'วันที่',txnUnits:'จำนวนหน่วย',txnPrice:'ราคา / NAV (฿)',txnAdd:'เพิ่มรายการ',txnHistory:'ประวัติ',txnEmpty:'ยังไม่มีรายการ',txnCorrect:'กลับรายการ',txnCorrected:'กลับรายการแล้ว',txnVoid:'รายการแก้ไข',txnEnterCode:'กรุณาใส่รหัสกองทุน',txnInvalid:'กรุณาใส่จำนวนหน่วยและราคาให้ถูกต้อง',txnRecorded:'บันทึกแล้ว',txnNeedsNav:'กดอัปเดต NAV เพื่อดึงประวัติราคา',buyWord:'ซื้อ',sellWord:'ขาย',
  accountTitle:'บัญชี',accountSub:'พอร์ตซิงค์บนคลาวด์และติดตามคุณไปทุกอุปกรณ์ที่เข้าสู่ระบบ',signOut:'ออกจากระบบ',connectTitle:'เชื่อมต่อคลาวด์',connectSub:'ตั้งค่าการเชื่อมต่อ Supabase ครั้งเดียว',projectUrl:'URL โปรเจกต์ Supabase',anonKey:'Anon public key',connectBtn:'เชื่อมต่อ',signInTitle:'เข้าสู่ระบบ',signInSub:'เข้าถึงพอร์ตได้จากทุกอุปกรณ์',emailLbl:'อีเมล',passwordLbl:'รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)',createAccount:'สร้างบัญชี',resetConnection:'โปรเจกต์ไม่ถูกต้อง? ตั้งค่าใหม่',redirectGoogle:'กำลังไปยัง Google…',signingIn:'กำลังเข้าสู่ระบบ…',creatingAccount:'กำลังสร้างบัญชี…',accountCreated:'สร้างบัญชีแล้ว หากระบบกำหนดให้ยืนยันอีเมล กรุณายืนยันก่อนเข้าสู่ระบบ',signedOut:'ออกจากระบบแล้ว',signedIn:'เข้าสู่ระบบในชื่อ',detailsUnavailable:'ไม่มีรายละเอียดของกองทุนนี้',openFinnomena:'เปิดใน Finnomena ↗',closeBtn:'ปิด',correctedToast:'เพิ่มรายการแก้ไขในบัญชีรายการแล้ว',assetForeign:'หุ้นต่างประเทศ',assetThai:'หุ้นไทย',assetMixed:'กองทุนผสม',assetFixed:'ตราสารหนี้ / ตลาดเงิน',taxGeneral:'ทั่วไป',
+ divWord:'ปันผล',divAmount:'จำนวนเงินปันผล (฿)',
+ secUnlock:'กำหนดการปลดล็อกกองทุนลดหย่อนภาษี',unlockHint:'SSF 10 ปี · ThaiESG/X 5 ปี · RMF อายุ 55 และถือครบ 5 ปี · อิงจากบัญชีรายการ',
+ uhFund:'กองทุน',uhBuy:'วันที่ซื้อ',uhUnits:'หน่วย',uhUnlock:'วันปลดล็อก',uhStatus:'สถานะ',unlockedWord:'✅ ขายได้แล้ว',inDaysWord:'อีก {d} วัน',
+ setBirth:'🎂 ตั้งวันเกิด (สำหรับ RMF)',birthPrompt:'ใส่วันเกิด (YYYY-MM-DD) เพื่อคำนวณวันปลดล็อก RMF:',needBirth:'ตั้งวันเกิดก่อน',
+ noLots:'ยังไม่มีล็อตกองทุนลดหย่อนภาษีที่ทราบวันซื้อ',setDate:'ระบุวันซื้อ',buyPrompt:'วันที่ซื้อครั้งแรกของ {c} (YYYY-MM-DD):',
+ secConc:'เจาะดูหลักทรัพย์ที่ถือจริง',concHint:'รวมหลักทรัพย์ที่ทุกกองทุนถืออยู่จริง',chName:'หลักทรัพย์',chExp:'มูลค่า',chPct:'% ของพอร์ต',chVia:'กองทุน',
+ concNote:'ประมาณจาก top-5 holdings ของแต่ละกอง — สัดส่วนจริงอาจสูงกว่านี้',noConcData:'ยังไม่มีข้อมูลหลักทรัพย์ — ระบบเติมให้อัตโนมัติหลัง sync รายละเอียดกองทุน',
+ rkAlpha:'TWR เทียบเกณฑ์เทียบ',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
  swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',swFee:'ค่าธรรมเนียมสับเปลี่ยน (฿)',swUnitsAuto:'จำนวนหน่วยคำนวณจากเงินรับสุทธิ',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
@@ -2043,15 +2088,8 @@ function applyLang(){
  updateAuthUI();renderBenchSel();
 }
 
-// Clear display on page load to prevent showing cached old values
-document.getElementById('h-value').textContent='';
-document.getElementById('h-cost').textContent='';
-document.getElementById('h-unreal').textContent='';
-document.getElementById('h-count').textContent='';
-document.getElementById('m-unreal').textContent='';
-document.getElementById('m-real').textContent='';
-document.getElementById('tl-baht').textContent='';
-document.getElementById('tl-pct').textContent='';
+// Loading skeletons instead of empty values (replaced by first render with data)
+['h-value','h-cost','h-unreal','h-count','m-unreal','m-real','tl-baht','tl-pct'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<span class="sk"></span>';});
 
 const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
 const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
@@ -2168,11 +2206,11 @@ function renderTable(){
  document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
-   <td>${fmt(f.nav,4)}</td><td>${fmt(f.units,2)}</td><td><b>฿${fmt0(f.value)}</b></td>
-   <td>${fmt(w,1)}%<span class="wbar" style="width:${Math.max(2,w/maxW*45)}px"></span></td>
-   <td class="${cls(chg)}">฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span></td>
-   <td class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
-   <td class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
+   <td data-l="NAV">${fmt(f.nav,4)}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
+   <td data-l="${escAttr(t('thWeight'))}">${fmt(w,1)}%<span class="wbar" style="width:${Math.max(2,w/maxW*45)}px"></span></td>
+   <td data-l="${escAttr(t('thChange'))}" class="${cls(chg)}">฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span></td>
+   <td data-l="${escAttr(t('thUnreal'))}" class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
+   <td data-l="${escAttr(t('thReal'))}" class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
  document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>${t('totalWord')} (${F.length} ${t('fundsWord')})</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
    <td class="${cls(T.chg[RANGE])}">฿${sign(T.chg[RANGE])}<br><span style="font-size:10.5px">${sign(T.pct[RANGE])}%</span></td>
    <td class="${cls(T.unreal)}">฿${sign(T.unreal)}<br><span style="font-size:10.5px">${sign(T.unreal_pct)}%</span></td>
@@ -2216,7 +2254,8 @@ function portfolioSeries(){
  for(const date of dates){let flow=0;
   while(ti<tx.length&&(tx[ti].date||'')<=date){const x=tx[ti++],amount=(+x.units||0)*(+x.price||0);units[x.code]=units[x.code]||0;
    if(x.action==='buy')units[x.code]+=+x.units||0;else if(x.action==='sell')units[x.code]=Math.max(0,units[x.code]-(+x.units||0));
-   if(x.sw){cash+=x.action==='sell'?amount:-amount;if(x.fee)cash-=+x.fee||0;}else flow+=x.action==='buy'?amount:-amount;
+   if(x.action==='dividend'){flow-=(+x.amount||0);}
+   else if(x.sw){cash+=x.action==='sell'?amount:-amount;if(x.fee)cash-=+x.fee||0;}else flow+=x.action==='buy'?amount:-amount;
   }
   let value=cash;for(const code of codes)value+=(units[code]||0)*(navAt(code,date)||0);
   if(prev!=null&&prev>0){const r=(value-flow)/prev-1;if(Number.isFinite(r))twr*=1+r;}
@@ -2331,10 +2370,12 @@ function renderRisk(){
  const P=riskStats(dates,windowRows.map(x=>x.twr));
  if(!P){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t('noData')}</div>`;tb.innerHTML='';return;}
  const cashflows=windowRows.map((x,i)=>({date:x.date,amount:i===0?-x.value:-x.flow}));if(cashflows.length)cashflows[cashflows.length-1].amount+=windowRows[windowRows.length-1].value;const irr=xirr(cashflows);
+ let B=null;if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();const wB=windowSeries(bds,bds.map(d=>bn[d]));B=riskStats(wB.ds,wB.vs);}
  const kpi=(l,v,c,m)=>`<div class="rk"><div class="l">${l}</div><div class="v ${c||''}">${v}</div>${m?`<div class="m">${m}</div>`:''}</div>`;
  kp.innerHTML=
   kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?fmtD(dates[0])+' → '+fmtD(dates[dates.length-1]):'')+
   kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst'))+
+  (B?kpi(t('rkAlpha'),sign(P.ret-B.ret)+'%',cls(P.ret-B.ret),'◆ '+escHTML(BENCH)):'')+
   kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+
   kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'','peak-to-trough')+
   kpi(t('rkWorst'),sign(P.worst.r)+'%','neg',fmtD(P.worst.d));
@@ -2345,13 +2386,61 @@ function renderRisk(){
   <td class="${cls(st.rr)}">${fmt(st.rr,2)}</td><td class="pos">${sign(st.best.r)}% <span style="color:var(--muted2)">${fmtD(st.best.d)}</span></td>
   <td class="neg">${sign(st.worst.r)}% <span style="color:var(--muted2)">${fmtD(st.worst.d)}</span></td></tr>`:'';
  rows.push(mkRow('◼ '+t('portWord'),P,true));
- if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();
-  const w=windowSeries(bds,bds.map(d=>bn[d]));const B=riskStats(w.ds,w.vs);
-  if(B)rows.push(mkRow('◆ '+escHTML(BENCH),B,true));}
+ if(B)rows.push(mkRow('◆ '+escHTML(BENCH),B,true));
  [...F].sort((a,b)=>b.value-a.value).forEach(f=>{
   const w=windowSeries(f.dates,f.vvals);const st=riskStats(w.ds,w.vs);
   if(st)rows.push(mkRow(`${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span>`,st));});
  tb.innerHTML=rows.join('');
+}
+
+/* ---------- tax-fund unlock tracker ---------- */
+function fmtDY(d){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';}
+function addYears(iso,ny){const d=new Date(iso+'T00:00:00Z');d.setUTCFullYear(d.getUTCFullYear()+ny);return d.toISOString().slice(0,10);}
+function unlockDate(tax,buyDate,birth){
+ if(tax==='SSF')return addYears(buyDate,10);
+ if(tax==='ThaiESG'||tax==='ThaiESGX')return addYears(buyDate,5);
+ if(tax==='LTF')return buyDate; // legacy LTF: holding periods have elapsed
+ if(tax==='RMF'){if(!birth)return null;const a55=addYears(birth,55),h5=addYears(buyDate,5);return a55>h5?a55:h5;}
+ return null;
+}
+function setBirth(){const v=prompt(t('birthPrompt'),localStorage.getItem('kkp_birth')||'1985-01-01');if(v&&/^\d{4}-\d{2}-\d{2}$/.test(v)){localStorage.setItem('kkp_birth',v);renderUnlock();}}
+function renderUnlock(){
+ const tb=document.getElementById('unlockBody');if(!tb)return;
+ const birth=localStorage.getItem('kkp_birth')||'';
+ const today=new Date().toISOString().slice(0,10);
+ const TAXES=new Set(['SSF','RMF','ThaiESG','ThaiESGX','LTF']);
+ const taxOf=c=>(HOLDINGS[c]&&HOLDINGS[c].tax)||(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].tax)||'General';
+ const rows=[];
+ effectiveTxns().forEach(x=>{if(x.action!=='buy')return;const tax=taxOf(x.code);if(!TAXES.has(tax))return;rows.push({code:x.code,tax,date:x.date||'',units:+x.units||0});});
+ for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(!(+h.units>0))continue;const tax=h.tax&&TAXES.has(h.tax)?h.tax:taxOf(c);if(!TAXES.has(tax))continue;rows.push({code:c,tax,date:h.firstBuy||'',units:+h.units||0,base:true});}
+ if(!rows.length){tb.innerHTML=`<tr><td colspan="5" class="skel">${t('noLots')}</td></tr>`;return;}
+ rows.sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
+ tb.innerHTML=rows.map(r=>{
+  if(!r.date)return `<tr><td>${escHTML(r.code)} <span class="tag ${escAttr(r.tax)}">${escHTML(r.tax)}</span></td><td>—</td><td>${fmt(r.units,2)}</td><td>—</td><td><button type="button" class="btn ghost" data-setbuy="${escAttr(r.code)}">${t('setDate')}</button></td></tr>`;
+  const un=unlockDate(r.tax,r.date,birth);
+  let status;
+  if(r.tax==='RMF'&&!birth)status=`<button type="button" class="btn ghost" data-birth="1">${t('needBirth')}</button>`;
+  else if(!un)status='—';
+  else if(un<=today)status=`<span class="pos">${t('unlockedWord')}</span>`;
+  else status=`<span style="color:var(--gold)">🔒 ${t('inDaysWord').replace('{d}',fmt0(isoDayDiff(un,today)))}</span>`;
+  return `<tr><td>${escHTML(r.code)} <span class="tag ${escAttr(r.tax)}">${escHTML(r.tax)}</span></td><td>${escHTML(fmtDY(r.date))}</td><td>${fmt(r.units,2)}</td><td>${un?escHTML(fmtDY(un)):'—'}</td><td>${status}</td></tr>`;
+ }).join('');
+ tb.querySelectorAll('[data-setbuy]').forEach(b=>b.onclick=()=>{const c=b.dataset.setbuy;const v=prompt(t('buyPrompt').replace('{c}',c),'2024-01-01');if(v&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&HOLDINGS_BASE[c]){HOLDINGS_BASE[c].firstBuy=v;persist();renderUnlock();}});
+ tb.querySelectorAll('[data-birth]').forEach(b=>b.onclick=setBirth);
+}
+
+/* ---------- look-through holdings (concentration) ---------- */
+function renderConc(){
+ const tb=document.getElementById('concBody');if(!tb)return;
+ const agg={};
+ F.forEach(f=>{const det=DETAILS[f.code]||DETCACHE[f.code];const top=(det&&det.top)||[];
+  top.forEach(x=>{if(!x||!x[0]||!(+x[1]>0))return;const key=String(x[0]).toUpperCase().replace(/\s+/g,' ').trim();
+   if(!agg[key])agg[key]={name:String(x[0]).trim(),exp:0,funds:new Set()};
+   agg[key].exp+=f.value*(+x[1])/100;agg[key].funds.add(f.code);});});
+ const rows=Object.values(agg).sort((a,b)=>b.exp-a.exp).slice(0,12);
+ if(!rows.length){tb.innerHTML=`<tr><td colspan="4" class="skel">${t('noConcData')}</td></tr>`;return;}
+ const mx=rows[0].exp||1;
+ tb.innerHTML=rows.map(r=>`<tr><td><span class="hold-bar" style="width:${Math.max(3,r.exp/mx*70)}px;display:inline-block;vertical-align:middle;margin-right:8px"></span>${escHTML(r.name)}</td><td>฿${fmt0(r.exp)}</td><td>${fmt(T.value?r.exp/T.value*100:0,2)}%</td><td>${r.funds.size}</td></tr>`).join('');
 }
 
 /* ---------- CSV export ---------- */
@@ -2472,14 +2561,16 @@ function renderTxnModal(preCode){
    <div class="tf2"><div class="tf"><label>${t('txnAmc')}</label><input id="tx-newamc" placeholder="e.g. K-Fund"></div>
     <div class="tf"><label>${t('txnAsset')}</label><select id="tx-newasset"><option value="Foreign Equity">${t('assetForeign')}</option><option value="Thai Equity">${t('assetThai')}</option><option value="Mixed">${t('assetMixed')}</option><option value="Fixed Income / MM">${t('assetFixed')}</option></select></div></div>
    <div class="tf"><label>${t('txnTax')}</label><select id="tx-newtax"><option value="General">${t('taxGeneral')}</option><option>SSF</option><option>RMF</option><option>ThaiESG</option><option>ThaiESGX</option><option>LTF</option></select></div></div>
-  <div class="tf2"><div class="tf"><label>${t('txnAction')}</label><select id="tx-action"><option value="buy">${t('buyWord')}</option><option value="sell">${t('sellWord')}</option></select></div>
+  <div class="tf2"><div class="tf"><label>${t('txnAction')}</label><select id="tx-action"><option value="buy">${t('buyWord')}</option><option value="sell">${t('sellWord')}</option><option value="dividend">${t('divWord')}</option></select></div>
    <div class="tf"><label>${t('txnDate')}</label><input id="tx-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>
-  <div class="tf2"><div class="tf"><label>${t('txnUnits')}</label><input id="tx-units" type="number" min="0" step="any" placeholder="0"></div>
+  <div class="tf2" id="tx-upwrap"><div class="tf"><label>${t('txnUnits')}</label><input id="tx-units" type="number" min="0" step="any" placeholder="0"></div>
    <div class="tf"><label>${t('txnPrice')}</label><input id="tx-price" type="number" min="0" step="any" placeholder="0"></div></div>
+  <div class="tf" id="tx-divwrap" style="display:none"><label>${t('divAmount')}</label><input id="tx-div" type="number" min="0" step="any" placeholder="0"></div>
   <button class="btn" id="tx-add" type="button" style="width:100%;justify-content:center;margin-top:4px">${t('txnAdd')}</button>
  </div>
  <div class="m-sec" style="margin-top:18px"><h4>${t('txnHistory')}</h4><div id="tx-list"></div></div></div>`;
  document.getElementById('tx-code').onchange=e=>{document.getElementById('tx-newwrap').style.display=e.target.value==='__NEW__'?'flex':'none';};
+ document.getElementById('tx-action').onchange=e=>{const dv=e.target.value==='dividend';document.getElementById('tx-divwrap').style.display=dv?'flex':'none';document.getElementById('tx-upwrap').style.display=dv?'none':'grid';};
  document.getElementById('tx-newwrap').style.display=document.getElementById('tx-code').value==='__NEW__'?'flex':'none';
  document.getElementById('tx-add').onclick=addTxn;
  renderTxnList();
@@ -2487,7 +2578,7 @@ function renderTxnModal(preCode){
 function renderTxnList(){const el=document.getElementById('tx-list');if(!el)return;
  if(!TXNS.length){el.innerHTML=`<div class="skel">${t('txnEmpty')}</div>`;return;}
  const voided=new Set(TXNS.filter(x=>x.action==='void').map(x=>String(x.voids)));
- el.innerHTML=[...TXNS].sort((a,b)=>((b.date||'').localeCompare(a.date||''))||((b.ts||0)-(a.ts||0))).map(x=>{if(x.action==='void')return`<div class="txn-row"><span class="txn-act">${t('txnVoid')}</span><span class="txn-c">#${escHTML(x.voids)}</span><span class="txn-d">${escHTML(x.date||'')}</span></div>`;const reversed=voided.has(String(x.ts)),act=x.action==='buy'?t('buyWord'):t('sellWord');return`<div class="txn-row"><span class="txn-act ${escAttr(x.action)}">${x.sw?'⇌ ':''}${act}</span><span class="txn-c">${escHTML(x.code)}</span><span class="txn-d">${escHTML(x.date||'')}</span><span class="txn-u">${fmt(+x.units||0,2)} @ ฿${fmt(+x.price||0,4)}</span><button class="txn-del" type="button" data-correct="${escAttr(x.ts)}" ${reversed?'disabled':''}>${reversed?t('txnCorrected'):t('txnCorrect')}</button></div>`;}).join('');
+ el.innerHTML=[...TXNS].sort((a,b)=>((b.date||'').localeCompare(a.date||''))||((b.ts||0)-(a.ts||0))).map(x=>{if(x.action==='void')return`<div class="txn-row"><span class="txn-act">${t('txnVoid')}</span><span class="txn-c">#${escHTML(x.voids)}</span><span class="txn-d">${escHTML(x.date||'')}</span></div>`;const reversed=voided.has(String(x.ts)),act=x.action==='buy'?t('buyWord'):x.action==='dividend'?t('divWord'):t('sellWord');return`<div class="txn-row"><span class="txn-act ${escAttr(x.action)}">${x.sw?'⇌ ':''}${act}</span><span class="txn-c">${escHTML(x.code)}</span><span class="txn-d">${escHTML(x.date||'')}</span><span class="txn-u">${x.action==='dividend'?'฿'+fmt(+x.amount||0,2):fmt(+x.units||0,2)+' @ ฿'+fmt(+x.price||0,4)}</span><button class="txn-del" type="button" data-correct="${escAttr(x.ts)}" ${reversed?'disabled':''}>${reversed?t('txnCorrected'):t('txnCorrect')}</button></div>`;}).join('');
  el.querySelectorAll('[data-correct]').forEach(b=>b.onclick=()=>reverseTxn(b.dataset.correct));
 }
 function reverseTxn(id){const target=TXNS.find(x=>String(x.ts)===String(id));if(!target||target.action==='void')return;let group=[target];if(target.sw){group=TXNS.filter(x=>x.action!=='void'&&x.sw&&((target.swGroup&&x.swGroup===target.swGroup)||(!target.swGroup&&Math.abs((+x.ts||0)-(+target.ts||0))<=2)));}const already=new Set(TXNS.filter(x=>x.action==='void').map(x=>String(x.voids))),now=Date.now(),date=new Date().toISOString().slice(0,10);group.filter(x=>!already.has(String(x.ts))).forEach((x,i)=>TXNS.push({action:'void',voids:x.ts,date,ts:now+i,swGroup:x.swGroup||null}));saveTxns();renderAll();renderTxnList();toast(t('correctedToast'),'ok');}
@@ -2497,9 +2588,10 @@ async function addTxn(){
  if(code==='__NEW__'){code=(document.getElementById('tx-newcode').value||'').trim();if(!code){toast(t('txnEnterCode'),'err');return;}
   txn.name=(document.getElementById('tx-newname').value||'').trim()||code;txn.amc=(document.getElementById('tx-newamc').value||'').trim()||'Other';txn.tax=document.getElementById('tx-newtax').value;txn.asset=document.getElementById('tx-newasset').value;}
  txn.code=code;
- if(!(txn.units>0)||!(txn.price>0)){toast(t('txnInvalid'),'err');return;}
+ if(txn.action==='dividend'){const amt=+((document.getElementById('tx-div')||{}).value||0);if(!(amt>0)){toast(t('txnInvalid'),'err');return;}txn.amount=amt;txn.units=0;txn.price=0;}
+ else if(!(txn.units>0)||!(txn.price>0)){toast(t('txnInvalid'),'err');return;}
  TXNS.push(txn);saveTxns();if(SB&&USER&&txn.action==='buy'){try{const{error}=await SB.from('fund_universe').upsert({code:txn.code},{onConflict:'code'});if(error)console.error('fund universe',error);}catch(e){console.error(e);}}renderAll();renderTxnModal(code);
- toast(`${txn.action==='buy'?t('buyWord'):t('sellWord')} ${code} ${t('txnRecorded')}${NAVDB[code]?'':' · '+t('txnNeedsNav')}`,'ok');
+ toast(`${txn.action==='buy'?t('buyWord'):txn.action==='dividend'?t('divWord'):t('sellWord')} ${code} ${t('txnRecorded')}${NAVDB[code]?'':' · '+t('txnNeedsNav')}`,'ok');
 }
 
 /* ---------- fund switch ---------- */
@@ -2634,6 +2726,8 @@ document.getElementById('promptBtn').onclick=async()=>{
 /* CSV + print */
 document.getElementById('csvBtn').onclick=exportCSV;
 document.getElementById('printBtn').onclick=()=>window.print();
+/* unlock tracker */
+document.getElementById('birthBtn').onclick=setBirth;
 /* language toggle */
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
@@ -2651,7 +2745,7 @@ function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);
 function renderAll(){
  buildHoldings();computeAll();applyFilter();
  safe(buildFilters);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
- safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);
+ safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);safe(renderUnlock);safe(renderConc);
 }
 /* ---------- auth + cloud sync ---------- */
 function _v(id){return (document.getElementById(id)||{}).value||'';}
