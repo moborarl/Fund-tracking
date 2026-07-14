@@ -114,15 +114,16 @@ export default {
 };
 
 async function allCodes(env) {
-  // fund_details has exactly one row per fund; nav_history latest page catches brand-new funds
-  const [r1, r2] = await Promise.all([
+  // three sources: fund_details (one row per synced fund), latest NAV page,
+  // and fund_universe (codes registered by the dashboard on buy/switch/import)
+  const [r1, r2, r3] = await Promise.all([
     sbFetch(env, 'fund_details?select=code'),
     sbFetch(env, 'nav_history?select=code&order=date.desc&limit=1000'),
+    sbFetch(env, 'fund_universe?select=code'),
   ]);
-  if (!r1.ok && !r2.ok) return { error: 'cannot read fund codes' };
+  if (!r1.ok && !r2.ok && !r3.ok) return { error: 'cannot read fund codes' };
   const set = new Set();
-  if (r1.ok) (await r1.json()).forEach(r => set.add(r.code));
-  if (r2.ok) (await r2.json()).forEach(r => set.add(r.code));
+  for (const r of [r1, r2, r3]) { if (r.ok) (await r.json()).forEach(x => set.add(x.code)); }
   return [...set].sort();
 }
 

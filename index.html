@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-6XW6Upu1th588Cl1q4lh8HXnTAv2DFnRUHc4x3DdJiQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-qq5fCWbxNoC82i48whftDicBnKZVbczSyf12dQKEi1w='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2028,7 +2028,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  secUnlock:'Tax-Fund Unlock Schedule',unlockHint:'SSF 10y · ThaiESG/X 5y · RMF age 55 & 5y from first buy · lots from your ledger',
  uhFund:'Fund',uhBuy:'Buy date',uhUnits:'Units',uhUnlock:'Unlock date',uhStatus:'Status',unlockedWord:'✅ Sellable',inDaysWord:'in {d} days',
  setBirth:'🎂 Set birth date (for RMF)',birthPrompt:'Enter your birth date (YYYY-MM-DD) to compute RMF unlock:',needBirth:'set birth date',
- noLots:'No tax-saving lots with known buy dates yet',setDate:'set buy date',buyPrompt:'First purchase date of {c} (YYYY-MM-DD):',editDatePrompt:'Buy date (YYYY-MM-DD):',
+ noLots:'No tax-saving lots with known buy dates yet',setDate:'set buy date',buyPrompt:'First purchase date of {c} (YYYY-MM-DD):',editDatePrompt:'Buy date (YYYY-MM-DD):',noNavList:'No NAV data yet (new funds sync within ~2h; if it persists, check the fund code)',
  secConc:'Look-Through Holdings',concHint:'What your funds actually hold, combined · click a row for detail',chName:'Security',chExp:'Exposure',chPct:'% of port',chVia:'Funds',
  concNote:"Estimated from each fund's top-5 holdings — actual exposure can be higher.",noConcData:'No holdings data yet — fund detail sync fills this automatically',
  editWord:'edit',byLot:'By lot',byFund:'By fund',byYear:'By year',
@@ -2069,7 +2069,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  secUnlock:'กำหนดการปลดล็อกกองทุนลดหย่อนภาษี',unlockHint:'SSF 10 ปี · ThaiESG/X 5 ปี · RMF อายุ 55 และถือครบ 5 ปี · อิงจากบัญชีรายการ',
  uhFund:'กองทุน',uhBuy:'วันที่ซื้อ',uhUnits:'หน่วย',uhUnlock:'วันปลดล็อก',uhStatus:'สถานะ',unlockedWord:'✅ ขายได้แล้ว',inDaysWord:'อีก {d} วัน',
  setBirth:'🎂 ตั้งวันเกิด (สำหรับ RMF)',birthPrompt:'ใส่วันเกิด (YYYY-MM-DD) เพื่อคำนวณวันปลดล็อก RMF:',needBirth:'ตั้งวันเกิดก่อน',
- noLots:'ยังไม่มีล็อตกองทุนลดหย่อนภาษีที่ทราบวันซื้อ',setDate:'ระบุวันซื้อ',buyPrompt:'วันที่ซื้อครั้งแรกของ {c} (YYYY-MM-DD):',editDatePrompt:'วันที่ซื้อ (YYYY-MM-DD):',
+ noLots:'ยังไม่มีล็อตกองทุนลดหย่อนภาษีที่ทราบวันซื้อ',setDate:'ระบุวันซื้อ',buyPrompt:'วันที่ซื้อครั้งแรกของ {c} (YYYY-MM-DD):',editDatePrompt:'วันที่ซื้อ (YYYY-MM-DD):',noNavList:'ยังไม่มีข้อมูล NAV (กองใหม่จะ sync ภายใน ~2 ชม. ถ้าค้างนานให้ตรวจรหัสกอง)',
  secConc:'เจาะดูหลักทรัพย์ที่ถือจริง',concHint:'รวมหลักทรัพย์ที่ทุกกองทุนถืออยู่จริง · คลิกแถวเพื่อดูรายละเอียด',chName:'หลักทรัพย์',chExp:'มูลค่า',chPct:'% ของพอร์ต',chVia:'กองทุน',
  concNote:'ประมาณจาก top-5 holdings ของแต่ละกอง — สัดส่วนจริงอาจสูงกว่านี้',noConcData:'ยังไม่มีข้อมูลหลักทรัพย์ — ระบบเติมให้อัตโนมัติหลัง sync รายละเอียดกองทุน',
  editWord:'แก้ไข',byLot:'รายล็อต',byFund:'รายกองทุน',byYear:'รายปี',
@@ -2157,6 +2157,9 @@ function renderHeader(){
 function renderConfidence(){
  const coverage=document.getElementById('confCoverage'),range=document.getElementById('confRange'),stale=document.getElementById('confStale');if(!coverage)return;
  coverage.textContent=`${T.covered||0}/${T.total_active||0}`;
+ coverage.parentElement.style.cursor='pointer';
+ coverage.parentElement.onclick=()=>{const miss=Object.entries(HOLDINGS).filter(([c,h])=>h.units>1e-8&&(!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length)).map(([c])=>c);
+  toast(miss.length?('⚠️ '+t('noNavList')+': '+escHTML(miss.join(', '))):t('confFresh'),miss.length?'err':'ok');};
  range.textContent=T.as_of?(T.oldest_as_of&&T.oldest_as_of!==T.as_of?`${fmtD(T.oldest_as_of)} – ${fmtD(T.as_of)}`:fmtD(T.as_of)):'—';
  stale.textContent=T.stale?String(T.stale):t('confFresh');
  document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
@@ -2812,7 +2815,7 @@ document.querySelectorAll('#unlockModes button').forEach(b=>{
 document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
 document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
-function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];delete h._verify;h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;if(Array.isArray(h.lots)){h.lots=h.lots.filter(L=>L&&L.date&&+L.units>0).map(L=>({date:String(L.date),units:+L.units,cost:+L.cost||0}));if(h.lots.length&&!h.firstBuy)h.firstBuy=h.lots.map(L=>L.date).sort()[0];if(!h.lots.length)delete h.lots;}else delete h.lots;}let merged=o;if(Object.keys(HOLDINGS_BASE).length&&confirm(t('mergeAsk'))){merged={...HOLDINGS_BASE};for(const c in o)merged[c]=o[c];}HOLDINGS_BASE=merged;persist();renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
+function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];delete h._verify;h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;if(Array.isArray(h.lots)){h.lots=h.lots.filter(L=>L&&L.date&&+L.units>0).map(L=>({date:String(L.date),units:+L.units,cost:+L.cost||0}));if(h.lots.length&&!h.firstBuy)h.firstBuy=h.lots.map(L=>L.date).sort()[0];if(!h.lots.length)delete h.lots;}else delete h.lots;}let merged=o;if(Object.keys(HOLDINGS_BASE).length&&confirm(t('mergeAsk'))){merged={...HOLDINGS_BASE};for(const c in o)merged[c]=o[c];}HOLDINGS_BASE=merged;persist();if(SB&&USER){try{SB.from('fund_universe').upsert(Object.keys(o).map(c=>({code:c})),{onConflict:'code'}).then(({error})=>{if(error)console.error('fund universe',error);});}catch(e){console.error(e);}}renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
 document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
