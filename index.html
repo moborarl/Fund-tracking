@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-tFaKEh8P9PsafkYdhcgtkcKlkuR72VnS0ti5nzZWRlo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-6XW6Upu1th588Cl1q4lh8HXnTAv2DFnRUHc4x3DdJiQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2028,7 +2028,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  secUnlock:'Tax-Fund Unlock Schedule',unlockHint:'SSF 10y · ThaiESG/X 5y · RMF age 55 & 5y from first buy · lots from your ledger',
  uhFund:'Fund',uhBuy:'Buy date',uhUnits:'Units',uhUnlock:'Unlock date',uhStatus:'Status',unlockedWord:'✅ Sellable',inDaysWord:'in {d} days',
  setBirth:'🎂 Set birth date (for RMF)',birthPrompt:'Enter your birth date (YYYY-MM-DD) to compute RMF unlock:',needBirth:'set birth date',
- noLots:'No tax-saving lots with known buy dates yet',setDate:'set buy date',buyPrompt:'First purchase date of {c} (YYYY-MM-DD):',
+ noLots:'No tax-saving lots with known buy dates yet',setDate:'set buy date',buyPrompt:'First purchase date of {c} (YYYY-MM-DD):',editDatePrompt:'Buy date (YYYY-MM-DD):',
  secConc:'Look-Through Holdings',concHint:'What your funds actually hold, combined · click a row for detail',chName:'Security',chExp:'Exposure',chPct:'% of port',chVia:'Funds',
  concNote:"Estimated from each fund's top-5 holdings — actual exposure can be higher.",noConcData:'No holdings data yet — fund detail sync fills this automatically',
  editWord:'edit',byLot:'By lot',byFund:'By fund',byYear:'By year',
@@ -2069,7 +2069,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  secUnlock:'กำหนดการปลดล็อกกองทุนลดหย่อนภาษี',unlockHint:'SSF 10 ปี · ThaiESG/X 5 ปี · RMF อายุ 55 และถือครบ 5 ปี · อิงจากบัญชีรายการ',
  uhFund:'กองทุน',uhBuy:'วันที่ซื้อ',uhUnits:'หน่วย',uhUnlock:'วันปลดล็อก',uhStatus:'สถานะ',unlockedWord:'✅ ขายได้แล้ว',inDaysWord:'อีก {d} วัน',
  setBirth:'🎂 ตั้งวันเกิด (สำหรับ RMF)',birthPrompt:'ใส่วันเกิด (YYYY-MM-DD) เพื่อคำนวณวันปลดล็อก RMF:',needBirth:'ตั้งวันเกิดก่อน',
- noLots:'ยังไม่มีล็อตกองทุนลดหย่อนภาษีที่ทราบวันซื้อ',setDate:'ระบุวันซื้อ',buyPrompt:'วันที่ซื้อครั้งแรกของ {c} (YYYY-MM-DD):',
+ noLots:'ยังไม่มีล็อตกองทุนลดหย่อนภาษีที่ทราบวันซื้อ',setDate:'ระบุวันซื้อ',buyPrompt:'วันที่ซื้อครั้งแรกของ {c} (YYYY-MM-DD):',editDatePrompt:'วันที่ซื้อ (YYYY-MM-DD):',
  secConc:'เจาะดูหลักทรัพย์ที่ถือจริง',concHint:'รวมหลักทรัพย์ที่ทุกกองทุนถืออยู่จริง · คลิกแถวเพื่อดูรายละเอียด',chName:'หลักทรัพย์',chExp:'มูลค่า',chPct:'% ของพอร์ต',chVia:'กองทุน',
  concNote:'ประมาณจาก top-5 holdings ของแต่ละกอง — สัดส่วนจริงอาจสูงกว่านี้',noConcData:'ยังไม่มีข้อมูลหลักทรัพย์ — ระบบเติมให้อัตโนมัติหลัง sync รายละเอียดกองทุน',
  editWord:'แก้ไข',byLot:'รายล็อต',byFund:'รายกองทุน',byYear:'รายปี',
@@ -2104,6 +2104,10 @@ function computeAll(){
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
   if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
    if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
+  if(!h.amc||h.amc==='Other'){const det=DETAILS[code]||DETCACHE[code];const am=det&&det.amc?String(det.amc):'';
+   if(am){const up=am.toUpperCase();
+    h.amc=up.indexOf('KKP')>=0?'KKP':up.indexOf('SCB')>=0?'SCB':up.indexOf('BBL')>=0?'Bualuang':up.indexOf('UOB')>=0?'UOB':(up.indexOf('KASSET')>=0||up.indexOf('KASIKORN')>=0)?'K-Fund':(up.indexOf('EASTSPRING')>=0||up.indexOf('TMB')>=0)?'Eastspring':up.indexOf('LH')>=0?'LH Fund':up.indexOf('ONE')>=0?'ONE':am;}}
+  if(h.name===code){const det=DETAILS[code]||DETCACHE[code];/* keep code as name; nothing else needed */}
   const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
   const last=vs[vs.length-1],prev=vs[vs.length-2]||last,ld=ds[ds.length-1];
   const rv=n=>refLE(ds,vs,daysBefore(ld,n));
@@ -2415,10 +2419,10 @@ function unlockLots(){
  const taxOf=c=>(HOLDINGS[c]&&HOLDINGS[c].tax)||(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].tax)||'General';
  const birth=localStorage.getItem('kkp_birth')||'';
  const rows=[];
- effectiveTxns().forEach(x=>{if(x.action!=='buy')return;const tax=taxOf(x.code);if(!TAXES.has(tax))return;rows.push({code:x.code,tax,date:x.date||'',units:+x.units||0});});
+ effectiveTxns().forEach(x=>{if(x.action!=='buy')return;const tax=taxOf(x.code);if(!TAXES.has(tax))return;rows.push({code:x.code,tax,date:x.date||'',units:+x.units||0,src:'tx',id:String(x.ts)});});
  for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(!(+h.units>0))continue;const tax=h.tax&&TAXES.has(h.tax)?h.tax:taxOf(c);if(!TAXES.has(tax))continue;
-  if(Array.isArray(h.lots)&&h.lots.length){h.lots.forEach(L=>rows.push({code:c,tax,date:L.date,units:+L.units||0,base:true}));}
-  else rows.push({code:c,tax,date:h.firstBuy||'',units:+h.units||0,base:true});}
+  if(Array.isArray(h.lots)&&h.lots.length){h.lots.forEach((L,li)=>rows.push({code:c,tax,date:L.date,units:+L.units||0,base:true,src:'lot',id:c+'|'+li}));}
+  else rows.push({code:c,tax,date:h.firstBuy||'',units:+h.units||0,base:true,src:'base',id:c});}
  rows.forEach(r=>{r.unlock=r.date?unlockDate(r.tax,r.date,birth):null;});
  return rows;
 }
@@ -2473,9 +2477,18 @@ function renderUnlock(){
  }else{
   th.innerHTML=H([t('uhFund'),t('uhBuy'),t('uhUnits'),t('uhUnlock'),t('uhStatus')]);
   const sorted=[...rows].sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
-  tb.innerHTML=sorted.map(r=>`<tr><td>${escHTML(r.code)} <span class="tag ${escAttr(r.tax)}">${escHTML(r.tax)}</span></td><td>${r.date?escHTML(fmtDY(r.date)):'—'}</td><td>${fmt(r.units,2)}</td><td>${r.unlock?escHTML(fmtDY(r.unlock)):'—'}</td><td>${statusOf(r)}</td></tr>`).join('');
+  tb.innerHTML=sorted.map(r=>`<tr><td>${escHTML(r.code)} <span class="tag ${escAttr(r.tax)}">${escHTML(r.tax)}</span></td><td>${r.date?escHTML(fmtDY(r.date)):'—'}</td><td>${fmt(r.units,2)}</td><td>${r.unlock?escHTML(fmtDY(r.unlock)):'—'}</td><td>${statusOf(r)}${r.date?` <button type="button" class="txn-del" title="edit date" data-editlot="${escAttr(r.src+':'+r.id)}" data-cur="${escAttr(r.date)}">✎</button>`:''}</td></tr>`).join('');
  }
  tb.querySelectorAll('[data-setbuy]').forEach(b=>b.onclick=()=>{const c=b.dataset.setbuy;const v=prompt(t('buyPrompt').replace('{c}',c),'2024-01-01');if(v&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&HOLDINGS_BASE[c]){HOLDINGS_BASE[c].firstBuy=v;persist();renderUnlock();}});
+ tb.querySelectorAll('[data-editlot]').forEach(b=>b.onclick=()=>{
+  const raw=b.dataset.editlot,ci=raw.indexOf(':'),src=raw.slice(0,ci),id=raw.slice(ci+1);
+  const v=prompt(t('editDatePrompt'),b.dataset.cur||'2024-01-01');
+  if(!v||!/^\d{4}-\d{2}-\d{2}$/.test(v))return;
+  if(src==='tx'){const x=TXNS.find(q=>String(q.ts)===id);if(x){x.date=v;saveTxns();renderAll();}}
+  else if(src==='lot'){const pi=id.lastIndexOf('|'),c=id.slice(0,pi),k=+id.slice(pi+1);const h=HOLDINGS_BASE[c];
+   if(h&&Array.isArray(h.lots)&&h.lots[k]){h.lots[k].date=v;h.firstBuy=h.lots.map(L=>L.date).sort()[0];persist();renderAll();}}
+  else{const h=HOLDINGS_BASE[id];if(h){h.firstBuy=v;persist();renderAll();}}
+ });
  tb.querySelectorAll('[data-birth]').forEach(b=>b.onclick=setBirth);
 }
 
