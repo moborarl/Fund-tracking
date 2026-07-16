@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-8hfvDJ+WUDKGA+++jwKDvMMloWXbZ8DFzu2G4rpJlXo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-4qxzxqBIXyVxqsrK+fvZVQtY9DR1+tYZZi7g6EUtgkk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2242,7 +2242,16 @@ function applyFilter(){
  const S=k=>F.reduce((s,f)=>s+f[k],0);
  T={value:S('value'),cost:S('cost'),unreal:S('unreal'),realized:S('realized')};
  T.unreal_pct=T.cost?T.unreal/T.cost*100:0;T.chg={};T.pct={};
- for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);const base=T.value-T.chg[k];T.pct[k]=base?T.chg[k]/base*100:0;}
+ // Range changes use the same calendar basis as the history chart:
+ // portfolio value on the latest valued date minus value n days earlier
+ // (per-fund NAVs carried forward), so headline and chart always agree.
+ const psH=portfolioSeries();
+ if(psH.length>1){
+  const dsP=psH.map(x=>x.date),vsP=psH.map(x=>x.value),lastD=dsP[dsP.length-1],lastV=vsP[vsP.length-1];
+  for(const k in RANGES){const ref=refLE(dsP,vsP,daysBefore(lastD,RANGES[k].d));T.chg[k]=lastV-ref;T.pct[k]=ref?T.chg[k]/ref*100:0;}
+ }else{
+  for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);const base=T.value-T.chg[k];T.pct[k]=base?T.chg[k]/base*100:0;}
+ }
  T.as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
  const active=F.filter(f=>f.units>1e-8&&f.value!==0);const eligible=Object.values(HOLDINGS).filter(h=>h.units>1e-8&&(filterAMC.size===0||filterAMC.has(h.amc))&&(filterTax.size===0||filterTax.has(h.tax)));
  T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3).length;
