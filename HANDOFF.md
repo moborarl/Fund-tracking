@@ -1,7 +1,14 @@
 # 🚀 Fund Tracking Dashboard — Project Handoff
 
 **Project:** Multi-AMC Portfolio Monitor (v2.x)
-**Last Updated:** 2026-07-13
+**Last Updated:** 2026-07-14
+
+> ⚠️ **RULE FOR ANY EDIT TO index.html:** the page ships a CSP that pins a
+> sha256 hash of the inline script. After ANY change run
+> `node scripts/update-csp.mjs` then `node scripts/check.mjs` before
+> committing — otherwise the browser blocks ALL JavaScript on the live site
+> (buttons dead, no data). CI (`.github/workflows/check.yml`) fails the build
+> if the hash is stale or i18n keys are missing in either language.
 **Live:** https://fundtracking.yourpower.today/
 **Repo:** https://github.com/moborarl/Fund-tracking (branch `main`, auto-deploys via Cloudflare Pages)
 
@@ -67,6 +74,41 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 - Responsive mobile action menu; keyboard-operable fund rows, focus-trapped
   dialogs, accessible labels, and escaped external/imported strings
 - Auth: email/password + **Google OAuth** (Supabase provider)
+- Dividend ledger entries (amount in THB) → realized P/L and TWR/XIRR flows
+- Tax-Fund Unlock Schedule: SSF 10y, ThaiESG/X 5y, RMF (age 55 & 5y; birth
+  date stored locally as `kkp_birth`); views By lot / By fund / By year
+  (Thai UI shows Buddhist years); every dated lot has a ✎ edit button
+- Look-Through Holdings: aggregates each fund's top-5 into real security
+  exposure; click a row to expand contributing funds (% in fund, ฿)
+- TWR vs Benchmark (alpha) card in Risk section when a benchmark is set
+- Valuation-coverage chip is clickable → lists funds that have no NAV yet
+- Mobile: holdings table collapses to labeled cards under 680 px; loading
+  skeleton shimmer replaces blank hero values
+
+## Portfolio import (holdings.json)
+
+Per-fund schema (all fields except `units`/`avg` optional):
+
+```json
+"FUND CODE": { "units": 1234.5678, "avg": 10.5, "realized": 0,
+               "tax": "ThaiESGX",
+               "lots": [ { "date": "2022-12-31", "units": 500, "cost": 5000 } ] }
+```
+
+- Fund code must match Finnomena's short code exactly. `tax`/`amc`/`name`
+  auto-fill from `fund_details` when omitted (explicit values win).
+- **Merge dialog:** OK = update/add only funds in the file · Cancel = replace all.
+- **`"units": 0` deletes the fund** from the portfolio (both modes).
+- Import stamps `asof` (import date) per fund; **ledger transactions dated on
+  or before `asof` are "absorbed"** — not re-applied to units/cost/TWR/unlock
+  (prevents double counting with statement balances). They stay visible in
+  history, dimmed, labeled "included in imported balance".
+- Import registers all codes in `fund_universe` so the Worker starts syncing
+  new funds (full coverage within ~2 h).
+- "📋 Copy AI import prompt" button (page footer) produces an OCR prompt that
+  converts statement screenshots into this schema, incl. per-year lots.
+- `holdings_update.json` in the repo = the user's verified full portfolio
+  (2026-07-14, cross-checked 59/59 units against AMC statements).
 
 ## Auth / accounts
 
@@ -85,6 +127,9 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 - Syncs NAV (range 1M) + full details incl. actual fees (mgmtA/terA parsed
   from the Thai `/fee` endpoint descriptions).
 - Details stored only when the main info endpoint succeeds (no partial cache).
+- Fund-code sources (`allCodes`): `fund_details` ∪ latest `nav_history` page
+  ∪ `fund_universe` (registered by the dashboard on buy/switch/import) —
+  without the last one, newly imported funds never enter the sync loop.
 - Secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (dedicated `sb_secret_...`
   key named `fund_nav_sync_v2`), and
   `SYNC_TOKEN` (manual endpoint bearer token) — Worker secrets only.
@@ -102,7 +147,10 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 
 - localStorage keys: `kkp_navdb_v2` (NAV), `kkp_funddet_v2` (details),
   `kkp_txns_v1` (ledger), `kkp_holdings`, `kkp_lang`, `kkp_histtf`,
-  `kkp_bench`, `kkp_proxy` (override proxy URL), `kkp_lastNavFetch`.
+  `kkp_bench`, `kkp_proxy` (override proxy URL), `kkp_lastNavFetch`,
+  `kkp_birth` (RMF unlock), `kkp_unlockmode` (lot/fund/year view).
+- Cloud persistence: `portfolios.holdings` keeps `lots`, `firstBuy`, `asof`
+  per fund — purchase dates follow the account across devices.
 - Client refetches a fund's details if cached entry is incomplete
   (missing category / mgmtA) — fixes stuck “—” fields.
 - Risk level falls back to parsing `risk_spectrum` when `risk_level` is null
@@ -149,3 +197,14 @@ HANDOFF.md                 this file
 - `87edcec` worker: fund-details sync, free-plan slice rotation
 - `dcc7a6e` fix incomplete detail caching + risk_spectrum fallback
 - `675b0e4` Google sign-in (Supabase OAuth)
+- `769548e`/`c158002` (Codex) ledger-adjusted TWR/XIRR, void corrections,
+  switch fee, Worker auth token + CSP + origin allow-list, api.yourpower.today
+- `c7c62a7` dividend txns, unlock schedule, look-through, alpha card,
+  mobile cards, skeleton, CI (scripts/check.mjs + GitHub Action)
+- `8e9872f` fix CSP hash blocking all JS + scripts/update-csp.mjs
+- `dbc80e3` unlock views (lot/fund/year), look-through drill-down
+- `327a05b`/`39ebadd` import merge option, per-year lots schema
+- `3076046` AMC auto-fill from fund details, per-lot date editing
+- `d068ead` fund_universe as Worker code source (new imports sync)
+- `435906b`/`0f36a42` units:0 deletes fund; asof absorbs pre-import ledger
+  txns (double-counting fix)
