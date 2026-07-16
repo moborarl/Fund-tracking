@@ -1,7 +1,7 @@
 # 🚀 Fund Tracking Dashboard — Project Handoff
 
 **Project:** Multi-AMC Portfolio Monitor (v2.x)
-**Last Updated:** 2026-07-14
+**Last Updated:** 2026-07-16
 
 > ⚠️ **RULE FOR ANY EDIT TO index.html:** the page ships a CSP that pins a
 > sha256 hash of the inline script. After ANY change run
@@ -55,6 +55,13 @@ Finnomena API ──► Cloudflare Worker "fund-nav-sync" (cron every 15 min)
 | `fund.yourpower.today` | legacy — old Worker `yourpower-fund` (old dashboard); safe to retire |
 
 ## Features (v2.x)
+
+- Visual system: "Ink, Brass, and Signal" — institutional graphite/ink
+  workspace, restrained brass focus color, semantic gain/loss/attention
+  signals, desktop operations rail, softly rounded analytical surfaces, and
+  recomposed mobile layouts. Filters remain in normal document flow to avoid
+  overlapping content. The visual layer preserves the existing DOM behavior
+  and portfolio calculations.
 
 - TH/EN language switch (persisted), including dynamic modals/status/error copy
 - Historical comparison chart: ledger-adjusted Value / TWR / NAV modes,
