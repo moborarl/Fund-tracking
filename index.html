@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-4qxzxqBIXyVxqsrK+fvZVQtY9DR1+tYZZi7g6EUtgkk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-s61xB6I4t+wDvtYyhpAqTC4+z0y4EYJvkwcqj+AIzXU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,6 +37,7 @@ header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);backgroun
 .toast.show{transform:translateX(-50%) translateY(0)}.toast.err{border-color:var(--neg)}.toast.ok{border-color:var(--pos)}
 /* filter bar */
 .filterbar{margin-top:18px;background:#101a2c;border:1px solid var(--line2);border-radius:14px;padding:13px 16px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;box-shadow:0 12px 32px rgba(0,0,0,.65);position:sticky;top:66px;z-index:45}
+.filterbar.stuck{border-radius:0;border-left:none;border-right:none;margin-left:-22px;margin-right:-22px;padding-left:22px;padding-right:22px;box-shadow:0 16px 34px rgba(0,0,0,.7)}
 .fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fgroup .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);font-weight:700;margin-right:2px}
 .fchip{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer;border:1px solid var(--line2);background:var(--panel2);color:var(--muted);transition:.12s;user-select:none}
@@ -342,6 +343,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 
 <div class="wrap">
  <!-- FILTER BAR -->
+ <div id="fbSentinel" aria-hidden="true"></div>
  <div class="filterbar">
   <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
   <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
@@ -2949,8 +2951,13 @@ document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importH
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
 document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-bg.show');if(e.key==='Escape'&&bg){hideDialog(bg.id);return;}const fund=e.target.closest&&e.target.closest('[data-fund]');if(fund&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFund(fund.dataset.fund);return;}if(e.key==='Tab'&&bg){const focusable=[...bg.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(!focusable.length){e.preventDefault();return;}const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 /* keep filter bar pinned right below the header */
-(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.filterbar');
- if(hdr&&fb){const adj=()=>{fb.style.top=(hdr.offsetHeight+6)+'px';};adj();window.addEventListener('resize',adj);}})();
+(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.filterbar'),sent=document.getElementById('fbSentinel');
+ if(!hdr||!fb)return;
+ const adj=()=>{fb.style.top=(hdr.offsetHeight-1)+'px';};adj();window.addEventListener('resize',adj);
+ if(sent&&'IntersectionObserver' in window){
+  new IntersectionObserver(es=>{fb.classList.toggle('stuck',!es[0].isIntersecting);},
+   {rootMargin:'-'+(hdr.offsetHeight+2)+'px 0px 0px 0px',threshold:0}).observe(sent);
+ }})();
 
 function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);}}
 function renderAll(){
