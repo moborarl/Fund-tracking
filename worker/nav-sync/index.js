@@ -179,8 +179,8 @@ async function syncSlice(env, sliceIdx) {
   const codes = await allCodes(env);
   if (codes.error) return codes;
   const nSlices = Math.max(1, Math.ceil(codes.length / SLICE_SIZE));
-  // Stateless rotation: slice advances every 15 minutes
-  if (sliceIdx === null || isNaN(sliceIdx)) sliceIdx = Math.floor(Date.now() / 900000) % nSlices;
+  // Stateless rotation: slice advances every hour (matches cron cadence -> full refresh every nSlices hours)
+  if (sliceIdx === null || isNaN(sliceIdx)) sliceIdx = Math.floor(Date.now() / 3600000) % nSlices;
   if (!Number.isInteger(sliceIdx) || sliceIdx < 0 || sliceIdx >= nSlices) return { error: 'slice out of range', slice: sliceIdx, of: nSlices };
   const slice = codes.slice(sliceIdx * SLICE_SIZE, (sliceIdx + 1) * SLICE_SIZE);
 

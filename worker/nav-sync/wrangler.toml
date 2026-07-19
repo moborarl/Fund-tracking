@@ -8,6 +8,6 @@ routes = [{ pattern = "api.yourpower.today", custom_domain = true }]
 enabled = true
 head_sampling_rate = 1
 
-# Rotating slice sync every 15 min (all funds fully refreshed ~every 2h)
+# Rotating slice sync hourly (one slice/hour; all funds fully refreshed every nSlices hours)
 [triggers]
-crons = ["*/15 * * * *"]
+crons = ["0 * * * *"]
