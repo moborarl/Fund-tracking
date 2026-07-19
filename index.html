@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-o7+wa1JJ11hFEILuer21WhQH4fcwdU4H/4q5w32evt0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-+FAclM9NBGOjmSqU6T0C6uDvVN54x1Qh80oZeSiltVw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2996,10 +2996,25 @@ if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=d
 
 async function loadMarket(){ if(!sbReady())return; try{
  const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...TXNS.map(x=>x.code).filter(Boolean),...(BENCH?[BENCH]:[])])];if(!codes.length){renderAll();return;}
- let nv=[];for(let from=0;;from+=1000){const r1=await SB.from('nav_history').select('code,date,nav').in('code',codes).range(from,from+999);if(r1.error||!r1.data)break;nv=nv.concat(r1.data);if(r1.data.length<1000)break;}
- if(nv&&nv.length){const m={};nv.forEach(r=>{(m[r.code]=m[r.code]||{})[r.date]=r.nav;});for(const c in m){NAVDB[c]=NAVDB[c]||{navs:{}};Object.assign(NAVDB[c].navs,m[c]);}}
- const r2=await SB.from('fund_details').select('code,data').in('code',codes); const fd=r2.data;
- if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});}
+ // seed persisted Supabase fund_details so first render has data without re-fetching
+ try{const _sd=JSON.parse(localStorage.getItem('kkp_sbdet_v1')||'{}');for(const c in _sd)if(!DETAILS[c])DETAILS[c]=_sd[c];}catch(e){}
+ // NAV history: incremental. New codes get a full pull; already-cached codes only pull dates newer than what we hold (cuts Supabase egress ~99% on repeat loads).
+ const haveNav=c=>NAVDB[c]&&NAVDB[c].navs&&Object.keys(NAVDB[c].navs).length;
+ const freshCodes=codes.filter(c=>!haveNav(c)), knownCodes=codes.filter(haveNav);
+ let sinceDate='';if(knownCodes.length)sinceDate=knownCodes.map(c=>{let mx='';for(const d in NAVDB[c].navs)if(d>mx)mx=d;return mx;}).sort()[0];
+ const pullNav=async(list,gt)=>{let out=[];for(let from=0;;from+=1000){let q=SB.from('nav_history').select('code,date,nav').in('code',list);if(gt)q=q.gt('date',gt);const r=await q.range(from,from+999);if(r.error||!r.data)break;out=out.concat(r.data);if(r.data.length<1000)break;}return out;};
+ let nv=[];
+ if(freshCodes.length)nv=nv.concat(await pullNav(freshCodes,''));
+ if(knownCodes.length&&sinceDate)nv=nv.concat(await pullNav(knownCodes,sinceDate));
+ if(nv&&nv.length){const m={};nv.forEach(r=>{(m[r.code]=m[r.code]||{})[r.date]=r.nav;});for(const c in m){NAVDB[c]=NAVDB[c]||{navs:{}};Object.assign(NAVDB[c].navs,m[c]);}
+  try{const st={};for(const c in NAVDB)st[c]={navs:NAVDB[c].navs};localStorage.setItem(LS_NAV,JSON.stringify(st));}catch(e){}}
+ // fund_details: large JSON blobs that change rarely -> always fetch codes we're missing, otherwise refresh at most once/day.
+ const missDet=codes.filter(c=>!DETAILS[c]);
+ const detAge=Date.now()-parseInt(localStorage.getItem('kkp_sbdetFetch')||'0');
+ const needDet=missDet.length?missDet:(detAge>20*3600*1000?codes:[]);
+ if(needDet.length){const r2=await SB.from('fund_details').select('code,data').in('code',needDet); const fd=r2.data;
+  if(fd&&fd.length){fd.forEach(r=>{DETAILS[r.code]=r.data;});
+   try{localStorage.setItem('kkp_sbdet_v1',JSON.stringify(DETAILS));localStorage.setItem('kkp_sbdetFetch',Date.now().toString());}catch(e){}}}
  renderAll();
 }catch(e){console.error('market load',e);} }
 
