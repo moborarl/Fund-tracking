@@ -268,7 +268,8 @@ A period of length *n* compares `asOf` against the **last available portfolio
 valuation on or before `asOf − n calendar days`** — the existing `refLE` +
 `daysBefore` behaviour at `index.html:2227`. This makes weekends, Thai public
 holidays, differing AMC calendars, and stale funds all resolve the same way: the last
-real valuation before the boundary, never an interpolated or skipped one. `1D` is
+available portfolio valuation before the boundary — which may itself rest on an
+execution observation — never an interpolated or skipped one. `1D` is
 therefore "versus the previous available valuation", not "versus yesterday".
 
 `YTD` anchors to 1 January of `asOf`'s year. `MAX` runs from the reliable-history start
@@ -299,8 +300,27 @@ On load, a stored `CUSTOM` whose bounds are missing or invalid falls back to `MA
 
 ## 3 · Holdings table
 
-The eight existing columns stay: Fund · NAV · Units · Market value · Weight ·
-Change (selected period) · Unrealized · Realized.
+The eight columns stay, with the second renamed: Fund · **Valuation price** · Units ·
+Market value · Weight · Change (selected period) · Unrealized · Realized.
+
+- **The NAV column becomes a valuation-price cell.** Market value is now
+  `effectivePrice × units` (§2), so a cell showing only the published NAV would break
+  the reconciliation every portfolio reader performs by eye: after a purchase newer
+  than the last NAV, the row would read `฿10 × 100 = ฿1,100`. The cell therefore shows
+  the price actually used:
+
+  | Line | Content |
+  |---|---|
+  | Primary | the price used in the market-value calculation |
+  | Beside it | a source badge, `NAV` or `ราคาจากรายการ` / `Execution`, plus that observation's date |
+  | Secondary, only when execution-derived | the latest published NAV and its date, dimmed |
+
+  For the common case — price source is a published NAV — this is what the column
+  already shows, plus the date it already carries. The badge only earns its space when
+  the two sources differ. `NAV × units = market value` then holds on every row.
+
+  The column header reads `ราคาที่ใช้ตีมูลค่า` / `Valuation price`. Sorting on it sorts
+  by the valuation price.
 
 - **Sparkline** in the Change column, over the same window as the global timeframe.
 - **Sortable headers.** Each sortable `<th>` contains a real `<button>`; the `<th>`
@@ -310,14 +330,32 @@ Change (selected period) · Unrealized · Realized.
 - **Inline disclosure replaces the fund detail modal.** The row stays a plain `<tr>`;
   the Fund cell holds a real `<button>` with `aria-expanded` and `aria-controls`.
   Activating it inserts a sibling `<tr><td colspan="8">` containing a
-  `role="region"` labelled by the fund's name heading, with: NAV and its price date,
-  average cost, actual collected fees (management fee and TER), the fund's top-5
-  holdings, and Buy / Sell / Switch buttons scoped to that fund. One row open at a
-  time. The modal markup and handler are removed once the panel reaches parity.
+  `role="region"` labelled by the fund's name heading, with: the valuation price with
+  its source and date, the latest published NAV with its date, average cost, actual
+  collected fees (management fee and TER), the fund's top-5 holdings, and
+  Buy / Sell / Switch buttons scoped to that fund. One row open at a time. The modal
+  markup and handler are removed once the panel reaches parity.
 - **Row height 54–56 px → 44 px** (header row stays 36 px), showing roughly 14 funds
   per screen instead of 8.
-- Funds without a NAV get an explicit `ไม่มีราคา` / `No price` badge rather than
-  dimmed text.
+- Funds with no price from either source get an explicit `ไม่มีราคา` / `No price` badge
+  rather than dimmed text.
+
+**CSV export must reconcile too.** `exportCSV()` (`index.html:2656`) currently emits
+`NAV` and `NAV Date`, which after this change would no longer multiply out to the
+`Market Value` column in the same row. Those two columns become five:
+
+| Column | Content |
+|---|---|
+| `Valuation Price` | the price used for `Market Value` |
+| `Price Source` | `NAV` or `Execution` |
+| `Price Date` | that observation's date |
+| `Published NAV` | latest published NAV, blank if none |
+| `Published NAV Date` | its date, blank if none |
+
+`Valuation Price × Units = Market Value` then holds in the spreadsheet. Column order,
+the UTF-8 BOM for Thai Excel, and the filter- and sort-aware row set are unchanged.
+The print stylesheet shows the valuation price and its source badge; it omits the
+secondary published-NAV line to save rows.
 
 Escaping of external and imported strings must survive the change — the disclosure
 panel renders fund names, AMC names, and top-holding names from Finnomena data.
@@ -487,11 +525,10 @@ numerator twice.
 price-bearing execution on that date — buys, sells and switch legs alike — so the price
 is deterministic regardless of ledger insertion order.
 
-**The synthetic price is never presented as market data.** The holdings table's NAV
-column keeps showing the real NAV with its own price date and staleness badge, and the
-`confRange` / `confStale` chips keep describing real NAVs only. An execution price can
-set `asOf` and can value a position (§2), but it is always distinguishable from a
-published NAV in the interface, and it is never written into `NAVDB`.
+**The synthetic price is never presented as market data, but it is never hidden
+either.** `confRange` and `confStale` keep describing published NAVs only, and the
+execution price is never written into `NAVDB`. What it must not do is disappear from
+the row whose value it produced — see the valuation-price cell in §3.
 `buildHoldings()` (`index.html:2096`) already seeds `NAVDB` from a transaction price
 for funds with no stored NAV at all, and that value reaches the `LS_NAV` cache — a
 synthetic price masquerading as market data. The engine must not add a second such
@@ -671,7 +708,10 @@ Run against the real 62-fund portfolio at 320, 390, 768, 1024, and 1400 px:
 - No horizontal overflow; sticky offsets correct at every width in both TH and EN
   (Thai labels are the wrapping risk).
 - A ledger entry dated after the latest NAV: the header date advances, carries its
-  `from execution` marker, and `confRange` still shows the earlier real-NAV date.
+  `from execution` marker, `confRange` still shows the earlier real-NAV date, and that
+  fund's row reconciles — valuation price × units equals its market value, with the
+  `Execution` badge and the published NAV shown beneath. The exported CSV reconciles
+  the same way when opened in Excel with Thai text intact.
 - The command bar's collapse table holds at every width: filter and timeframe triggers
   show their active selection, and the timeframe never disappears.
 - Keyboard-only pass: tab bar arrow navigation, sort buttons, row disclosure, filter
@@ -710,6 +750,11 @@ Reordered so nothing surfaces a known-bad number.
    - for a portfolio whose snapshot funds lack `asof` — the state of the repo's own
      `holdings.json` — period-derived values are replaced by `noData` and the
      "ตั้งวันเริ่มพอร์ต" action appears in the hero.
+
+   Because `asOf` moves in this phase, the valuation-price cell and the five CSV price
+   columns from §3 ship here too, in their plain form on the existing table. Phase 2
+   restyles them and adds the published-NAV line to the disclosure panel. Shipping
+   them later would leave a phase where `NAV × units` no longer equals market value.
 1. **Structure** — command bar, portfolio header with scope and freshness chips, tab
    shell with full keyboard support, remove the left rail, single global timeframe with
    its persistence and resolved-comparison-date label.
