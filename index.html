@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-+FAclM9NBGOjmSqU6T0C6uDvVN54x1Qh80oZeSiltVw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Z9F2zJZ+pUSeLYJCRD4aj2AVEoXv0P62/BS36FgF6BM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2081,11 +2081,6 @@ let SB=null, USER=null, _saveT=null;
 function persist(){ try{localStorage.setItem('kkp_holdings',JSON.stringify(HOLDINGS_BASE));localStorage.setItem(LS_TXN,JSON.stringify(TXNS));}catch(e){} if(SB&&USER){clearTimeout(_saveT);_saveT=setTimeout(saveCloud,800);} }
 async function saveCloud(){ if(!SB||!USER)return; try{const{error}=await SB.from('portfolios').upsert({user_id:USER.id,holdings:HOLDINGS_BASE,transactions:TXNS,updated_at:new Date().toISOString()});if(error)console.error('cloud save',error);}catch(e){console.error(e);} }
 function saveTxns(){persist();}
-function txAbsorbed(x){const h=HOLDINGS_BASE[x.code];return !!(h&&h.asof&&(x.date||'')<=h.asof);}
-function effectiveTxns(){
- const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
- return TXNS.filter(x=>x&&x.action!=='void'&&!voided.has(String(x.ts))&&!txAbsorbed(x)).sort((a,b)=>((a.date||'').localeCompare(b.date||''))||((a.ts||0)-(b.ts||0)));
-}
 function buildHoldings(){
  HOLDINGS=JSON.parse(JSON.stringify(HOLDINGS_BASE));
  const tx=effectiveTxns();
@@ -2222,9 +2217,6 @@ function applyLang(){
 
 // Loading skeletons instead of empty values (replaced by first render with data)
 ['h-value','h-cost','h-unreal','h-count','m-unreal','m-real','tl-baht','tl-pct'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<span class="sk"></span>';});
-
-const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
-const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
 
 function computeAll(){
  ALL=[];
@@ -2388,6 +2380,15 @@ function renderMSList(){
  document.querySelectorAll('#msList .ga[data-amc]').forEach(g=>g.onclick=()=>{byAmc[g.dataset.amc].forEach(f=>histSel.add(f.code));renderMSList();renderHist();});
  const clr=document.querySelector('#msList .ga[data-clear]');if(clr)clr.onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 }
+/* ==== PERF ENGINE START ==== */
+const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
+const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
+function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
+function txAbsorbed(x){const h=HOLDINGS_BASE[x.code];return !!(h&&h.asof&&(x.date||'')<=h.asof);}
+function effectiveTxns(){
+ const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
+ return TXNS.filter(x=>x&&x.action!=='void'&&!voided.has(String(x.ts))&&!txAbsorbed(x)).sort((a,b)=>((a.date||'').localeCompare(b.date||''))||((a.ts||0)-(b.ts||0)));
+}
 function seriesMeta(code){
  const base=HOLDINGS_BASE[code]||HOLDINGS[code];if(base)return base;
  const tx=[...effectiveTxns()].reverse().find(x=>x.code===code);return tx||{amc:'Other',tax:'General',asset:'Foreign Equity'};
@@ -2411,10 +2412,6 @@ function portfolioSeries(){
  }
  return rows;
 }
-function fundLedgerMap(code,dates,mode){
- const m={},nav=(NAVDB[code]||{}).navs||{},units0=+(HOLDINGS_BASE[code]&&HOLDINGS_BASE[code].units)||0,tx=effectiveTxns().filter(x=>x.code===code);let units=units0,ti=0;
- dates.forEach(d=>{while(ti<tx.length&&(tx[ti].date||'')<=d){const x=tx[ti++];units=Math.max(0,units+(x.action==='buy'?1:-1)*(+x.units||0));}const n=navAt(code,d);m[d]=n==null?null:(mode==='nav'?n:units*n);});return m;
-}
 function xirr(cashflows){
  const cf=cashflows.filter(x=>Number.isFinite(x.amount)&&x.amount!==0).sort((a,b)=>a.date.localeCompare(b.date));if(cf.length<2||!cf.some(x=>x.amount<0)||!cf.some(x=>x.amount>0))return null;
  const t0=new Date(cf[0].date+'T00:00:00Z');const npv=r=>cf.reduce((s,x)=>s+x.amount/Math.pow(1+r,(new Date(x.date+'T00:00:00Z')-t0)/31557600000),0);
@@ -2422,7 +2419,6 @@ function xirr(cashflows){
  for(let i=0;i<120;i++){const mid=(lo+hi)/2,fm=npv(mid);if(Math.abs(fm)<1e-7)return mid*100;if(flo*fm<=0){hi=mid;fhi=fm;}else{lo=mid;flo=fm;}}
  return((lo+hi)/2)*100;
 }
-/* timeframe window: filter sorted date array to the selected range */
 function tfWindow(dates){
  if(!dates.length)return dates;
  const last=dates[dates.length-1];
@@ -2433,6 +2429,23 @@ function tfWindow(dates){
  else if(D[histTF])from=daysBefore(last,D[histTF]);
  else return dates; // MAX
  return dates.filter(d=>d>=from);
+}
+function riskStats(ds,vs){
+ if(!vs||vs.length<3)return null;
+ const rets=[];for(let i=1;i<vs.length;i++){if(vs[i-1]>0)rets.push(vs[i]/vs[i-1]-1);}
+ if(rets.length<2)return null;
+ const mean=rets.reduce((a,b)=>a+b,0)/rets.length;
+ const sd=Math.sqrt(rets.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(rets.length-1));
+ const vol=sd*Math.sqrt(252)*100;
+ let peak=vs[0],dd=0;for(const v of vs){if(v>peak)peak=v;if(peak>0)dd=Math.min(dd,v/peak-1);}
+ const ret=(vs[vs.length-1]/vs[0]-1)*100;
+ let bi=0,wi=0;rets.forEach((r,i)=>{if(r>rets[bi])bi=i;if(r<rets[wi])wi=i;});
+ return{vol,maxDD:dd*100,ret,rr:vol>0?ret/vol:0,best:{d:ds[bi+1],r:rets[bi]*100},worst:{d:ds[wi+1],r:rets[wi]*100}};
+}
+/* ==== PERF ENGINE END ==== */
+function fundLedgerMap(code,dates,mode){
+ const m={},nav=(NAVDB[code]||{}).navs||{},units0=+(HOLDINGS_BASE[code]&&HOLDINGS_BASE[code].units)||0,tx=effectiveTxns().filter(x=>x.code===code);let units=units0,ti=0;
+ dates.forEach(d=>{while(ti<tx.length&&(tx[ti].date||'')<=d){const x=tx[ti++];units=Math.max(0,units+(x.action==='buy'?1:-1)*(+x.units||0));}const n=navAt(code,d);m[d]=n==null?null:(mode==='nav'?n:units*n);});return m;
 }
 function buildHist(){
  const ps=portfolioSeries();const dateSet=new Set(ps.map(x=>x.date));F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
@@ -2494,18 +2507,6 @@ async function setBench(code){
 }
 
 /* ---------- risk & performance ---------- */
-function riskStats(ds,vs){
- if(!vs||vs.length<3)return null;
- const rets=[];for(let i=1;i<vs.length;i++){if(vs[i-1]>0)rets.push(vs[i]/vs[i-1]-1);}
- if(rets.length<2)return null;
- const mean=rets.reduce((a,b)=>a+b,0)/rets.length;
- const sd=Math.sqrt(rets.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(rets.length-1));
- const vol=sd*Math.sqrt(252)*100;
- let peak=vs[0],dd=0;for(const v of vs){if(v>peak)peak=v;if(peak>0)dd=Math.min(dd,v/peak-1);}
- const ret=(vs[vs.length-1]/vs[0]-1)*100;
- let bi=0,wi=0;rets.forEach((r,i)=>{if(r>rets[bi])bi=i;if(r<rets[wi])wi=i;});
- return{vol,maxDD:dd*100,ret,rr:vol>0?ret/vol:0,best:{d:ds[bi+1],r:rets[bi]*100},worst:{d:ds[wi+1],r:rets[wi]*100}};
-}
 function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF window
  const w=tfWindow(dates);const wset=new Set(w);
  const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)){ds.push(d);vs.push(vals[i]);}});
@@ -2804,7 +2805,6 @@ async function addTxn(){
 }
 
 /* ---------- fund switch ---------- */
-function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
 function openSw(){showDialog('swBg');renderSwModal();}
 function closeSw(){hideDialog('swBg');}
 function swMsg(m,ok){const e=document.getElementById('sw-msg');if(e){e.textContent=m;e.style.color=ok?'var(--pos)':'var(--neg)';}}
