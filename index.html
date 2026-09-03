@@ -231,13 +231,17 @@ header.top{position:fixed;inset:0 auto 0 0;width:214px;background:#0a0e0d;border
 .upd .btn{width:100%;justify-content:flex-start;min-height:36px;padding:8px 10px}
 .upd #updBtn{margin-top:8px;background:var(--accent);border-color:var(--accent);color:#10130f;font-weight:700}
 .wrap{max-width:none;margin:0 0 0 214px;padding:0 28px 56px;display:grid;grid-template-columns:minmax(0,1fr)}
-.wrap>.filterbar{order:1}.wrap>.confidence{order:2}.wrap>.empty-state{order:3}.wrap>.hero{order:4}
+.wrap>.sticky-controls{order:1}.wrap>.empty-state{order:3}.wrap>.hero{order:4}
 .wrap>section:nth-of-type(1){order:5}.wrap>section:nth-of-type(6){order:6}.wrap>section:nth-of-type(4){order:7}
 .wrap>section:nth-of-type(2){order:8}.wrap>section:nth-of-type(3){order:9}.wrap>section:nth-of-type(5){order:10}.wrap>.foot{order:11}
 .btn,.btn.ghost{border-radius:var(--radius-sm);background:transparent;border:1px solid var(--line2);box-shadow:none;color:var(--muted);transition:background-color .15s,color .15s,border-color .15s}
 .btn:hover,.btn.ghost:hover{filter:none;background:rgba(199,167,96,.08);border-color:var(--accent);color:var(--txt)}
 .btn:focus-visible,.fchip:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .filterbar{position:relative;top:auto;margin:18px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-md);background:rgba(17,22,20,.94);box-shadow:var(--shadow);backdrop-filter:blur(14px);z-index:10}
+.sticky-controls{position:sticky;top:0;z-index:45;background:var(--bg);padding-bottom:10px;transition:box-shadow .15s}
+.sticky-controls>.filterbar{margin-top:14px}
+.sticky-controls>.confidence{margin-bottom:0}
+.sticky-controls.stuck{box-shadow:0 16px 30px rgba(0,0,0,.45)}
 .fgroup .lbl,.eyebrow,.rk .l,.m-stat .l,.tf label,.m-sec h4,thead th,.risk-tbl th{letter-spacing:0;color:var(--muted2)}
 .fchip,.ms-chip,.ms-modes,.range-pills,.bench-sel,.ms-search,.tf-custom input[type=date],.tf select,.tf input{border-radius:var(--radius-sm);background:var(--panel2);border-color:var(--line);box-shadow:none}
 .fchip.on,.ms-chip.on,.ms-modes button.on,.range-pills button.on{background:var(--accent);color:#10130f;box-shadow:none}
@@ -344,6 +348,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 <div class="wrap">
  <!-- FILTER BAR -->
  <div id="fbSentinel" aria-hidden="true"></div>
+ <div class="sticky-controls">
  <div class="filterbar">
   <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
   <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
@@ -354,6 +359,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
   <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
   <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
   <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
+ </div>
  </div>
 
  <div class="empty-state" id="emptyState" hidden>
@@ -2951,10 +2957,10 @@ document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importH
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
 document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-bg.show');if(e.key==='Escape'&&bg){hideDialog(bg.id);return;}const fund=e.target.closest&&e.target.closest('[data-fund]');if(fund&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFund(fund.dataset.fund);return;}if(e.key==='Tab'&&bg){const focusable=[...bg.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(!focusable.length){e.preventDefault();return;}const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 /* keep filter bar pinned right below the header */
-(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.filterbar');
+(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.sticky-controls');
  if(!hdr||!fb)return;
  // Top-bar layout: stick just below the header. Sidebar/tall layouts: stick to viewport top.
- const topOff=()=>{const r=hdr.getBoundingClientRect();return (r.width>window.innerWidth*0.6&&r.height<140)?Math.max(0,Math.round(r.height)-1):0;};
+ const topOff=()=>{const r=hdr.getBoundingClientRect();return (r.width>window.innerWidth*0.6&&r.height<160)?Math.max(0,Math.round(r.height)-1):0;};
  const adj=()=>{fb.style.top=topOff()+'px';};
  adj();window.addEventListener('resize',adj);
  let tick=false;
