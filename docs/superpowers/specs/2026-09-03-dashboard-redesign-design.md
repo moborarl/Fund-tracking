@@ -116,7 +116,7 @@ The 214 px left rail is removed; its actions move into the command bar.
 
 | Layer | Height | Contents |
 |---|---|---|
-| Command bar | intrinsic, ~56 px | Brand · AMC filter · Tax filter · **global timeframe** · TH/EN · actions menu · Update NAV |
+| Command bar | intrinsic, ~56 px | Brand · AMC filter · Tax filter · **global timeframe** · TH/EN · overflow panel · Update NAV |
 | Portfolio header | intrinsic, min 96 px | Total market value · Δ for the selected period · sparkline · cost basis / unrealized / realized · scope and freshness chips |
 | Tab bar | intrinsic, ~40 px | **ถือครอง** · ผลตอบแทน · สัดส่วน · ความเสี่ยง · ภาษี |
 | Tab body | remaining viewport (desktop) | See geometry rules below |
@@ -139,18 +139,33 @@ proposed in the previous draft and the current `topOff()` heuristic
 wrap. The portfolio header keeps a `min-height` and no fixed height.
 
 Below 1024 px the shell reverts to normal document flow and document scrolling, and
-**exactly one element is sticky: the tab bar, at `top: 0`.** The command bar and
-portfolio header scroll away. One sticky element at zero needs no offset arithmetic, so
-the mobile path is also pure CSS. The tab bar is the layer worth keeping — switching
-tabs is the frequent action while scrolling a long list, whereas filters and timeframe
-are set once and read.
+**exactly one element is sticky at `top: 0`: a wrapper holding the tab strip plus a
+compact status row.** The full command bar and the portfolio header scroll away above
+it. One sticky element at zero needs no offset arithmetic, so the mobile path is also
+pure CSS.
 
-**Actions menu** collapses `Sign in`, `Buy / Sell`, `Switch`, CSV export, print, and
-both import buttons. `Update NAV` stays outside it as the one primary button, because
-it is the only action carrying a freshness signal. The menu is a `button` with
-`aria-expanded` and `aria-haspopup="menu"` controlling a `role="menu"`; Escape closes
-it and returns focus to the trigger, a click or focus outside closes it, and Up/Down
-move between items.
+The compact status row carries what the governing principle requires to stay visible:
+the active-period trigger (`1M`, `กำหนดเอง`), the freshness chip, and the scope chip
+when a filter is active. Tapping the period trigger opens the same period popover used
+on desktop. Without this row the mobile path would contradict the governing principle,
+since the timeframe otherwise lives on the command bar and would scroll out of view.
+
+**Overflow panel** collapses `Sign in`, `Buy / Sell`, `Switch`, CSV export, print, both
+import buttons, and the TH/EN switch. Below 1024 px it also absorbs the AMC and Tax
+filters. `Update NAV` never enters it — it stays a visible button, shrinking to an icon
+button with a persistent `aria-label` on mobile, because it is the only action carrying
+a freshness signal.
+
+Because the panel mixes one-shot actions with filter checkboxes, it is **not** an ARIA
+menu. It is a `button` with `aria-expanded` / `aria-haspopup="dialog"` over a
+`role="dialog"` labelled by its heading, containing ordinary buttons and checkboxes.
+`role="menu"` would require every child to be a `menuitem` variant —
+`menuitemcheckbox` for the filters — and would impose roving-tabindex arrow navigation
+that suits neither checkboxes nor a mixed panel. Escape closes it and returns focus to
+the trigger; a click or focus outside closes it; Tab cycles within it while open.
+
+The AMC and Tax filter popovers at wider breakpoints use the same `role="dialog"`
+pattern, so there is one disclosure behaviour across the whole command bar.
 
 **Command bar control forms.** The controls do not fit inline. The real filter sets are
 8 AMCs and 5 tax types (6 once an LTF holding appears — `computeAll()` derives `LTF`
@@ -161,13 +176,13 @@ Update NAV. They collapse as follows.
 |---|---|---|
 | ≥ 1240 px | `AMC: ทั้งหมด` / `ภาษี: ทั้งหมด` buttons opening multi-select popovers | Full segmented control, 9 options |
 | 1024–1239 px | Same two buttons | Single trigger showing the active value, opening the period menu |
-| < 1024 px | Both move into the actions menu | Single trigger, stays on the command bar |
+| < 1024 px | Both move into the overflow panel | Single trigger, mirrored in the sticky status row |
 
 The trigger label always shows the active selection (`1M`, `กำหนดเอง`, `AMC: KKP +2`),
 so the current scope and period are readable without opening anything. Each popover is
 a `button` with `aria-expanded` / `aria-haspopup` over a `role="dialog"` containing
 checkboxes for filters or radios for the period, with Escape, click-outside, and
-focus-return matching the actions menu. Filters apply on change; the popover stays open
+focus-return matching the overflow panel. Filters apply on change; the popover stays open
 so several can be toggled in one visit.
 
 The timeframe control never leaves the command bar at any width, because every number
@@ -191,12 +206,15 @@ Space selects — so arrowing past a heavy panel does not force a render.
 
 ### Mobile (< 780 px)
 
-Command bar keeps brand, the timeframe trigger, and the overflow button; filters live
-inside the overflow menu, per the collapse table above. The portfolio header keeps the
-total, Δ, and sparkline, with the three secondary KPIs wrapping to a second line. The
-tab bar — the one sticky element at this width — becomes a horizontally scrollable
-strip with the active tab scrolled into view. The holdings table keeps its existing
-card recomposition under 680 px, with the disclosure panel rendering inside the card.
+The command bar keeps brand, the timeframe trigger, the `Update NAV` icon button, and
+the overflow trigger. Filters and the TH/EN switch live inside the overflow panel, per
+the collapse table above. The portfolio header keeps the total, Δ, and sparkline, with
+the three secondary KPIs wrapping to a second line; both scroll away.
+
+The sticky wrapper below them holds the compact status row (period trigger, freshness
+chip, scope chip) above a horizontally scrollable tab strip with the active tab
+scrolled into view. The holdings table keeps its existing card recomposition under
+680 px, with the disclosure panel rendering inside the card.
 
 ---
 
@@ -420,12 +438,35 @@ No coverage-exit branch is written. `navAt()` carries the last price forward
 indefinitely, so a priced fund never becomes unpriced; units reaching zero are already
 handled by the sell branch.
 
-### 5.3 Date labels carry the year when the window spans one
+### 5.3 Transaction dates join the valuation axis
+
+The axis is currently the union of NAV dates only (`index.html:2398`). A transaction
+dated between two NAV observations is drained into the later date's batch, so
+`(value - flow) / prev - 1` books that flow at the end of a period it did not span. A
+large contribution mid-period therefore distorts the sub-period return.
+
+**The axis becomes the union of NAV dates and transaction dates**, restricted to
+`>= portfolioAnchor`. On a date that carries no new NAV:
+
+- each priced fund is valued at `navAt(code, date)`, which carries its last price
+  forward, so funds with no new observation contribute a 0% sub-period return — which
+  is the correct reading under carry-forward;
+- a fund being bought that has no NAV coverage yet is valued at the transaction's own
+  price for that date, which is the only price that exists for it.
+
+The flow is then subtracted on the date it actually occurred, and TWR becomes a true
+time-weighted chain rather than an end-of-period approximation. The axis grows by the
+number of distinct transaction dates, which is small next to years of daily NAVs.
+
+`histHint` keeps its existing "ledger-adjusted" wording (`index.html:2132`); with this
+change the wording is literally true rather than approximate.
+
+### 5.4 Date labels carry the year when the window spans one
 
 `fmtD()` includes the year when the window's first and last dates fall in different
 calendar years. Thai locale keeps Buddhist years, matching the rest of the Thai UI.
 
-### 5.4 Guards
+### 5.5 Guards
 
 - Drop any daily return that is not finite from the return series.
 - Window coverage below 60% renders the existing `noData` message instead of the KPI
@@ -442,12 +483,33 @@ calendar years. Thai locale keeps Buddhist years, matching the rest of the Thai 
   both sides and keep their separate report in the coverage chip, which already lists
   them (`confCoverage`, `62/66` in the measured portfolio).
 
-### 5.5 Naming
+### 5.6 Naming
 
-`rkXirr` already reads "Estimated XIRR" / "XIRR โดยประมาณ" (`index.html:2139`) and its
-`xirrEst` footnote already states that the baseline cost is treated as an opening cash
-flow. Both are correct and stay. The footnote gains the anchor date so the reader knows
-which cash flows were actually available.
+`rkXirr` already reads "Estimated XIRR" / "XIRR โดยประมาณ" (`index.html:2139`) and
+stays. "Estimated" remains accurate for its own reason: the app has no record of the
+investor's true external cash flows, only a statement snapshot plus a ledger.
+
+**The `xirrEst` footnote is wrong and must be rewritten.** It currently reads "Baseline
+cost is treated as an opening cash flow" / "ใช้ต้นทุนพอร์ตตั้งต้นเป็นกระแสเงินสดวันแรก",
+but `renderRisk()` (`index.html:2520`) builds
+
+```js
+{ date: x.date, amount: i === 0 ? -x.value : -x.flow }
+```
+
+and `x.value` is **market value**, not cost (`rows.push({date, value, twr, flow})` at
+`index.html:2410`). Opening market value is the right choice for a windowed return — it
+is what the investor had at risk when the window opened — so the calculation stays and
+the wording changes, in both languages:
+
+> Opening market value on `<date>` is treated as the initial cash flow; subsequent
+> ledger and synthetic coverage flows are included.
+
+> ใช้มูลค่าตลาดต้นงวด ณ `<วันที่>` เป็นกระแสเงินสดแรก รวมรายการซื้อขายและ
+> เงินที่เพิ่งเข้ามาในความคุ้มครองราคาที่ตามมา
+
+`<date>` is the window's first date after anchor clamping, so the reader can see which
+cash flows were actually available.
 
 ---
 
@@ -494,6 +556,8 @@ Required fixtures:
 | 9 | Fund with no NAV at all | Excluded from valuation; counted in the coverage chip |
 | 10 | AMC filter applied, where the filtered-out fund holds the latest `asof` | Series, totals **and `portfolioAnchor`** all move to the filtered set |
 | 10b | Window start before some funds' first NAV | Coverage ratio matches the `asOf`-money definition; below 60% the KPIs suppress |
+| 10c | Large contribution dated between two NAV observations | The contribution date appears on the valuation axis and TWR is unchanged by it; the pre-fix end-of-period booking would have shifted it |
+| 10d | Window with an opening balance, one mid-window buy and one sell | XIRR cash-flow series equals exactly `[-openingMarketValue, -buy, +sell, +closingMarketValue]` on the expected dates |
 | 11 | Custom window whose start precedes the anchor | Clamped to the anchor; reported clamped date |
 | 12 | Custom window of a single day | Returns zero-length result, not `NaN` |
 
@@ -509,7 +573,7 @@ Run against the real 62-fund portfolio at 320, 390, 768, 1024, and 1400 px:
 - The command bar's collapse table holds at every width: filter and timeframe triggers
   show their active selection, and the timeframe never disappears.
 - Keyboard-only pass: tab bar arrow navigation, sort buttons, row disclosure, filter
-  and timeframe popovers, actions menu — each with open/close/Escape/focus-return —
+  and timeframe popovers, overflow panel — each with open/close/Escape/focus-return —
   and dialogs still focus-trapped.
 - Comparison chart at the 8-series cap: chips disable with a translated reason, `+ all`
   on a large AMC reports what it added, "Clear" still works.
@@ -529,9 +593,10 @@ stays manual.
 
 Reordered so nothing surfaces a known-bad number.
 
-0. **Performance engine** — the anchor model, coverage-entry flow, year-aware date
-   labels, guards, fixtures, and `check-perf.mjs`. No visual change; the existing hero
-   and risk section pick up correct numbers immediately.
+0. **Performance engine** — the anchor model, coverage-entry flow, transaction dates on
+   the valuation axis, year-aware date labels, guards, the rewritten `xirrEst` footnote
+   in both languages, fixtures, and `check-perf.mjs`. The only visible change is that
+   footnote; the existing hero and risk section pick up correct numbers immediately.
 1. **Structure** — command bar, portfolio header with scope and freshness chips, tab
    shell with full keyboard support, remove the left rail, single global timeframe with
    its persistence and resolved-comparison-date label.
