@@ -416,19 +416,38 @@ while `importHoldings()` (`index.html:2954`) stamps one on every UI import.
 ### 5.2 One pricing source, one coverage state
 
 The engine values positions through a single function, and decides coverage from that
-same function — never from `navAt()` directly. Two prices exist and both establish
-coverage:
+same function — never from `navAt()` directly. Two kinds of price observation exist,
+real NAVs and execution prices, and both establish coverage. Selection between them is
+**by observation date, not by source preference**:
 
 ```
 effectivePrice(code, date):
-    nav = navAt(code, date)                      // real NAV, carried forward
-    if nav != null: return nav
-    return lastExecutionPrice(code, date)        // synthetic, carried forward, else null
+    navObs  = latest real NAV dated <= date                    // {date, price} or null
+    execObs = latest price-bearing execution dated <= date     // {date, price} or null
 
-lastExecutionPrice(code, date):
-    the unit-weighted average execution price of that fund's most recent
-    transaction date <= date, or null if it has none
+    if both null:            return null
+    if one is null:          return the other's price
+    if navObs.date >= execObs.date: return navObs.price        // ties go to the real NAV
+    return execObs.price
 ```
+
+A price-bearing execution is a buy, a sell, or either leg of a switch, with
+`price > 0`. Dividends and voided entries are skipped entirely — voids are already
+removed by `effectiveTxns()` (`index.html:2087`), and dividends carry `amount` rather
+than `price` (`index.html:2101`). Skipping rather than merely ignoring matters: a
+dividend dated after an execution must not shadow that execution's price, so `execObs`
+scans for the latest *price-bearing* entry, not the latest entry of any kind.
+
+Both observations carry forward until superseded by a newer one of either kind.
+
+**Why date order, not source order.** Preferring `navAt()` whenever it returns
+non-null looks safe but is wrong, and because `navAt()` carries prices forward
+indefinitely it never returns null once a fund has any NAV at all — so an
+execution-price fallback placed behind it would almost never run. Take a Friday NAV of
+฿10, a Monday purchase of 100 units at ฿11, and no Monday NAV: the position would be
+valued at ฿1,000 while its flow was ฿1,100, manufacturing a ฿100 loss on the
+transaction date. Under date order the Monday execution is the later observation and
+both sides agree at ฿1,100.
 
 `wasPriced[code]` is simply `effectivePrice(code, previousDate) != null`. A fund
 becomes covered the moment it is first valued at *either* kind of price, and stays
@@ -442,10 +461,17 @@ NAV arrives, `navAt(C, P) == null` is still true and the position is added a sec
 time as a synthetic coverage flow. The whole position would be removed from the
 numerator twice.
 
-**Multiple executions on one date** resolve to the unit-weighted average of that date's
-buy prices, so the price is deterministic regardless of ledger insertion order.
+**Multiple executions on one date** resolve to the unit-weighted average of every
+price-bearing execution on that date — buys, sells and switch legs alike — so the price
+is deterministic regardless of ledger insertion order.
 
-**The synthetic price is engine-internal.** It is never written into `NAVDB`.
+**The synthetic price is engine-internal.** It never leaves the performance engine: the
+holdings table's NAV column keeps showing the real NAV with its price date and
+staleness badge, and the page's `asOf` (§2) is still the latest date on which some
+included fund has a **real** NAV — an execution never advances it. Only TWR, XIRR,
+volatility, drawdown and the period Δ read `effectivePrice`.
+
+It is also never written into `NAVDB`.
 `buildHoldings()` (`index.html:2096`) already seeds `NAVDB` from a transaction price
 for funds with no stored NAV at all, and that value reaches the `LS_NAV` cache — a
 synthetic price masquerading as market data. The engine must not add a second such
@@ -605,6 +631,10 @@ Required fixtures:
 | 10d | Window with an opening balance, one mid-window buy and one sell | XIRR cash-flow series equals exactly `[-openingMarketValue, -buy, +sell, +closingMarketValue]` on the expected dates |
 | 10e | New fund bought before its first stored NAV | The transaction date starts coverage; the first later NAV creates no second external flow; TWR reflects only execution price → first NAV |
 | 10f | Two buys of one fund on the same date at different prices | `effectivePrice` is their unit-weighted average, independent of ledger insertion order |
+| 10g | Purchase after a stale NAV, before the next NAV | Position values at the execution price, not the stale NAV; no manufactured gain or loss on the transaction date |
+| 10h | Sell-only transaction on a fund with no NAV yet | The sell price establishes coverage exactly as a buy would |
+| 10i | Dividend dated after an execution, still before the next NAV | The carried execution price survives; the dividend does not shadow it |
+| 10j | Real NAV and an execution on the same date | The real NAV wins the tie |
 | 11 | Custom window whose start precedes the anchor | Clamped to the anchor; reported clamped date |
 | 12 | Custom window of a single day | Returns zero-length result, not `NaN` |
 
@@ -644,9 +674,13 @@ Reordered so nothing surfaces a known-bad number.
    source and its coverage state, coverage-entry flow, transaction dates on the
    valuation axis, year-aware date labels, guards, the rewritten `xirrEst` footnote in
    both languages, fixtures, and `check-perf.mjs`. Also confines the existing synthetic
-   price at `index.html:2096` so it cannot reach the `LS_NAV` cache. The only visible
-   change is that footnote; the existing hero and risk section pick up correct numbers
-   immediately.
+   price at `index.html:2096` so it cannot reach the `LS_NAV` cache.
+
+   Visible changes in this phase, all intentional: the existing hero and risk section
+   pick up correct numbers, the `xirrEst` footnote is reworded in both languages, and —
+   for a portfolio whose snapshot funds lack `asof`, which is the state of the repo's
+   own `holdings.json` — period-derived values are replaced by `noData` and the
+   "ตั้งวันเริ่มพอร์ต" action appears in the hero. Reviewers should expect all three.
 1. **Structure** — command bar, portfolio header with scope and freshness chips, tab
    shell with full keyboard support, remove the left rail, single global timeframe with
    its persistence and resolved-comparison-date label.
