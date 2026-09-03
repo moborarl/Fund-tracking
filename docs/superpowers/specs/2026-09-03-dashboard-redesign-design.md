@@ -161,11 +161,18 @@ menu. It is a `button` with `aria-expanded` / `aria-haspopup="dialog"` over a
 `role="dialog"` labelled by its heading, containing ordinary buttons and checkboxes.
 `role="menu"` would require every child to be a `menuitem` variant —
 `menuitemcheckbox` for the filters — and would impose roving-tabindex arrow navigation
-that suits neither checkboxes nor a mixed panel. Escape closes it and returns focus to
-the trigger; a click or focus outside closes it; Tab cycles within it while open.
+that suits neither checkboxes nor a mixed panel.
 
-The AMC and Tax filter popovers at wider breakpoints use the same `role="dialog"`
-pattern, so there is one disclosure behaviour across the whole command bar.
+It is a **non-modal** dialog, and focus is not trapped. On open, focus moves to the
+first control inside. Tab and Shift+Tab move through it and then leave normally,
+closing it on focus-out. A click outside also closes it. Escape closes it and returns
+focus to the trigger; focus-out does not, since focus has already gone where the user
+sent it. The previous draft said both "focus outside closes it" and "Tab cycles within
+it", which are two different patterns — trapping belongs to genuinely modal dialogs
+like Buy / Sell, which keep their existing focus trap.
+
+The AMC, Tax, and period popovers use this same non-modal pattern, so there is one
+disclosure behaviour across the whole command bar.
 
 **Command bar control forms.** The controls do not fit inline. The real filter sets are
 8 AMCs and 5 tax types (6 once an LTF holding appears — `computeAll()` derives `LTF`
@@ -406,37 +413,76 @@ The prompt reuses the existing pattern from `setBirth()` (`index.html:2554`). Th
 is reachable today: the repo's `holdings.json` has no `asof` on any of its 66 funds,
 while `importHoldings()` (`index.html:2954`) stamps one on every UI import.
 
-### 5.2 Coverage entry is an external flow
+### 5.2 One pricing source, one coverage state
 
-Within the reliable window, a fund's NAV history can still begin after
-`portfolioAnchor`.
-
-The date axis is the union of NAV dates, so consecutive dates can be days apart, and
-the transaction loop at `index.html:2403` drains **every** entry dated `<= D` — not
-just those dated `D`. Any rule keyed on "transactions dated exactly `D`" therefore
-misses a purchase dated `D − 1` that settles into the same batch, and mishandles a sale
-in the opposite direction.
-
-Capture each fund's units **before** the batch runs, and use those:
+The engine values positions through a single function, and decides coverage from that
+same function — never from `navAt()` directly. Two prices exist and both establish
+coverage:
 
 ```
-openingUnits = { ...units }                        // before the while loop for D
+effectivePrice(code, date):
+    nav = navAt(code, date)                      // real NAV, carried forward
+    if nav != null: return nav
+    return lastExecutionPrice(code, date)        // synthetic, carried forward, else null
+
+lastExecutionPrice(code, date):
+    the unit-weighted average execution price of that fund's most recent
+    transaction date <= date, or null if it has none
+```
+
+`wasPriced[code]` is simply `effectivePrice(code, previousDate) != null`. A fund
+becomes covered the moment it is first valued at *either* kind of price, and stays
+covered — `navAt()` carries NAVs forward and the execution price carries forward the
+same way, so coverage is entered once and never left. No coverage-exit branch is
+written; units reaching zero are already handled by the sell branch.
+
+**Why this matters.** Without it, a fund bought before its first stored NAV is valued
+at its execution price on the purchase date — entering `prev` — and then, when the real
+NAV arrives, `navAt(C, P) == null` is still true and the position is added a second
+time as a synthetic coverage flow. The whole position would be removed from the
+numerator twice.
+
+**Multiple executions on one date** resolve to the unit-weighted average of that date's
+buy prices, so the price is deterministic regardless of ledger insertion order.
+
+**The synthetic price is engine-internal.** It is never written into `NAVDB`.
+`buildHoldings()` (`index.html:2096`) already seeds `NAVDB` from a transaction price
+for funds with no stored NAV at all, and that value reaches the `LS_NAV` cache — a
+synthetic price masquerading as market data. The engine must not add a second such
+path, and phase 0 should confine the existing one so it cannot be persisted.
+
+### 5.2.1 Coverage entry is an external flow
+
+Within the reliable window, a fund can still become covered after `portfolioAnchor`.
+
+The date axis is the union of NAV and transaction dates (§5.3 below), and the transaction
+loop at `index.html:2403` drains **every** entry dated `<= D` — not just those dated
+`D`. Any rule keyed on "transactions dated exactly `D`" therefore misses a purchase
+dated `D − 1` that settles into the same batch, and mishandles a sale in the opposite
+direction.
+
+Capture each fund's units **before** the batch runs, and gate on the coverage state:
+
+```
+openingUnits = { ...units }                     // before the while loop for D
 
 // drain the batch: each buy, sell, dividend and switch contributes to flow exactly once
 
-if navAt(C, D) != null && navAt(C, P) == null:
-    flow += openingUnits[C] * navAt(C, D)
+if effectivePrice(C, D) != null && !wasPriced[C]:
+    flow += openingUnits[C] * effectivePrice(C, D)
 ```
 
-`openingUnits[C]` is the capital that was already held but unpriced, which is precisely
+`openingUnits[C]` is the capital that was already held but unvalued, which is precisely
 what enters coverage. Units acquired in the batch entered `flow` through the ledger
 branch and must not be added again; units sold in the batch left through it as well.
-The small residual — the difference between a transaction's price and that day's NAV —
-is genuine return and is correctly retained.
 
-No coverage-exit branch is written. `navAt()` carries the last price forward
-indefinitely, so a priced fund never becomes unpriced; units reaching zero are already
-handled by the sell branch.
+For a newly bought, previously unheld fund `openingUnits[C]` is zero, so the coverage
+flow is zero and the purchase is accounted for entirely by the ledger branch — the
+correct result, and the case the previous draft got wrong. TWR then reflects only the
+movement from execution price to the first real NAV.
+
+The residual between a transaction's price and that day's NAV, on units already held,
+is genuine return and is correctly retained.
 
 ### 5.3 Transaction dates join the valuation axis
 
@@ -446,13 +492,12 @@ dated between two NAV observations is drained into the later date's batch, so
 large contribution mid-period therefore distorts the sub-period return.
 
 **The axis becomes the union of NAV dates and transaction dates**, restricted to
-`>= portfolioAnchor`. On a date that carries no new NAV:
-
-- each priced fund is valued at `navAt(code, date)`, which carries its last price
-  forward, so funds with no new observation contribute a 0% sub-period return — which
-  is the correct reading under carry-forward;
-- a fund being bought that has no NAV coverage yet is valued at the transaction's own
-  price for that date, which is the only price that exists for it.
+`>= portfolioAnchor`. Every position on every date is valued at
+`effectivePrice(code, date)` from §5.2 — there is no second pricing path. On a date
+that carries no new NAV, that resolves to the fund's carried-forward NAV, so it
+contributes a 0% sub-period return, which is the correct reading under carry-forward.
+For a fund with no NAV coverage yet it resolves to the carried-forward execution price,
+the only price that exists for it.
 
 The flow is then subtracted on the date it actually occurred, and TWR becomes a true
 time-weighted chain rather than an end-of-period approximation. The axis grows by the
@@ -558,6 +603,8 @@ Required fixtures:
 | 10b | Window start before some funds' first NAV | Coverage ratio matches the `asOf`-money definition; below 60% the KPIs suppress |
 | 10c | Large contribution dated between two NAV observations | The contribution date appears on the valuation axis and TWR is unchanged by it; the pre-fix end-of-period booking would have shifted it |
 | 10d | Window with an opening balance, one mid-window buy and one sell | XIRR cash-flow series equals exactly `[-openingMarketValue, -buy, +sell, +closingMarketValue]` on the expected dates |
+| 10e | New fund bought before its first stored NAV | The transaction date starts coverage; the first later NAV creates no second external flow; TWR reflects only execution price → first NAV |
+| 10f | Two buys of one fund on the same date at different prices | `effectivePrice` is their unit-weighted average, independent of ledger insertion order |
 | 11 | Custom window whose start precedes the anchor | Clamped to the anchor; reported clamped date |
 | 12 | Custom window of a single day | Returns zero-length result, not `NaN` |
 
@@ -593,10 +640,13 @@ stays manual.
 
 Reordered so nothing surfaces a known-bad number.
 
-0. **Performance engine** — the anchor model, coverage-entry flow, transaction dates on
-   the valuation axis, year-aware date labels, guards, the rewritten `xirrEst` footnote
-   in both languages, fixtures, and `check-perf.mjs`. The only visible change is that
-   footnote; the existing hero and risk section pick up correct numbers immediately.
+0. **Performance engine** — the anchor model, the single `effectivePrice` pricing
+   source and its coverage state, coverage-entry flow, transaction dates on the
+   valuation axis, year-aware date labels, guards, the rewritten `xirrEst` footnote in
+   both languages, fixtures, and `check-perf.mjs`. Also confines the existing synthetic
+   price at `index.html:2096` so it cannot reach the `LS_NAV` cache. The only visible
+   change is that footnote; the existing hero and risk section pick up correct numbers
+   immediately.
 1. **Structure** — command bar, portfolio header with scope and freshness chips, tab
    shell with full keyboard support, remove the left rail, single global timeframe with
    its persistence and resolved-comparison-date label.
