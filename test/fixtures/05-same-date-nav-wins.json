@@ -1,0 +1,20 @@
+{
+  "name": "a real NAV wins a same-date tie against an execution",
+  "state": {
+    "HOLDINGS_BASE": { "FUND-B": { "units": 10, "avg": 100, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-02" } },
+    "TXNS": [
+      { "ts": 1, "date": "2026-01-05", "code": "FUND-A", "action": "buy", "units": 100, "price": 11, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "name": "FUND-A" }
+    ],
+    "NAVDB": {
+      "FUND-A": { "navs": { "2026-01-05": 12 } },
+      "FUND-B": { "navs": { "2026-01-02": 100, "2026-01-05": 100 } }
+    },
+    "histTF": "MAX"
+  },
+  "expect": {
+    "series": [
+      { "date": "2026-01-02", "value": 1000 },
+      { "date": "2026-01-05", "value": 2200 }
+    ]
+  }
+}

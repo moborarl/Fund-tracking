@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Z9F2zJZ+pUSeLYJCRD4aj2AVEoXv0P62/BS36FgF6BM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-KF2jd4KUQmgk5E35UA3loGY3z1L1i1jUq4fPLUSAo0c='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2384,6 +2384,23 @@ function renderMSList(){
 const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
 const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
 function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
+function navObsAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let o=null;for(const d of ds){if(d<=date)o={date:d,price:nv[d]};else break;}return o;}
+function execObsAt(code,date){
+ const tx=effectiveTxns().filter(x=>x.code===code&&(x.action==='buy'||x.action==='sell')&&+x.price>0&&(x.date||'')<=date);
+ if(!tx.length)return null;
+ const last=tx[tx.length-1].date;
+ let u=0,uv=0;
+ for(const x of tx){if(x.date!==last)continue;const n=Math.abs(+x.units||0);if(!n)continue;u+=n;uv+=n*(+x.price||0);}
+ return u>0?{date:last,price:uv/u}:null;
+}
+function priceObsAt(code,date){
+ const n=navObsAt(code,date),e=execObsAt(code,date);
+ if(!n&&!e)return null;
+ if(!e)return{date:n.date,price:n.price,src:'nav'};
+ if(!n)return{date:e.date,price:e.price,src:'exec'};
+ return n.date>=e.date?{date:n.date,price:n.price,src:'nav'}:{date:e.date,price:e.price,src:'exec'};
+}
+function effectivePrice(code,date){const o=priceObsAt(code,date);return o?o.price:null;}
 function txAbsorbed(x){const h=HOLDINGS_BASE[x.code];return !!(h&&h.asof&&(x.date||'')<=h.asof);}
 function effectiveTxns(){
  const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
@@ -2406,7 +2423,7 @@ function portfolioSeries(){
    if(x.action==='dividend'){flow-=(+x.amount||0);}
    else if(x.sw){cash+=x.action==='sell'?amount:-amount;if(x.fee)cash-=+x.fee||0;}else flow+=x.action==='buy'?amount:-amount;
   }
-  let value=cash;for(const code of codes)value+=(units[code]||0)*(navAt(code,date)||0);
+  let value=cash;for(const code of codes)value+=(units[code]||0)*(effectivePrice(code,date)||0);
   if(prev!=null&&prev>0){const r=(value-flow)/prev-1;if(Number.isFinite(r))twr*=1+r;}
   rows.push({date,value,twr,flow});prev=value;
  }
