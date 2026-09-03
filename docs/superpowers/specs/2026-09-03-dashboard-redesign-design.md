@@ -43,7 +43,8 @@ Further defects found while measuring:
 2. **Risk figures are impossible.** TWR `+12,073.62%`, XIRR `+6,345.59%`, annualized
    volatility `595.5%`, best day `+608.41%`.
 3. **Date labels drop the year.** `fmtD()` (`index.html:2514`) renders
-   "8 Jul → 2 Sept" for a window spanning 8 July 2019 → 2 September 2026.
+   "8 Jul → 2 Sept" for a window spanning 8 July 2025 → 2 September 2026 — the year
+   is never shown, so a multi-year window is indistinguishable from a two-month one.
 4. **The 214 px left rail carries only action buttons**, no section navigation, while
    the holdings table is horizontally cramped.
 5. **Custom date ranges do not persist.** `tfApply` (`index.html:2897`) sets
@@ -68,9 +69,9 @@ codes.forEach(c => units[c] = +(HOLDINGS_BASE[c] && HOLDINGS_BASE[c].units) || 0
 Post-`asof` ledger entries are applied forward and pre-`asof` ones are suppressed by
 `txAbsorbed()` (`index.html:2084`), so the engine is correct **from `asof` onward**.
 Before `asof` it holds the snapshot's units constant across the entire stored NAV
-history — seven years, in the measured portfolio. `MAX` is therefore a backtest of the
-snapshot's holdings, not the investor's historical portfolio, and it is presented as
-though it were the latter.
+history — 296 valuation dates back to 8 July 2025, in the measured portfolio. `MAX` is
+therefore a backtest of the snapshot's holdings, not the investor's historical
+portfolio, and it is presented as though it were the latter.
 
 The repo's own `holdings.json` carries **no `asof` on any of its 66 funds** and no
 `lots`, so for hand-edited or legacy data there is currently no anchor at all.
