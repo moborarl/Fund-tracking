@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-2xdpZvH7zkU8pnKlDBcNlDwOc25VYfddJWaCkzb0Iog='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-cBqzJiJi05Vj3/dPK6I56jVbR+qh8zslaAMpEw/BIJM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2459,15 +2459,19 @@ function portfolioSeries(){
  const units={};codes.forEach(c=>units[c]=+(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].units)||0);
  const tx=effectiveTxns().filter(x=>codes.includes(x.code));let ti=0,cash=0,prev=null,twr=100;
  const rows=[];
+ let prevDate=null;
  for(const date of dates){let flow=0;
+  const openingUnits={};for(const c of codes)openingUnits[c]=units[c]||0;
+  const wasPriced={};for(const c of codes)wasPriced[c]=prevDate!=null&&effectivePrice(c,prevDate)!=null;
   while(ti<tx.length&&(tx[ti].date||'')<=date){const x=tx[ti++],amount=(+x.units||0)*(+x.price||0);units[x.code]=units[x.code]||0;
    if(x.action==='buy')units[x.code]+=+x.units||0;else if(x.action==='sell')units[x.code]=Math.max(0,units[x.code]-(+x.units||0));
    if(x.action==='dividend'){flow-=(+x.amount||0);}
    else if(x.sw){cash+=x.action==='sell'?amount:-amount;if(x.fee)cash-=+x.fee||0;}else flow+=x.action==='buy'?amount:-amount;
   }
+  for(const c of codes){if(!wasPriced[c]&&effectivePrice(c,date)!=null)flow+=(openingUnits[c]||0)*effectivePrice(c,date);}
   let value=cash;for(const code of codes)value+=(units[code]||0)*(effectivePrice(code,date)||0);
   if(prev!=null&&prev>0){const r=(value-flow)/prev-1;if(Number.isFinite(r))twr*=1+r;}
-  rows.push({date,value,twr,flow});prev=value;
+  rows.push({date,value,twr,flow});prev=value;prevDate=date;
  }
  return rows;
 }
