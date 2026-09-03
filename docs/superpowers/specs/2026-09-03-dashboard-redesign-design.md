@@ -116,24 +116,34 @@ The 214 px left rail is removed; its actions move into the command bar.
 
 | Layer | Height | Contents |
 |---|---|---|
-| Command bar (sticky) | intrinsic, ~56 px | Brand · AMC filter · Tax filter · **global timeframe** · TH/EN · actions menu · Update NAV |
-| Portfolio header (sticky) | intrinsic, min 96 px | Total market value · Δ for the selected period · sparkline · cost basis / unrealized / realized · scope and freshness chips |
-| Tab bar (sticky) | intrinsic, ~40 px | **ถือครอง** · ผลตอบแทน · สัดส่วน · ความเสี่ยง · ภาษี |
-| Tab body | remaining viewport (desktop) | See scrolling rules below |
+| Command bar | intrinsic, ~56 px | Brand · AMC filter · Tax filter · **global timeframe** · TH/EN · actions menu · Update NAV |
+| Portfolio header | intrinsic, min 96 px | Total market value · Δ for the selected period · sparkline · cost basis / unrealized / realized · scope and freshness chips |
+| Tab bar | intrinsic, ~40 px | **ถือครอง** · ผลตอบแทน · สัดส่วน · ความเสี่ยง · ภาษี |
+| Tab body | remaining viewport (desktop) | See geometry rules below |
 
 `ถือครอง` (Holdings) is the default tab. Tab state persists under `kkp_tab`.
 
-**Sticky geometry.** The three layers are not fixed pixel heights. Each measures itself
-with a `ResizeObserver` and publishes `--h-cmd`, `--h-hdr`, `--h-tabs` as CSS custom
-properties on `:root`; every sticky `top` and the tab body's height derive from those.
-This replaces the current `topOff()` heuristic (`index.html:2963`), which tests
-`r.height < 160` and breaks when Thai labels wrap. The portfolio header has a
-`min-height` but no fixed height, so wrapping grows it instead of clipping.
+**Geometry — no JavaScript measurement.** On desktop (≥ 1024 px) the shell is
 
-**Scrolling.** On desktop (≥ 1024 px) the tab body scrolls internally so the three
-layers stay put. Below 1024 px the page reverts to normal document scrolling — the
-command bar and tab bar stay sticky, the portfolio header does not — to avoid
-nested-scroll friction on touch.
+```css
+height: 100dvh;
+display: grid;
+grid-template-rows: auto auto auto minmax(0, 1fr);
+```
+
+The three layers size to their content and the fourth row takes the remainder. None of
+them is `position: sticky`, no offset is computed, and Thai labels that wrap simply
+grow their row and shrink the panel. This removes both the `ResizeObserver` bookkeeping
+proposed in the previous draft and the current `topOff()` heuristic
+(`index.html:2963`), which tests `r.height < 160` and breaks exactly when those labels
+wrap. The portfolio header keeps a `min-height` and no fixed height.
+
+Below 1024 px the shell reverts to normal document flow and document scrolling, and
+**exactly one element is sticky: the tab bar, at `top: 0`.** The command bar and
+portfolio header scroll away. One sticky element at zero needs no offset arithmetic, so
+the mobile path is also pure CSS. The tab bar is the layer worth keeping — switching
+tabs is the frequent action while scrolling a long list, whereas filters and timeframe
+are set once and read.
 
 **Actions menu** collapses `Sign in`, `Buy / Sell`, `Switch`, CSV export, print, and
 both import buttons. `Update NAV` stays outside it as the one primary button, because
@@ -141,6 +151,27 @@ it is the only action carrying a freshness signal. The menu is a `button` with
 `aria-expanded` and `aria-haspopup="menu"` controlling a `role="menu"`; Escape closes
 it and returns focus to the trigger, a click or focus outside closes it, and Up/Down
 move between items.
+
+**Command bar control forms.** The controls do not fit inline. The real filter sets are
+8 AMCs and 5 tax types (6 once an LTF holding appears — `computeAll()` derives `LTF`
+at `index.html:2233`), plus 9 timeframes: 22 chips before brand, language, menu, and
+Update NAV. They collapse as follows.
+
+| Width | AMC / Tax | Timeframe |
+|---|---|---|
+| ≥ 1240 px | `AMC: ทั้งหมด` / `ภาษี: ทั้งหมด` buttons opening multi-select popovers | Full segmented control, 9 options |
+| 1024–1239 px | Same two buttons | Single trigger showing the active value, opening the period menu |
+| < 1024 px | Both move into the actions menu | Single trigger, stays on the command bar |
+
+The trigger label always shows the active selection (`1M`, `กำหนดเอง`, `AMC: KKP +2`),
+so the current scope and period are readable without opening anything. Each popover is
+a `button` with `aria-expanded` / `aria-haspopup` over a `role="dialog"` containing
+checkboxes for filters or radios for the period, with Escape, click-outside, and
+focus-return matching the actions menu. Filters apply on change; the popover stays open
+so several can be toggled in one visit.
+
+The timeframe control never leaves the command bar at any width, because every number
+on screen depends on it.
 
 **Tab bar** is a `role="tablist"` of `role="tab"` buttons with `aria-selected` and
 `aria-controls`; each panel is a `role="tabpanel"` labelled by its tab. Left/Right move
@@ -160,13 +191,12 @@ Space selects — so arrowing past a heavy panel does not force a render.
 
 ### Mobile (< 780 px)
 
-Command bar keeps brand, the timeframe control, and the overflow button — the
-timeframe stays visible because every number on the screen depends on it. Filters move
-into the overflow menu. The portfolio header keeps the total, Δ, and sparkline, with
-the three secondary KPIs wrapping to a second line. The tab bar becomes a horizontally
-scrollable strip with the active tab scrolled into view. The holdings table keeps its
-existing card recomposition under 680 px, with the disclosure panel rendering inside
-the card.
+Command bar keeps brand, the timeframe trigger, and the overflow button; filters live
+inside the overflow menu, per the collapse table above. The portfolio header keeps the
+total, Δ, and sparkline, with the three secondary KPIs wrapping to a second line. The
+tab bar — the one sticky element at this width — becomes a horizontally scrollable
+strip with the active tab scrolled into view. The holdings table keeps its existing
+card recomposition under 680 px, with the disclosure panel rendering inside the card.
 
 ---
 
@@ -282,8 +312,16 @@ custom properties and joined by two more scales, all defined against `--surface`
 
 Colour is never the only distinction: donut segments carry direct labels with values,
 chart series carry end-of-line labels, and the benchmark keeps its dashed stroke.
-Series beyond eight cycle the ramp but vary dash pattern, so two same-coloured lines
-never share a style.
+
+**The comparison chart is capped at 8 fund series**, plus the portfolio line and the
+benchmark — 10 lines at most. Eight colours with dash cycling and end labels do not
+stay readable beyond that, and the current multi-select makes overrun trivial: the
+`+ all` button per AMC (`index.html:2383`) can add 20 funds in one click from a
+62-fund portfolio. At the cap, unselected chips are disabled with
+`aria-disabled="true"` and a translated explanation (`เลือกได้สูงสุด 8 กอง ·
+เอาออกก่อนเพื่อเพิ่มกองอื่น`), and `+ all` on an AMC that would overrun selects up to
+the cap by value and reports how many it added. "Portfolio only" and "Clear" always
+work regardless of the cap.
 
 ### Type and density
 
@@ -305,7 +343,9 @@ The theme stays dark-only, per the project's standing requirement.
 
 ### 5.1 Reliable-history anchor
 
-Define, for each fund with a `HOLDINGS_BASE` entry and units > 0:
+Define, for each **currently included** fund — one passing `seriesIncluded()`, so the
+anchor moves with the AMC and Tax filters exactly as `asOf` and the totals do — with a
+`HOLDINGS_BASE` entry and units > 0:
 
 ```
 anchor(code) = HOLDINGS_BASE[code].asof            (when present)
@@ -327,9 +367,22 @@ already correct.
 - A period whose requested start precedes `portfolioAnchor` is clamped to the anchor,
   and the header's resolved comparison date shows the clamped date.
 
-**Missing `asof`.** If any snapshot fund with units > 0 lacks `asof` there is no honest
-anchor. The risk tab and the header Δ then show the existing `noData` message with an
-explanatory line, and the portfolio header surfaces a single action, "ตั้งวันเริ่มพอร์ต",
+**Missing `asof`.** If any included snapshot fund with units > 0 lacks `asof` there is
+no honest anchor, and **every period-derived result becomes unavailable** — not merely
+the risk tab. That set is: the header Δ, its percentage and sparkline, the holdings
+table's Change column and row sparklines, top gainers and losers, and the whole risk
+tab. Each renders the existing `noData` message rather than a number, and the Change
+column's header drops its period label.
+
+Point-in-time results stay available throughout, because they need no period: total
+market value, cost basis, unrealized and realized P/L, weights, all three allocation
+donuts, look-through holdings, and the tax unlock schedule.
+
+The comparison chart also stays, drawn entirely in the dimmed dashed "modelled history"
+treatment described above, since it is explicitly labelled as reconstructed rather than
+presented as measured performance.
+
+The portfolio header surfaces a single action, "ตั้งวันเริ่มพอร์ต",
 which prompts for a date and writes it as `asof` on every snapshot fund missing one.
 The prompt reuses the existing pattern from `setBirth()` (`index.html:2554`). This case
 is reachable today: the repo's `holdings.json` has no `asof` on any of its 66 funds,
@@ -338,17 +391,30 @@ while `importHoldings()` (`index.html:2954`) stamps one on every UI import.
 ### 5.2 Coverage entry is an external flow
 
 Within the reliable window, a fund's NAV history can still begin after
-`portfolioAnchor`. For each date `D` with previous date `P`, for each included code
-`C`:
+`portfolioAnchor`.
+
+The date axis is the union of NAV dates, so consecutive dates can be days apart, and
+the transaction loop at `index.html:2403` drains **every** entry dated `<= D` — not
+just those dated `D`. Any rule keyed on "transactions dated exactly `D`" therefore
+misses a purchase dated `D − 1` that settles into the same batch, and mishandles a sale
+in the opposite direction.
+
+Capture each fund's units **before** the batch runs, and use those:
 
 ```
+openingUnits = { ...units }                        // before the while loop for D
+
+// drain the batch: each buy, sell, dividend and switch contributes to flow exactly once
+
 if navAt(C, D) != null && navAt(C, P) == null:
-    boughtToday = Σ units of buy transactions for C dated exactly D
-    flow += (units[C] - boughtToday) * navAt(C, D)
+    flow += openingUnits[C] * navAt(C, D)
 ```
 
-Subtracting `boughtToday` prevents double counting: those units' cash already entered
-`flow` through the ledger branch, and `units[C]` already includes them.
+`openingUnits[C]` is the capital that was already held but unpriced, which is precisely
+what enters coverage. Units acquired in the batch entered `flow` through the ledger
+branch and must not be added again; units sold in the batch left through it as well.
+The small residual — the difference between a transaction's price and that day's NAV —
+is genuine return and is correctly retained.
 
 No coverage-exit branch is written. `navAt()` carries the last price forward
 indefinitely, so a priced fund never becomes unpriced; units reaching zero are already
@@ -362,8 +428,19 @@ calendar years. Thai locale keeps Buddhist years, matching the rest of the Thai 
 ### 5.4 Guards
 
 - Drop any daily return that is not finite from the return series.
-- When priced funds represent less than 60% of portfolio market value on the window's
-  first date, render the existing `noData` message instead of the KPI values.
+- Window coverage below 60% renders the existing `noData` message instead of the KPI
+  values. "Market value on the window's first date" is not computable — a fund with no
+  historical price has no value then — so coverage is measured in `asOf` money:
+
+  ```
+  coverage = Σ asOf value of included funds priced on or before the window start
+           ÷ Σ asOf value of all included funds that are priced at all
+  ```
+
+  This answers the question that matters: how much of today's selected portfolio the
+  historical window actually represents. Funds never priced at all are excluded from
+  both sides and keep their separate report in the coverage chip, which already lists
+  them (`confCoverage`, `62/66` in the measured portfolio).
 
 ### 5.5 Naming
 
@@ -407,13 +484,16 @@ Required fixtures:
 | 1 | Static single-fund holding, no transactions | TWR equals the fund's simple NAV return exactly |
 | 2 | Dividend-paying fund | TWR deliberately differs from NAV return; the gap equals the dividend's contribution |
 | 3 | Coverage entry with a same-day purchase | No double count — TWR unchanged by the entry |
+| 3b | Coverage entry with a purchase dated between the previous NAV date and `D` | Same result as 3; the `boughtToday` formulation would have double counted |
+| 3c | Coverage entry with a same-day sale | Sale flows out once; TWR unchanged by the entry |
 | 4 | Coverage entry with no transaction that day | Entry contributes zero return |
 | 5 | Snapshot boundary: transactions before and after `asof` | Pre-`asof` entries absorbed; series starts at `asof` |
-| 6 | Snapshot funds with no `asof` | Engine reports "no anchor" rather than a number |
+| 6 | Snapshot funds with no `asof` | Engine reports "no anchor"; every period-derived result is unavailable while point-in-time values still compute |
 | 7 | Buy, sell, dividend, and switch in one window | Units, cost, realized P/L, and TWR all reconcile |
 | 8 | Stale fund (last NAV before `asOf`) | Carried forward; flagged stale; no synthetic return |
 | 9 | Fund with no NAV at all | Excluded from valuation; counted in the coverage chip |
-| 10 | AMC filter applied | Series and totals cover only the filtered set |
+| 10 | AMC filter applied, where the filtered-out fund holds the latest `asof` | Series, totals **and `portfolioAnchor`** all move to the filtered set |
+| 10b | Window start before some funds' first NAV | Coverage ratio matches the `asOf`-money definition; below 60% the KPIs suppress |
 | 11 | Custom window whose start precedes the anchor | Clamped to the anchor; reported clamped date |
 | 12 | Custom window of a single day | Returns zero-length result, not `NaN` |
 
@@ -426,8 +506,13 @@ Run against the real 62-fund portfolio at 320, 390, 768, 1024, and 1400 px:
 
 - No horizontal overflow; sticky offsets correct at every width in both TH and EN
   (Thai labels are the wrapping risk).
-- Keyboard-only pass: tab bar arrow navigation, sort buttons, row disclosure, actions
-  menu open/close/Escape/focus-return, dialogs still focus-trapped.
+- The command bar's collapse table holds at every width: filter and timeframe triggers
+  show their active selection, and the timeframe never disappears.
+- Keyboard-only pass: tab bar arrow navigation, sort buttons, row disclosure, filter
+  and timeframe popovers, actions menu — each with open/close/Escape/focus-return —
+  and dialogs still focus-trapped.
+- Comparison chart at the 8-series cap: chips disable with a translated reason, `+ all`
+  on a large AMC reports what it added, "Clear" still works.
 - 200% browser zoom at 1400 px: layers still usable, nothing clipped.
 - Contrast spot-check of `--muted`, `--muted2`, and every categorical token against the
   surface it renders on.
