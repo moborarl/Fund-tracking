@@ -237,10 +237,32 @@ their handler are deleted; `15D` is dropped and `1D` joins the shared set.
 
 ### Valuation anchor
 
-There is exactly one valuation date for the whole page: **`asOf` = the latest date on
-which any included fund has a NAV.** Every "current" number — total market value,
-weights, unrealized P/L — is computed at `asOf` with each fund's own last known NAV
-carried forward, which is what `navAt()` already does.
+There is exactly one valuation date for the whole page:
+
+```
+asOf = max( latest real NAV date, latest price-bearing execution date )
+       over included funds
+```
+
+Every "current" number — total market value, weights, unrealized P/L — and the terminal
+point of the performance series are computed at `asOf` using `effectivePrice()` (§5.2),
+so the headline total, the table, the Δ, and the risk window all describe the same
+terminal state.
+
+**Why executions count.** A ledger entry dated after the last stored NAV carries a
+price the investor already knows, so it is a newer observation than the carried-forward
+NAV, and `buildHoldings()` (`index.html:2089`) already adds its units to the portfolio
+regardless of date. Capping `asOf` at the last real NAV would value those units at a
+stale price while still counting them — the same mismatch §5.2 removes — or would
+require a new "pending" state that hides units the investor just recorded. Neither is
+worth it.
+
+**Price provenance stays visible.** `asOf` is the *valuation* date; market-data
+freshness is reported separately by the existing chips, `confRange` ("NAV date range" /
+"ช่วงวันที่ NAV") and `confStale` (`index.html:2150`), which continue to describe real
+NAVs only. When `asOf` comes from an execution rather than a NAV, the header's date
+carries a marker (`ราคาจากรายการ` / `from execution`) so the reader can tell the two
+apart without opening anything.
 
 A period of length *n* compares `asOf` against the **last available portfolio
 valuation on or before `asOf − n calendar days`** — the existing `refLE` +
@@ -465,13 +487,11 @@ numerator twice.
 price-bearing execution on that date — buys, sells and switch legs alike — so the price
 is deterministic regardless of ledger insertion order.
 
-**The synthetic price is engine-internal.** It never leaves the performance engine: the
-holdings table's NAV column keeps showing the real NAV with its price date and
-staleness badge, and the page's `asOf` (§2) is still the latest date on which some
-included fund has a **real** NAV — an execution never advances it. Only TWR, XIRR,
-volatility, drawdown and the period Δ read `effectivePrice`.
-
-It is also never written into `NAVDB`.
+**The synthetic price is never presented as market data.** The holdings table's NAV
+column keeps showing the real NAV with its own price date and staleness badge, and the
+`confRange` / `confStale` chips keep describing real NAVs only. An execution price can
+set `asOf` and can value a position (§2), but it is always distinguishable from a
+published NAV in the interface, and it is never written into `NAVDB`.
 `buildHoldings()` (`index.html:2096`) already seeds `NAVDB` from a transaction price
 for funds with no stored NAV at all, and that value reaches the `LS_NAV` cache — a
 synthetic price masquerading as market data. The engine must not add a second such
@@ -517,8 +537,10 @@ dated between two NAV observations is drained into the later date's batch, so
 `(value - flow) / prev - 1` books that flow at the end of a period it did not span. A
 large contribution mid-period therefore distorts the sub-period return.
 
-**The axis becomes the union of NAV dates and transaction dates**, restricted to
-`>= portfolioAnchor`. Every position on every date is valued at
+**The axis becomes the union of NAV dates and transaction dates**, bounded to
+`portfolioAnchor <= date <= asOf`. Since `asOf` is itself the later of the last NAV and
+the last price-bearing execution (§2), no transaction can push the series past the
+page's valuation date, and the series terminal point is always `asOf`. Every position on every date is valued at
 `effectivePrice(code, date)` from §5.2 — there is no second pricing path. On a date
 that carries no new NAV, that resolves to the fund's carried-forward NAV, so it
 contributes a 0% sub-period return, which is the correct reading under carry-forward.
@@ -635,6 +657,7 @@ Required fixtures:
 | 10h | Sell-only transaction on a fund with no NAV yet | The sell price establishes coverage exactly as a buy would |
 | 10i | Dividend dated after an execution, still before the next NAV | The carried execution price survives; the dividend does not shadow it |
 | 10j | Real NAV and an execution on the same date | The real NAV wins the tie |
+| 10k | Purchase dated after the latest real NAV | `asOf`, the headline total, the terminal series date and value, the Δ, the units, and the displayed date all agree; `confRange` still reports the earlier real-NAV date |
 | 11 | Custom window whose start precedes the anchor | Clamped to the anchor; reported clamped date |
 | 12 | Custom window of a single day | Returns zero-length result, not `NaN` |
 
@@ -647,6 +670,8 @@ Run against the real 62-fund portfolio at 320, 390, 768, 1024, and 1400 px:
 
 - No horizontal overflow; sticky offsets correct at every width in both TH and EN
   (Thai labels are the wrapping risk).
+- A ledger entry dated after the latest NAV: the header date advances, carries its
+  `from execution` marker, and `confRange` still shows the earlier real-NAV date.
 - The command bar's collapse table holds at every width: filter and timeframe triggers
   show their active selection, and the timeframe never disappears.
 - Keyboard-only pass: tab bar arrow navigation, sort buttons, row disclosure, filter
@@ -676,11 +701,15 @@ Reordered so nothing surfaces a known-bad number.
    both languages, fixtures, and `check-perf.mjs`. Also confines the existing synthetic
    price at `index.html:2096` so it cannot reach the `LS_NAV` cache.
 
-   Visible changes in this phase, all intentional: the existing hero and risk section
-   pick up correct numbers, the `xirrEst` footnote is reworded in both languages, and —
-   for a portfolio whose snapshot funds lack `asof`, which is the state of the repo's
-   own `holdings.json` — period-derived values are replaced by `noData` and the
-   "ตั้งวันเริ่มพอร์ต" action appears in the hero. Reviewers should expect all three.
+   Four visible changes, all intentional, so reviewers should expect them:
+
+   - the existing hero and risk section pick up correct numbers;
+   - the `xirrEst` footnote is reworded in both languages;
+   - `asOf` can now be advanced by a ledger entry dated after the last NAV, and carries
+     its `from execution` marker when it is;
+   - for a portfolio whose snapshot funds lack `asof` — the state of the repo's own
+     `holdings.json` — period-derived values are replaced by `noData` and the
+     "ตั้งวันเริ่มพอร์ต" action appears in the hero.
 1. **Structure** — command bar, portfolio header with scope and freshness chips, tab
    shell with full keyboard support, remove the left rail, single global timeframe with
    its persistence and resolved-comparison-date label.
