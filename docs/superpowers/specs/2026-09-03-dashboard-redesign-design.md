@@ -317,7 +317,9 @@ Market value · Weight · Change (selected period) · Unrealized · Realized.
 
   For the common case — price source is a published NAV — this is what the column
   already shows, plus the date it already carries. The badge only earns its space when
-  the two sources differ. `NAV × units = market value` then holds on every row.
+  the two sources differ. `Valuation price × units = market value` then holds on every
+  row — including execution-derived rows, where that price is deliberately not the
+  published NAV.
 
   The column header reads `ราคาที่ใช้ตีมูลค่า` / `Valuation price`. Sorting on it sorts
   by the valuation price.
