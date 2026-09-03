@@ -38,3 +38,6 @@ nav_history.json
 *.tmp
 *.temp
 .wrangler/
+
+# Local preview copy (CSP stripped, do not commit)
+preview.local.html
