@@ -1573,7 +1573,42 @@ Count the leading empty strings against the header before running — there must
    if(!NAVDB[t.code]||!Object.keys(NAVDB[t.code].navs||{}).length)NAVDB[t.code]={navs:{[t.date||new Date().toISOString().slice(0,10)]:t.price}};
 ```
 
-Nothing replaces it. `priceObsAt` supplies the price for such funds, and `computeAll`'s `if(!ds.length)continue;` guard means a fund with no NAV at all is excluded from `ALL` — which is the pre-existing behaviour for funds with no price data and is what the `confCoverage` chip already reports.
+Deleting it alone would be a regression: `computeAll`'s `if(!ds.length)continue;` guard excludes any fund with no `NAVDB` entry, and that seed was what made a freshly bought fund visible at all. Widen the guard so an execution price is enough. In `computeAll` (~2238), replace:
+
+```js
+  const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
+  const _as=pageAsOf()||ds[ds.length-1];
+  const _po=priceObsAt(code,_as)||{date:ds[ds.length-1],price:vs[vs.length-1],src:'nav'};
+  const last=_po.price,prev=vs[vs.length-2]||vs[vs.length-1],ld=ds[ds.length-1];
+```
+
+— the two-line form left by Task 3 Step 5 — with:
+
+```js
+  const ds=Object.keys(nav).sort();const vs=ds.map(d=>nav[d]);
+  const _as=pageAsOf()||new Date().toISOString().slice(0,10);
+  const _po=priceObsAt(code,_as);
+  if(!_po)continue;
+  const last=_po.price,prev=vs.length>1?vs[vs.length-2]:_po.price,ld=ds.length?ds[ds.length-1]:'';
+```
+
+The `if(!ds.length)continue;` guard is gone and `const vs=ds.map(d=>nav[d]);` keeps its place on the first line.
+
+The `vs` array is derived from `ds` on the preceding line and is now empty for such a fund, so `prev` falls back to the valuation price and `ld` to `''`. `f.nav_date` being empty makes `isoDayDiff(T.as_of, f.nav_date)` non-numeric, so guard the staleness flag in `renderTable()` — change:
+
+```js
+stale=T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3
+```
+
+to:
+
+```js
+stale=T.as_of&&f.nav_date&&isoDayDiff(T.as_of,f.nav_date)>3
+```
+
+and in the same row template the published-NAV secondary line must not print an empty NAV — it already renders only when `f.price_src==='exec'`, so extend that condition to `f.price_src==='exec'&&f.nav_date`.
+
+A fund priced only by an execution therefore appears in the table with the `Execution` badge and no published-NAV line, is counted in the totals, and contributes no synthetic price to `NAVDB` or the `LS_NAV` cache. The `confCoverage` chip keeps reporting funds with no price from either source.
 
 - [ ] **Step 6: Refresh CSP and run the full check**
 
@@ -1588,6 +1623,7 @@ Reload, import `holdings.json`, set the start date. Then:
 2. Record a buy dated tomorrow via **Buy / Sell** on a fund you hold. That row must switch to the `Execution` badge with tomorrow's date and show the published NAV beneath, and must still reconcile.
 3. Export CSV, open it in Excel, and confirm Thai fund names render correctly and that `Valuation Price × Units = Market Value` in the affected row.
 4. Confirm the `NAV date range` chip still shows the older published-NAV date, not tomorrow's.
+5. Record a buy on a fund code you do **not** hold and that has no NAV — e.g. `TESTFUND-X`, 10 units at ฿5. It must appear in the table with the `Execution` badge, no published-NAV line, `฿50` market value, and no staleness badge. Then run `localStorage.getItem('kkp_navdb_v2')` in the console and confirm `TESTFUND-X` does **not** appear in it. Void the transaction afterwards to leave the portfolio as it was.
 
 - [ ] **Step 8: Commit**
 
