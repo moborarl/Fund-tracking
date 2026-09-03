@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-KF2jd4KUQmgk5E35UA3loGY3z1L1i1jUq4fPLUSAo0c='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Cnd+6cSe9a+yZNeBioHYYYbZLcm8JqpMuajgTnW/mKI='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,6 +146,7 @@ input[type=file]{display:none}
 .fee span:first-child{color:var(--muted)}.fee span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
 .skel{color:var(--muted2);font-size:12.5px;padding:20px 0;text-align:center}
 .stale-badge{display:inline-flex;align-items:center;font-size:9px;font-weight:700;color:#ffd17b;background:rgba(240,185,93,.14);border:1px solid rgba(240,185,93,.25);border-radius:4px;padding:1px 5px;margin-left:5px}
+.src-badge{font-size:10px;color:var(--muted2);white-space:nowrap}
 .retbars{display:flex;gap:8px;flex-wrap:wrap}
 .retb{flex:1;min-width:70px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center}
 .retb .l{font-size:10px;color:var(--muted2);font-weight:600}.retb .v{font-size:14px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
@@ -2121,7 +2122,7 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 
 /* ---------- i18n ---------- */
 const I18N={
-en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
+en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
  lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
@@ -2162,7 +2163,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
  swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
  swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
-th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
+th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
@@ -2228,10 +2229,13 @@ function computeAll(){
     h.amc=up.indexOf('KKP')>=0?'KKP':up.indexOf('SCB')>=0?'SCB':up.indexOf('BBL')>=0?'Bualuang':up.indexOf('UOB')>=0?'UOB':(up.indexOf('KASSET')>=0||up.indexOf('KASIKORN')>=0)?'K-Fund':(up.indexOf('EASTSPRING')>=0||up.indexOf('TMB')>=0)?'Eastspring':up.indexOf('LH')>=0?'LH Fund':up.indexOf('ONE')>=0?'ONE':am;}}
   if(h.name===code){const det=DETAILS[code]||DETCACHE[code];/* keep code as name; nothing else needed */}
   const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
-  const last=vs[vs.length-1],prev=vs[vs.length-2]||last,ld=ds[ds.length-1];
+  const _as=pageAsOf()||ds[ds.length-1];
+  const _po=priceObsAt(code,_as)||{date:ds[ds.length-1],price:vs[vs.length-1],src:'nav'};
+  const last=_po.price,prev=vs[vs.length-2]||vs[vs.length-1],ld=ds[ds.length-1];
   const rv=n=>refLE(ds,vs,daysBefore(ld,n));
   const value=h.units*last,cost=h.units*h.avg;
-  const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:last,nav_date:ld,
+  const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:vs[vs.length-1],nav_date:ld,
+   price:_po.price,price_src:_po.src,price_date:_po.date,
    value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
   for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
   ALL.push(o);}
@@ -2252,7 +2256,9 @@ function applyFilter(){
  }else{
   for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);const base=T.value-T.chg[k];T.pct[k]=base?T.chg[k]/base*100:0;}
  }
- T.as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
+ T.as_of=ALL.reduce((m,f)=>f.price_date>m?f.price_date:m,'');
+ T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
+ T.nav_as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
  const active=F.filter(f=>f.units>1e-8&&f.value!==0);const eligible=Object.values(HOLDINGS).filter(h=>h.units>1e-8&&(filterAMC.size===0||filterAMC.has(h.amc))&&(filterTax.size===0||filterTax.has(h.tax)));
  T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
@@ -2271,7 +2277,7 @@ function buildFilters(){
 
 /* ---------- header / KPIs ---------- */
 function renderHeader(){
- document.getElementById('asof').textContent=T.as_of?new Date(T.as_of+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}):t('noAsOf');
+ document.getElementById('asof').innerHTML=T.as_of?escHTML(new Date(T.as_of+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}))+(T.as_of_src==='exec'?` <span class="src-badge">${escHTML(t('fromExec'))}</span>`:''):escHTML(t('noAsOf'));
  const pts=Object.values(NAVDB).reduce((s,v)=>s+Object.keys(v.navs||{}).length,0);
  document.getElementById('srcline').textContent=t('navPoints').replace('{n}',fmt0(pts));
  document.getElementById('h-value').textContent=fmt(T.value);
@@ -2401,6 +2407,18 @@ function priceObsAt(code,date){
  return n.date>=e.date?{date:n.date,price:n.price,src:'nav'}:{date:e.date,price:e.price,src:'exec'};
 }
 function effectivePrice(code,date){const o=priceObsAt(code,date);return o?o.price:null;}
+function pageAsOf(){
+ const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&seriesIncluded(c));
+ let m='';
+ for(const c of codes){
+  const nv=(NAVDB[c]||{}).navs||{};for(const d in nv)if(d>m)m=d;
+ }
+ for(const x of effectiveTxns()){
+  if(!codes.includes(x.code))continue;
+  if((x.action==='buy'||x.action==='sell')&&+x.price>0&&(x.date||'')>m)m=x.date;
+ }
+ return m;
+}
 function txAbsorbed(x){const h=HOLDINGS_BASE[x.code];return !!(h&&h.asof&&(x.date||'')<=h.asof);}
 function effectiveTxns(){
  const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
@@ -2413,7 +2431,9 @@ function seriesMeta(code){
 function seriesIncluded(code){const m=seriesMeta(code);return(filterAMC.size===0||filterAMC.has(m.amc))&&(filterTax.size===0||filterTax.has(m.tax));}
 function portfolioSeries(){
  const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&NAVDB[c]&&seriesIncluded(c));
- const dates=[...new Set(codes.flatMap(c=>Object.keys((NAVDB[c]||{}).navs||{})))].sort();
+ const asOf=pageAsOf();
+ const txDates=effectiveTxns().filter(x=>codes.includes(x.code)&&(x.date||'')).map(x=>x.date);
+ const dates=[...new Set([...codes.flatMap(c=>Object.keys((NAVDB[c]||{}).navs||{})),...txDates])].sort().filter(d=>!asOf||d<=asOf);
  const units={};codes.forEach(c=>units[c]=+(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].units)||0);
  const tx=effectiveTxns().filter(x=>codes.includes(x.code));let ti=0,cash=0,prev=null,twr=100;
  const rows=[];
