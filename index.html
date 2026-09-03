@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Cnd+6cSe9a+yZNeBioHYYYbZLcm8JqpMuajgTnW/mKI='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-cLxm5KGA0XAAHJSFcJ5EX7XCsFz1GgyHTgfoKrqoupY='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2260,7 +2260,7 @@ function applyFilter(){
  T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
  T.nav_as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
  const active=F.filter(f=>f.units>1e-8&&f.value!==0);const eligible=Object.values(HOLDINGS).filter(h=>h.units>1e-8&&(filterAMC.size===0||filterAMC.has(h.amc))&&(filterTax.size===0||filterTax.has(h.tax)));
- T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3).length;
+ T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
 }
 
@@ -2294,7 +2294,7 @@ function renderConfidence(){
  coverage.parentElement.style.cursor='pointer';
  coverage.parentElement.onclick=()=>{const miss=Object.entries(HOLDINGS).filter(([c,h])=>h.units>1e-8&&(!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length)).map(([c])=>c);
   toast(miss.length?('⚠️ '+t('noNavList')+': '+escHTML(miss.join(', '))):t('confFresh'),miss.length?'err':'ok');};
- range.textContent=T.as_of?(T.oldest_as_of&&T.oldest_as_of!==T.as_of?`${fmtD(T.oldest_as_of)} – ${fmtD(T.as_of)}`:fmtD(T.as_of)):'—';
+ range.textContent=T.nav_as_of?(T.oldest_as_of&&T.oldest_as_of!==T.nav_as_of?`${fmtD(T.oldest_as_of)} – ${fmtD(T.nav_as_of)}`:fmtD(T.nav_as_of)):'—';
  stale.textContent=T.stale?String(T.stale):t('confFresh');
  document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
  document.getElementById('rangeDot').className='conf-dot'+(T.stale?' warn':'');document.getElementById('staleDot').className='conf-dot'+(T.stale?' bad':'');
@@ -2349,7 +2349,7 @@ function valOf(f,k){if(k==='weight')return f.value;if(k==='chg')return f.pct[RAN
 function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
  const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3;
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
    <td data-l="NAV">${fmt(f.nav,4)}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
