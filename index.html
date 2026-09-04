@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-oLC5ByqRdMkT3ahngbPf09lUZL6HQh82r14LPtrknbM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-4aIcvBLxYP4jHvTdzmtqeN1OjDGi0xC/DK99uGj86UQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2263,7 +2263,7 @@ function applyFilter(){
  T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
  T.nav_as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
  const active=F.filter(f=>f.units>1e-8&&f.value!==0);const eligible=Object.values(HOLDINGS).filter(h=>h.units>1e-8&&(filterAMC.size===0||filterAMC.has(h.amc))&&(filterTax.size===0||filterTax.has(h.tax)));
- T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
+ T.oldest_as_of=active.reduce((m,f)=>f.nav_date&&(!m||f.nav_date<m)?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
 }
 
@@ -2663,7 +2663,7 @@ function renderUnlock(){
  const rows=unlockLots();
  const H=cols=>'<tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr>';
  if(!rows.length){th.innerHTML='';tb.innerHTML=`<tr><td colspan="5" class="skel">${t('noLots')}</td></tr>`;return;}
- const navOf=c=>{const f=ALL.find(x=>x.code===c);return f?f.nav:(navAt(c,today)||0);};
+ const navOf=c=>{const f=ALL.find(x=>x.code===c);if(f&&f.nav!=null)return f.nav;if(f&&f.price!=null)return f.price;return navAt(c,today)||0;};
  const statusOf=r=>{
   if(r.tax==='RMF'&&!birth)return `<button type="button" class="btn ghost" data-birth="1">${t('needBirth')}</button>`;
   if(!r.date)return `<button type="button" class="btn ghost" data-setbuy="${escAttr(r.code)}">${t('setDate')}</button>`;
