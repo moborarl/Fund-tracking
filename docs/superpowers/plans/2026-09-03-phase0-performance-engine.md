@@ -1675,3 +1675,53 @@ git commit -m "Record Phase 0 acceptance results"
 Phases 1–3 of the spec — the tabbed shell and command bar, the holdings table rework, and the Ink & brass v2 visual language — get their own plans, written once Phase 0 is reviewed. Their step detail depends on how the shell actually lands, and writing it now would produce guesses that need rewriting.
 
 Phase 0 leaves the dashboard working with its existing layout, correct numbers, and a reconciled price column and export.
+
+---
+
+## Phase 0 results
+
+Recorded 2026-09-04 against the real portfolio (66 funds imported, 62 priced,
+`asof` stamped `2026-07-14`), timeframe `MAX`, window `2026-07-14 → 2026-09-04`,
+43 valuation points, `windowCoverage` = 1.000.
+
+### Headline figures
+
+| Figure | Before Phase 0 | After |
+|---|---|---|
+| TWR | `+12,073.62%` | `-0.81%` |
+| Estimated XIRR | `+6,345.59%` | `-5.55%` |
+| Volatility (annualized) | `595.5%` | `7.6%` |
+| Max drawdown | `-23.0%` | `-2.6%` |
+| Best day | `+608.41%` | `+1.31%` |
+| Worst day | `-9.52%` | `-1.00%` |
+| Total market value | — | `฿2,074,775.57` |
+
+All six are now plausible for a seven-week window on a diversified Thai
+mutual-fund portfolio.
+
+### Single-fund reconciliation
+
+Filtered to the one `ONE-THAIESGX-L` holding, the portfolio row and that fund's
+own row agree to four decimal places on both return (`0.4056%`) and annualized
+volatility (`7.884%`) over the same 43-point window.
+
+This check initially failed — portfolio `+0.41%` against fund `+7.12%` — and
+caught a defect all eight prior tasks missed: `windowSeries` filtered only by
+`tfWindow`, which for `MAX` returns every stored date, so per-fund and benchmark
+risk rows measured from each series' first stored NAV including the pre-anchor
+backtest span. Fixed in commit `06e9f23`.
+
+### Language parity
+
+Every string this phase touched resolves in both languages: `noAnchor`,
+`setStartDate`, `setStartPrompt`, `xirrEst`, `fromExec`, `thPrice`, `srcNav`,
+`srcExec`. `scripts/check.mjs` reports 263 used keys resolving in both. The
+Thai date labels render Buddhist years (`4 ก.ย. 2569`).
+
+One pre-existing gap, not introduced here: the max-drawdown meta line is the
+hardcoded literal `peak-to-trough` rather than a `t()` key, so it stays English
+in Thai and `check.mjs`'s i18n gate cannot see it.
+
+### Automated checks
+
+`node scripts/check.mjs` → 5/5, including `perf engine: 20 fixtures pass`, exit 0.
