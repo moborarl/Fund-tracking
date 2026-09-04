@@ -1,0 +1,8 @@
+# index.html carries a CSP meta tag pinning a sha256 of its own inline script.
+# update-csp.mjs hashes the WORKING COPY; Cloudflare Pages serves the git blob.
+# With core.autocrlf=true on Windows those two differ, so the deployed page
+# would pin a hash that does not match the script it ships and the browser
+# would block all JavaScript. Pin LF so both sides hash the same bytes.
+index.html text eol=lf
+scripts/*.mjs text eol=lf
+*.json text eol=lf

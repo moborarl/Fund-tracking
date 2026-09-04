@@ -51,4 +51,12 @@ try {
   ok('worker/nav-sync/index.js parses');
 } catch (e) { fail('worker parse error: ' + e.message); }
 
+// ---- performance engine fixtures ----
+try {
+  const { runFixtures } = await import('./check-perf.mjs');
+  const { passed, failed: bad } = await runFixtures();
+  if (bad.length) bad.forEach(b => fail('perf fixture: ' + b));
+  else ok(`perf engine: ${passed} fixtures pass`);
+} catch (e) { fail('perf fixture error: ' + e.message); }
+
 process.exit(failed);

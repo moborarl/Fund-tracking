@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-+FAclM9NBGOjmSqU6T0C6uDvVN54x1Qh80oZeSiltVw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-oMnTRaeYUJqO68aj2uwgKZjCgFCfcXVwGduTgNxq4Q4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,6 +146,7 @@ input[type=file]{display:none}
 .fee span:first-child{color:var(--muted)}.fee span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
 .skel{color:var(--muted2);font-size:12.5px;padding:20px 0;text-align:center}
 .stale-badge{display:inline-flex;align-items:center;font-size:9px;font-weight:700;color:#ffd17b;background:rgba(240,185,93,.14);border:1px solid rgba(240,185,93,.25);border-radius:4px;padding:1px 5px;margin-left:5px}
+.src-badge{font-size:10px;color:var(--muted2);white-space:nowrap}
 .retbars{display:flex;gap:8px;flex-wrap:wrap}
 .retb{flex:1;min-width:70px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center}
 .retb .l{font-size:10px;color:var(--muted2);font-weight:600}.retb .v{font-size:14px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
@@ -231,13 +232,17 @@ header.top{position:fixed;inset:0 auto 0 0;width:214px;background:#0a0e0d;border
 .upd .btn{width:100%;justify-content:flex-start;min-height:36px;padding:8px 10px}
 .upd #updBtn{margin-top:8px;background:var(--accent);border-color:var(--accent);color:#10130f;font-weight:700}
 .wrap{max-width:none;margin:0 0 0 214px;padding:0 28px 56px;display:grid;grid-template-columns:minmax(0,1fr)}
-.wrap>.filterbar{order:1}.wrap>.confidence{order:2}.wrap>.empty-state{order:3}.wrap>.hero{order:4}
+.wrap>.sticky-controls{order:1}.wrap>.empty-state{order:3}.wrap>.hero{order:4}
 .wrap>section:nth-of-type(1){order:5}.wrap>section:nth-of-type(6){order:6}.wrap>section:nth-of-type(4){order:7}
 .wrap>section:nth-of-type(2){order:8}.wrap>section:nth-of-type(3){order:9}.wrap>section:nth-of-type(5){order:10}.wrap>.foot{order:11}
 .btn,.btn.ghost{border-radius:var(--radius-sm);background:transparent;border:1px solid var(--line2);box-shadow:none;color:var(--muted);transition:background-color .15s,color .15s,border-color .15s}
 .btn:hover,.btn.ghost:hover{filter:none;background:rgba(199,167,96,.08);border-color:var(--accent);color:var(--txt)}
 .btn:focus-visible,.fchip:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .filterbar{position:relative;top:auto;margin:18px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-md);background:rgba(17,22,20,.94);box-shadow:var(--shadow);backdrop-filter:blur(14px);z-index:10}
+.sticky-controls{position:sticky;top:0;z-index:45;background:var(--bg);padding-bottom:10px;transition:box-shadow .15s}
+.sticky-controls>.filterbar{margin-top:14px}
+.sticky-controls>.confidence{margin-bottom:0}
+.sticky-controls.stuck{box-shadow:0 16px 30px rgba(0,0,0,.45)}
 .fgroup .lbl,.eyebrow,.rk .l,.m-stat .l,.tf label,.m-sec h4,thead th,.risk-tbl th{letter-spacing:0;color:var(--muted2)}
 .fchip,.ms-chip,.ms-modes,.range-pills,.bench-sel,.ms-search,.tf-custom input[type=date],.tf select,.tf input{border-radius:var(--radius-sm);background:var(--panel2);border-color:var(--line);box-shadow:none}
 .fchip.on,.ms-chip.on,.ms-modes button.on,.range-pills button.on{background:var(--accent);color:#10130f;box-shadow:none}
@@ -344,6 +349,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 <div class="wrap">
  <!-- FILTER BAR -->
  <div id="fbSentinel" aria-hidden="true"></div>
+ <div class="sticky-controls">
  <div class="filterbar">
   <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
   <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
@@ -354,6 +360,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
   <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
   <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
   <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
+ </div>
  </div>
 
  <div class="empty-state" id="emptyState" hidden>
@@ -456,7 +463,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
     <button class="btn ghost" id="printBtn" data-i18n="printBtn">🖨 Print</button>
    </span></div>
   <div class="tbl-wrap"><table id="tbl"><thead><tr>
-   <th class="sortable" data-k="code" data-i18n="thFund">Fund</th><th class="sortable" data-k="nav">NAV</th><th class="sortable" data-k="units" data-i18n="thUnits">Units</th>
+   <th class="sortable" data-k="code" data-i18n="thFund">Fund</th><th class="sortable" data-k="price" data-i18n="thPrice">Valuation price</th><th class="sortable" data-k="units" data-i18n="thUnits">Units</th>
    <th class="sortable" data-k="value" data-i18n="thValue">Market Value</th><th class="sortable" data-k="weight" data-i18n="thWeight">Weight</th>
    <th class="sortable" data-k="chg"><span data-i18n="thChange">Change</span> <span id="th-tl"></span></th><th class="sortable" data-k="unreal" data-i18n="thUnreal">Unrealized</th><th class="sortable" data-k="realized" data-i18n="thReal">Realized</th>
   </tr></thead><tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot></table></div>
@@ -2075,11 +2082,6 @@ let SB=null, USER=null, _saveT=null;
 function persist(){ try{localStorage.setItem('kkp_holdings',JSON.stringify(HOLDINGS_BASE));localStorage.setItem(LS_TXN,JSON.stringify(TXNS));}catch(e){} if(SB&&USER){clearTimeout(_saveT);_saveT=setTimeout(saveCloud,800);} }
 async function saveCloud(){ if(!SB||!USER)return; try{const{error}=await SB.from('portfolios').upsert({user_id:USER.id,holdings:HOLDINGS_BASE,transactions:TXNS,updated_at:new Date().toISOString()});if(error)console.error('cloud save',error);}catch(e){console.error(e);} }
 function saveTxns(){persist();}
-function txAbsorbed(x){const h=HOLDINGS_BASE[x.code];return !!(h&&h.asof&&(x.date||'')<=h.asof);}
-function effectiveTxns(){
- const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
- return TXNS.filter(x=>x&&x.action!=='void'&&!voided.has(String(x.ts))&&!txAbsorbed(x)).sort((a,b)=>((a.date||'').localeCompare(b.date||''))||((a.ts||0)-(b.ts||0)));
-}
 function buildHoldings(){
  HOLDINGS=JSON.parse(JSON.stringify(HOLDINGS_BASE));
  const tx=effectiveTxns();
@@ -2087,7 +2089,6 @@ function buildHoldings(){
   let h=HOLDINGS[t.code];
   if(!h){ if(t.action!=='buy')continue;
    h=HOLDINGS[t.code]={name:t.name||t.code,amc:t.amc||'Other',tax:t.tax||'General',asset:t.asset||'Foreign Equity',units:0,avg:0,realized:0,_added:true};
-   if(!NAVDB[t.code]||!Object.keys(NAVDB[t.code].navs||{}).length)NAVDB[t.code]={navs:{[t.date||new Date().toISOString().slice(0,10)]:t.price}};
   }
   const u=+t.units||0,pr=+t.price||0;
   if(t.action==='buy'){const nu=h.units+u; h.avg=nu>0?(h.units*h.avg+u*pr)/nu:pr; h.units=nu;}
@@ -2120,7 +2121,7 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 
 /* ---------- i18n ---------- */
 const I18N={
-en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
+en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
  lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
@@ -2130,9 +2131,10 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  topGainers:'Top Gainers',topLosers:'Top Losers',bestPerf:'Best performers',weakPerf:'Weakest performers',rvu:'Realized vs Unrealized',plBreak:'P/L breakdown',unrealWord:'Unrealized',realWord:'Realized',
  secRisk:'Risk & Performance',riskHint:'Portfolio uses ledger-adjusted TWR · follows chart timeframe above',
  rhRet:'Return',rhVol:'Volatility (ann.)',rhDD:'Max Drawdown',rhRR:'Return ÷ Volatility',rhBest:'Best Day',rhWorst:'Worst Day',portWord:'Portfolio',
- rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Baseline cost is treated as an opening cash flow',noData:'Not enough NAV history in this window',
+ rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Opening market value on {d} is the initial cash flow; later ledger and coverage flows are included',noData:'Not enough NAV history in this window',noAnchor:'Set a portfolio start date to measure performance',noPeriodMsg:'No measurable period yet — set the date your imported balances were accurate',setStartDate:'Set portfolio start date',setStartPrompt:'Enter the date your imported balances were accurate (YYYY-MM-DD):',
  secHold:'Holdings',holdHint:'Click any row for fund details · click headers to sort · change column follows selected range',
  csvBtn:'⬇ Export CSV',printBtn:'🖨 Print',thFund:'Fund',thUnits:'Units',thValue:'Market Value',thWeight:'Weight',thChange:'Change',thUnreal:'Unrealized',thReal:'Realized',totalWord:'Total',fundsWord:'funds',
+ thPrice:'Valuation price',srcNav:'NAV',srcExec:'Execution',
  footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
  expBtn:'⬇ Download nav_history.json',impBtn:'⬆ Import NAV database',impHoldBtn:'⬆ Import portfolio (holdings.json)',disclaimer:'For portfolio tracking only — not investment advice.',
  r_d1:'1 Day',r_w1:'1 Week',r_d15:'15 Days',r_m1:'1 Month',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
@@ -2155,13 +2157,14 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',txnBtn:'⇄ Buy / S
  editWord:'edit',byLot:'By lot',byFund:'By fund',byYear:'By year',
  uhUnlocked:'Unlocked',uhLocked:'Locked',uhNext:'Next unlock',uhYear:'Unlock year',uhValue:'Est. value',uhFundsN:'Funds',unknownWord:'unknown date',pctInFund:'in fund',
  rkAlpha:'TWR vs Benchmark',
+ rkDDMeta:'peak-to-trough',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
  swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',swFee:'Switching fee (฿)',swUnitsAuto:'Units are calculated from net proceeds',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
  swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
  swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
  swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
-th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
+th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
@@ -2171,9 +2174,10 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  topGainers:'ปรับขึ้นสูงสุด',topLosers:'ปรับลงมากสุด',bestPerf:'ผลงานดีที่สุด',weakPerf:'ผลงานอ่อนแอที่สุด',rvu:'รับรู้แล้ว vs ยังไม่รับรู้',plBreak:'สรุปกำไรขาดทุน',unrealWord:'ยังไม่รับรู้',realWord:'รับรู้แล้ว',
  secRisk:'ความเสี่ยงและผลตอบแทน',riskHint:'พอร์ตใช้ TWR ที่ปรับตามรายการซื้อขาย · ตามช่วงเวลาของกราฟด้านบน',
  rhRet:'ผลตอบแทน',rhVol:'ความผันผวน (ต่อปี)',rhDD:'ขาดทุนสะสมสูงสุด',rhRR:'ผลตอบแทน ÷ ความผันผวน',rhBest:'วันที่ดีที่สุด',rhWorst:'วันแย่ที่สุด',portWord:'พอร์ตรวม',
- rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้ต้นทุนพอร์ตตั้งต้นเป็นกระแสเงินสดวันแรก',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',
+ rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้มูลค่าตลาดต้นงวด ณ {d} เป็นกระแสเงินสดแรก รวมรายการซื้อขายและเงินที่เพิ่งเข้ามาในความคุ้มครองราคาที่ตามมา',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',noAnchor:'ตั้งวันเริ่มพอร์ตก่อน จึงจะวัดผลตอบแทนได้',noPeriodMsg:'ยังวัดผลตอบแทนไม่ได้ — ตั้งวันที่ยอดที่นำเข้าถูกต้อง',setStartDate:'ตั้งวันเริ่มพอร์ต',setStartPrompt:'กรอกวันที่ยอดที่นำเข้าถูกต้อง (ปปปป-ดด-วว):',
  secHold:'กองทุนที่ถือครอง',holdHint:'คลิกแถวเพื่อดูรายละเอียด · คลิกหัวตารางเพื่อเรียง · คอลัมน์เปลี่ยนแปลงตามช่วงเวลาที่เลือก',
  csvBtn:'⬇ ส่งออก CSV',printBtn:'🖨 พิมพ์',thFund:'กองทุน',thUnits:'หน่วย',thValue:'มูลค่าตลาด',thWeight:'น้ำหนัก',thChange:'เปลี่ยนแปลง',thUnreal:'ยังไม่รับรู้',thReal:'รับรู้แล้ว',totalWord:'รวม',fundsWord:'กองทุน',
+ thPrice:'ราคาที่ใช้ตีมูลค่า',srcNav:'NAV',srcExec:'ราคาจากรายการ',
  footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
  expBtn:'⬇ ดาวน์โหลด nav_history.json',impBtn:'⬆ นำเข้าฐานข้อมูล NAV',impHoldBtn:'⬆ นำเข้าพอร์ต (holdings.json)',disclaimer:'ใช้เพื่อติดตามพอร์ตเท่านั้น — ไม่ใช่คำแนะนำการลงทุน',
  r_d1:'1 วัน',r_w1:'1 สัปดาห์',r_d15:'15 วัน',r_m1:'1 เดือน',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
@@ -2196,6 +2200,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  editWord:'แก้ไข',byLot:'รายล็อต',byFund:'รายกองทุน',byYear:'รายปี',
  uhUnlocked:'ปลดล็อกแล้ว',uhLocked:'ล็อกอยู่',uhNext:'ปลดล็อกถัดไป',uhYear:'ปีที่ปลดล็อก',uhValue:'มูลค่าโดยประมาณ',uhFundsN:'จำนวนกอง',unknownWord:'ไม่ทราบวันซื้อ',pctInFund:'ในกอง',
  rkAlpha:'TWR เทียบเกณฑ์เทียบ',
+ rkDDMeta:'จากจุดสูงสุดถึงจุดต่ำสุด',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
  swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',swFee:'ค่าธรรมเนียมสับเปลี่ยน (฿)',swUnitsAuto:'จำนวนหน่วยคำนวณจากเงินรับสุทธิ',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
@@ -2217,11 +2222,9 @@ function applyLang(){
 // Loading skeletons instead of empty values (replaced by first render with data)
 ['h-value','h-cost','h-unreal','h-count','m-unreal','m-real','tl-baht','tl-pct'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<span class="sk"></span>';});
 
-const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
-const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
-
 function computeAll(){
  ALL=[];
+ const _pao=pageAsOf(),_noAnchor=portfolioAnchor()===null;
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
   if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
    if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
@@ -2229,13 +2232,17 @@ function computeAll(){
    if(am){const up=am.toUpperCase();
     h.amc=up.indexOf('KKP')>=0?'KKP':up.indexOf('SCB')>=0?'SCB':up.indexOf('BBL')>=0?'Bualuang':up.indexOf('UOB')>=0?'UOB':(up.indexOf('KASSET')>=0||up.indexOf('KASIKORN')>=0)?'K-Fund':(up.indexOf('EASTSPRING')>=0||up.indexOf('TMB')>=0)?'Eastspring':up.indexOf('LH')>=0?'LH Fund':up.indexOf('ONE')>=0?'ONE':am;}}
   if(h.name===code){const det=DETAILS[code]||DETCACHE[code];/* keep code as name; nothing else needed */}
-  const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
-  const last=vs[vs.length-1],prev=vs[vs.length-2]||last,ld=ds[ds.length-1];
-  const rv=n=>refLE(ds,vs,daysBefore(ld,n));
+  const ds=Object.keys(nav).sort();const vs=ds.map(d=>nav[d]);
+  const _as=_pao||new Date().toISOString().slice(0,10);
+  const _po=priceObsAt(code,_as);
+  if(!_po)continue;
+  const last=_po.price,prev=vs.length>1?vs[vs.length-2]:_po.price,ld=ds.length?ds[ds.length-1]:'';
+  const rv=n=>ds.length?refLE(ds,vs,daysBefore(ld,n)):last;
   const value=h.units*last,cost=h.units*h.avg;
-  const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:last,nav_date:ld,
+  const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:vs[vs.length-1],nav_date:ld,
+   price:_po.price,price_src:_po.src,price_date:_po.date,
    value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
-  for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
+  if(!_noAnchor&&ds.length)for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
   ALL.push(o);}
  ALL.sort((a,b)=>b.value-a.value);
 }
@@ -2251,14 +2258,15 @@ function applyFilter(){
  if(psH.length>1){
   const dsP=psH.map(x=>x.date),vsP=psH.map(x=>x.value),lastD=dsP[dsP.length-1],lastV=vsP[vsP.length-1];
   for(const k in RANGES){const ref=refLE(dsP,vsP,daysBefore(lastD,RANGES[k].d));T.chg[k]=lastV-ref;T.pct[k]=ref?T.chg[k]/ref*100:0;}
- }else{
-  for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);const base=T.value-T.chg[k];T.pct[k]=base?T.chg[k]/base*100:0;}
  }
- T.as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
+ T.as_of=ALL.reduce((m,f)=>f.price_date>m?f.price_date:m,'');
+ T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
+ T.nav_as_of=ALL.reduce((m,f)=>f.nav_date>m?f.nav_date:m,'');
  const active=F.filter(f=>f.units>1e-8&&f.value!==0);const eligible=Object.values(HOLDINGS).filter(h=>h.units>1e-8&&(filterAMC.size===0||filterAMC.has(h.amc))&&(filterTax.size===0||filterTax.has(h.tax)));
- T.oldest_as_of=active.reduce((m,f)=>!m||f.nav_date<m?f.nav_date:m,'');T.stale=active.filter(f=>T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3).length;
+ T.oldest_as_of=active.reduce((m,f)=>f.nav_date&&(!m||f.nav_date<m)?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
 }
+function noPeriod(){for(const k in RANGES)if(T.chg[k]!=null)return false;return true;}
 
 /* ---------- filters UI ---------- */
 function buildFilters(){
@@ -2273,7 +2281,7 @@ function buildFilters(){
 
 /* ---------- header / KPIs ---------- */
 function renderHeader(){
- document.getElementById('asof').textContent=T.as_of?new Date(T.as_of+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}):t('noAsOf');
+ document.getElementById('asof').innerHTML=T.as_of?escHTML(new Date(T.as_of+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric'}))+(T.as_of_src==='exec'?` <span class="src-badge">${escHTML(t('fromExec'))}</span>`:''):escHTML(t('noAsOf'));
  const pts=Object.values(NAVDB).reduce((s,v)=>s+Object.keys(v.navs||{}).length,0);
  document.getElementById('srcline').textContent=t('navPoints').replace('{n}',fmt0(pts));
  document.getElementById('h-value').textContent=fmt(T.value);
@@ -2290,7 +2298,7 @@ function renderConfidence(){
  coverage.parentElement.style.cursor='pointer';
  coverage.parentElement.onclick=()=>{const miss=Object.entries(HOLDINGS).filter(([c,h])=>h.units>1e-8&&(!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length)).map(([c])=>c);
   toast(miss.length?('⚠️ '+t('noNavList')+': '+escHTML(miss.join(', '))):t('confFresh'),miss.length?'err':'ok');};
- range.textContent=T.as_of?(T.oldest_as_of&&T.oldest_as_of!==T.as_of?`${fmtD(T.oldest_as_of)} – ${fmtD(T.as_of)}`:fmtD(T.as_of)):'—';
+ range.textContent=T.nav_as_of?(T.oldest_as_of&&T.oldest_as_of!==T.nav_as_of?`${fmtD(T.oldest_as_of)} – ${fmtD(T.nav_as_of)}`:fmtD(T.nav_as_of)):'—';
  stale.textContent=T.stale?String(T.stale):t('confFresh');
  document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
  document.getElementById('rangeDot').className='conf-dot'+(T.stale?' warn':'');document.getElementById('staleDot').className='conf-dot'+(T.stale?' bad':'');
@@ -2298,14 +2306,21 @@ function renderConfidence(){
 function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
  const b=T.chg[RANGE],p=T.pct[RANGE];
- document.getElementById('tl-baht').textContent='฿'+sign(b);document.getElementById('tl-baht').className='big mono '+cls(b);
- const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
- document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(RANGE).toLowerCase():rangeLabel(RANGE));
+ const tlb=document.getElementById('tl-baht');
  document.getElementById('g-tl').textContent='· '+rangeLabel(RANGE);document.getElementById('l-tl').textContent='· '+rangeLabel(RANGE);
  document.getElementById('th-tl').textContent='('+rangeLabel(RANGE)+')';
+ if(noPeriod()){tlb.textContent='—';tlb.className='big mono';
+  const pe0=document.getElementById('tl-pct');pe0.textContent='';pe0.className='pct mono';
+  document.getElementById('tl-label').innerHTML=`${escHTML(t('noPeriodMsg'))} <button type="button" class="btn ghost" id="setStartBtn">${escHTML(t('setStartDate'))}</button>`;
+  const sb=document.getElementById('setStartBtn');if(sb)sb.onclick=setStartDate;
+  return;}
+ tlb.textContent='฿'+sign(b);tlb.className='big mono '+cls(b);
+ const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
+ document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(RANGE).toLowerCase():rangeLabel(RANGE));
 }
 function renderMovers(){
- const s=[...F].sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
+ if(noPeriod()){const _m=t(portfolioAnchor()===null?'noAnchor':'noPeriodMsg');document.getElementById('gainers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;document.getElementById('losers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;return;}
+ const s=F.filter(f=>Number.isFinite(f.pct[RANGE])).sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
  const row=(f,i)=>`<div class="mover" role="button" tabindex="0" data-fund="${escAttr(f.code)}"><div class="rank">${i+1}</div>
   <div class="nm"><div class="c">${escHTML(f.code)}</div><div class="t">${escHTML(f.amc)} · ${escHTML(f.name)}</div></div>
   <div style="text-align:right"><div class="pct ${cls(f.pct[RANGE])}">${sign(f.pct[RANGE])}%</div><div class="baht">฿${sign(f.chg[RANGE])}</div></div></div>`;
@@ -2341,20 +2356,21 @@ function renderDonuts(){
 }
 
 /* ---------- table ---------- */
-function valOf(f,k){if(k==='weight')return f.value;if(k==='chg')return f.pct[RANGE];if(k==='code')return f.code;return f[k];}
+function valOf(f,k){if(k==='weight')return f.value;if(k==='chg'){const v=f.pct[RANGE];return Number.isFinite(v)?v:0;}if(k==='code')return f.code;return f[k];}
 function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
+ const noAnchor=noPeriod();
  const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.as_of&&isoDayDiff(T.as_of,f.nav_date)>3;
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3,noFund=noAnchor||chg==null;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
-   <td data-l="NAV">${fmt(f.nav,4)}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
+   <td data-l="${escAttr(t('thPrice'))}">${fmt(f.price,4)} <span class="src-badge">${escHTML(t(f.price_src==='exec'?'srcExec':'srcNav'))} ${escHTML(fmtD(f.price_date))}</span>${f.price_src==='exec'&&f.nav_date?`<br><span style="font-size:10.5px;color:var(--muted2)">NAV ${fmt(f.nav,4)} · ${escHTML(fmtD(f.nav_date))}</span>`:''}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
    <td data-l="${escAttr(t('thWeight'))}">${fmt(w,1)}%<span class="wbar" style="width:${Math.max(2,w/maxW*45)}px"></span></td>
-   <td data-l="${escAttr(t('thChange'))}" class="${cls(chg)}">฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span></td>
+   <td data-l="${escAttr(t('thChange'))}" class="${noFund?'':cls(chg)}">${noFund?'<span style="color:var(--muted2)">—</span>':`฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span>`}</td>
    <td data-l="${escAttr(t('thUnreal'))}" class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
    <td data-l="${escAttr(t('thReal'))}" class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
  document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>${t('totalWord')} (${F.length} ${t('fundsWord')})</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
-   <td class="${cls(T.chg[RANGE])}">฿${sign(T.chg[RANGE])}<br><span style="font-size:10.5px">${sign(T.pct[RANGE])}%</span></td>
+   <td class="${noAnchor?'':cls(T.chg[RANGE])}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(T.chg[RANGE])}<br><span style="font-size:10.5px">${sign(T.pct[RANGE])}%</span>`}</td>
    <td class="${cls(T.unreal)}">฿${sign(T.unreal)}<br><span style="font-size:10.5px">${sign(T.unreal_pct)}%</span></td>
    <td class="${cls(T.realized)}">฿${sign(T.realized)}</td></tr>`;
 }
@@ -2382,6 +2398,66 @@ function renderMSList(){
  document.querySelectorAll('#msList .ga[data-amc]').forEach(g=>g.onclick=()=>{byAmc[g.dataset.amc].forEach(f=>histSel.add(f.code));renderMSList();renderHist();});
  const clr=document.querySelector('#msList .ga[data-clear]');if(clr)clr.onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 }
+/* ==== PERF ENGINE START ==== */
+const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
+const refLE=(ds,vs,t)=>{let v=vs[0];for(let i=0;i<ds.length;i++){if(ds[i]<=t)v=vs[i];else break;}return v;};
+function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
+function navObsAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let o=null;for(const d of ds){if(d<=date)o={date:d,price:nv[d]};else break;}return o;}
+function execObsAt(code,date){
+ const tx=effectiveTxns().filter(x=>x.code===code&&(x.action==='buy'||x.action==='sell')&&+x.price>0&&(x.date||'')<=date);
+ if(!tx.length)return null;
+ const last=tx[tx.length-1].date;
+ let u=0,uv=0;
+ for(const x of tx){if(x.date!==last)continue;const n=Math.abs(+x.units||0);if(!n)continue;u+=n;uv+=n*(+x.price||0);}
+ return u>0?{date:last,price:uv/u}:null;
+}
+function priceObsAt(code,date){
+ const n=navObsAt(code,date),e=execObsAt(code,date);
+ if(!n&&!e)return null;
+ if(!e)return{date:n.date,price:n.price,src:'nav'};
+ if(!n)return{date:e.date,price:e.price,src:'exec'};
+ return n.date>=e.date?{date:n.date,price:n.price,src:'nav'}:{date:e.date,price:e.price,src:'exec'};
+}
+function effectivePrice(code,date){const o=priceObsAt(code,date);return o?o.price:null;}
+function pageAsOf(){
+ const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&seriesIncluded(c));
+ let m='';
+ for(const c of codes){
+  const nv=(NAVDB[c]||{}).navs||{};for(const d in nv)if(d>m)m=d;
+ }
+ for(const x of effectiveTxns()){
+  if(!codes.includes(x.code))continue;
+  if((x.action==='buy'||x.action==='sell')&&+x.price>0&&(x.date||'')>m)m=x.date;
+ }
+ return m;
+}
+function windowCoverage(start){
+ const asOf=pageAsOf();if(!asOf)return 0;
+ const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&seriesIncluded(c));
+ let num=0,den=0;
+ for(const c of codes){
+  const u=+(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].units)||0;if(!(u>0))continue;
+  const p=effectivePrice(c,asOf);if(p==null)continue;
+  const v=u*p;den+=v;
+  if(effectivePrice(c,start)!=null)num+=v;
+ }
+ return den>0?num/den:0;
+}
+function portfolioAnchor(){
+ let m='';
+ for(const c in HOLDINGS_BASE){
+  const h=HOLDINGS_BASE[c];
+  if(!h||!(+h.units>0)||!seriesIncluded(c))continue;
+  if(!h.asof)return null;
+  if(h.asof>m)m=h.asof;
+ }
+ return m||'';
+}
+function txAbsorbed(x){const h=HOLDINGS_BASE[x.code];return !!(h&&h.asof&&(x.date||'')<=h.asof);}
+function effectiveTxns(){
+ const voided=new Set(TXNS.filter(x=>x&&x.action==='void'&&x.voids!=null).map(x=>String(x.voids)));
+ return TXNS.filter(x=>x&&x.action!=='void'&&!voided.has(String(x.ts))&&!txAbsorbed(x)).sort((a,b)=>((a.date||'').localeCompare(b.date||''))||((a.ts||0)-(b.ts||0)));
+}
 function seriesMeta(code){
  const base=HOLDINGS_BASE[code]||HOLDINGS[code];if(base)return base;
  const tx=[...effectiveTxns()].reverse().find(x=>x.code===code);return tx||{amc:'Other',tax:'General',asset:'Foreign Equity'};
@@ -2389,25 +2465,29 @@ function seriesMeta(code){
 function seriesIncluded(code){const m=seriesMeta(code);return(filterAMC.size===0||filterAMC.has(m.amc))&&(filterTax.size===0||filterTax.has(m.tax));}
 function portfolioSeries(){
  const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&NAVDB[c]&&seriesIncluded(c));
- const dates=[...new Set(codes.flatMap(c=>Object.keys((NAVDB[c]||{}).navs||{})))].sort();
+ const asOf=pageAsOf();
+ const txDates=effectiveTxns().filter(x=>codes.includes(x.code)&&(x.date||'')).map(x=>x.date);
+ const anchor=portfolioAnchor();
+ if(anchor===null)return [];
+ const dates=[...new Set([...codes.flatMap(c=>Object.keys((NAVDB[c]||{}).navs||{})),...txDates])].sort().filter(d=>(!anchor||d>=anchor)&&(!asOf||d<=asOf));
  const units={};codes.forEach(c=>units[c]=+(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].units)||0);
  const tx=effectiveTxns().filter(x=>codes.includes(x.code));let ti=0,cash=0,prev=null,twr=100;
  const rows=[];
+ let prevDate=null;
  for(const date of dates){let flow=0;
+  const openingUnits={};for(const c of codes)openingUnits[c]=units[c]||0;
+  const wasPriced={};for(const c of codes)wasPriced[c]=prevDate!=null&&effectivePrice(c,prevDate)!=null;
   while(ti<tx.length&&(tx[ti].date||'')<=date){const x=tx[ti++],amount=(+x.units||0)*(+x.price||0);units[x.code]=units[x.code]||0;
    if(x.action==='buy')units[x.code]+=+x.units||0;else if(x.action==='sell')units[x.code]=Math.max(0,units[x.code]-(+x.units||0));
    if(x.action==='dividend'){flow-=(+x.amount||0);}
    else if(x.sw){cash+=x.action==='sell'?amount:-amount;if(x.fee)cash-=+x.fee||0;}else flow+=x.action==='buy'?amount:-amount;
   }
-  let value=cash;for(const code of codes)value+=(units[code]||0)*(navAt(code,date)||0);
+  for(const c of codes){if(!wasPriced[c]&&effectivePrice(c,date)!=null)flow+=(openingUnits[c]||0)*effectivePrice(c,date);}
+  let value=cash;for(const code of codes)value+=(units[code]||0)*(effectivePrice(code,date)||0);
   if(prev!=null&&prev>0){const r=(value-flow)/prev-1;if(Number.isFinite(r))twr*=1+r;}
-  rows.push({date,value,twr,flow});prev=value;
+  rows.push({date,value,twr,flow});prev=value;prevDate=date;
  }
  return rows;
-}
-function fundLedgerMap(code,dates,mode){
- const m={},nav=(NAVDB[code]||{}).navs||{},units0=+(HOLDINGS_BASE[code]&&HOLDINGS_BASE[code].units)||0,tx=effectiveTxns().filter(x=>x.code===code);let units=units0,ti=0;
- dates.forEach(d=>{while(ti<tx.length&&(tx[ti].date||'')<=d){const x=tx[ti++];units=Math.max(0,units+(x.action==='buy'?1:-1)*(+x.units||0));}const n=navAt(code,d);m[d]=n==null?null:(mode==='nav'?n:units*n);});return m;
 }
 function xirr(cashflows){
  const cf=cashflows.filter(x=>Number.isFinite(x.amount)&&x.amount!==0).sort((a,b)=>a.date.localeCompare(b.date));if(cf.length<2||!cf.some(x=>x.amount<0)||!cf.some(x=>x.amount>0))return null;
@@ -2416,7 +2496,11 @@ function xirr(cashflows){
  for(let i=0;i<120;i++){const mid=(lo+hi)/2,fm=npv(mid);if(Math.abs(fm)<1e-7)return mid*100;if(flo*fm<=0){hi=mid;fhi=fm;}else{lo=mid;flo=fm;}}
  return((lo+hi)/2)*100;
 }
-/* timeframe window: filter sorted date array to the selected range */
+function windowCashflows(windowRows){
+ const cf=windowRows.map((x,i)=>({date:x.date,amount:i===0?-x.value:-x.flow}));
+ if(cf.length)cf[cf.length-1].amount+=windowRows[windowRows.length-1].value;
+ return cf;
+}
 function tfWindow(dates){
  if(!dates.length)return dates;
  const last=dates[dates.length-1];
@@ -2428,10 +2512,28 @@ function tfWindow(dates){
  else return dates; // MAX
  return dates.filter(d=>d>=from);
 }
+function riskStats(ds,vs){
+ if(!vs||vs.length<3)return null;
+ const rets=[];for(let i=1;i<vs.length;i++){if(vs[i-1]>0)rets.push(vs[i]/vs[i-1]-1);}
+ if(rets.length<2)return null;
+ const mean=rets.reduce((a,b)=>a+b,0)/rets.length;
+ const sd=Math.sqrt(rets.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(rets.length-1));
+ const vol=sd*Math.sqrt(252)*100;
+ let peak=vs[0],dd=0;for(const v of vs){if(v>peak)peak=v;if(peak>0)dd=Math.min(dd,v/peak-1);}
+ const ret=(vs[vs.length-1]/vs[0]-1)*100;
+ let bi=0,wi=0;rets.forEach((r,i)=>{if(r>rets[bi])bi=i;if(r<rets[wi])wi=i;});
+ return{vol,maxDD:dd*100,ret,rr:vol>0?ret/vol:0,best:{d:ds[bi+1],r:rets[bi]*100},worst:{d:ds[wi+1],r:rets[wi]*100}};
+}
+/* ==== PERF ENGINE END ==== */
+function fundLedgerMap(code,dates,mode){
+ const m={},nav=(NAVDB[code]||{}).navs||{},units0=+(HOLDINGS_BASE[code]&&HOLDINGS_BASE[code].units)||0,tx=effectiveTxns().filter(x=>x.code===code);let units=units0,ti=0;
+ dates.forEach(d=>{while(ti<tx.length&&(tx[ti].date||'')<=d){const x=tx[ti++];units=Math.max(0,units+(x.action==='buy'?1:-1)*(+x.units||0));}const n=navAt(code,d);m[d]=n==null?null:(mode==='nav'?n:units*n);});return m;
+}
 function buildHist(){
  const ps=portfolioSeries();const dateSet=new Set(ps.map(x=>x.date));F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
  if(BENCH&&NAVDB[BENCH])Object.keys(NAVDB[BENCH].navs||{}).forEach(d=>dateSet.add(d));
- const dates=tfWindow([...dateSet].sort());
+ const _anchor=portfolioAnchor();
+ const dates=tfWindow([...dateSet].sort()).filter(d=>_anchor===null?false:(!_anchor||d>=_anchor));
  const ent=[];
  if(histSel.has('__PORT__')&&histMode!=='nav'){
   const byDate=Object.fromEntries(ps.map(x=>[x.date,x]));const m={};dates.forEach(d=>m[d]=byDate[d]?(histMode==='norm'?byDate[d].twr:byDate[d].value):null);
@@ -2488,38 +2590,28 @@ async function setBench(code){
 }
 
 /* ---------- risk & performance ---------- */
-function riskStats(ds,vs){
- if(!vs||vs.length<3)return null;
- const rets=[];for(let i=1;i<vs.length;i++){if(vs[i-1]>0)rets.push(vs[i]/vs[i-1]-1);}
- if(rets.length<2)return null;
- const mean=rets.reduce((a,b)=>a+b,0)/rets.length;
- const sd=Math.sqrt(rets.reduce((a,b)=>a+(b-mean)*(b-mean),0)/(rets.length-1));
- const vol=sd*Math.sqrt(252)*100;
- let peak=vs[0],dd=0;for(const v of vs){if(v>peak)peak=v;if(peak>0)dd=Math.min(dd,v/peak-1);}
- const ret=(vs[vs.length-1]/vs[0]-1)*100;
- let bi=0,wi=0;rets.forEach((r,i)=>{if(r>rets[bi])bi=i;if(r<rets[wi])wi=i;});
- return{vol,maxDD:dd*100,ret,rr:vol>0?ret/vol:0,best:{d:ds[bi+1],r:rets[bi]*100},worst:{d:ds[wi+1],r:rets[wi]*100}};
-}
-function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF window
+function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF window, clamped to the reliable-history anchor
+ const anchor=portfolioAnchor();if(anchor===null)return{ds:[],vs:[]};
  const w=tfWindow(dates);const wset=new Set(w);
- const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)){ds.push(d);vs.push(vals[i]);}});
+ const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)&&(!anchor||d>=anchor)){ds.push(d);vs.push(vals[i]);}});
  return{ds,vs};
 }
-function fmtD(d){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short'}):'—';}
+function fmtD(d,withYear){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',withYear?{day:'numeric',month:'short',year:'numeric'}:{day:'numeric',month:'short'}):'—';}
 function renderRisk(){
  const kp=document.getElementById('riskKpis'),tb=document.getElementById('riskBody');if(!kp||!tb)return;
  const ps=portfolioSeries(),dates=tfWindow(ps.map(x=>x.date)),dateSet=new Set(dates),windowRows=ps.filter(x=>dateSet.has(x.date));
  const P=riskStats(dates,windowRows.map(x=>x.twr));
- if(!P){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t('noData')}</div>`;tb.innerHTML='';return;}
- const cashflows=windowRows.map((x,i)=>({date:x.date,amount:i===0?-x.value:-x.flow}));if(cashflows.length)cashflows[cashflows.length-1].amount+=windowRows[windowRows.length-1].value;const irr=xirr(cashflows);
+ const thin=dates.length&&windowCoverage(dates[0])<0.6;
+ if(!P||thin){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t(portfolioAnchor()===null?'noAnchor':'noData')}</div>`;tb.innerHTML='';return;}
+ const irr=xirr(windowCashflows(windowRows));
  let B=null;if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();const wB=windowSeries(bds,bds.map(d=>bn[d]));B=riskStats(wB.ds,wB.vs);}
  const kpi=(l,v,c,m)=>`<div class="rk"><div class="l">${l}</div><div class="v ${c||''}">${v}</div>${m?`<div class="m">${m}</div>`:''}</div>`;
  kp.innerHTML=
-  kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?fmtD(dates[0])+' → '+fmtD(dates[dates.length-1]):'')+
-  kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst'))+
+  kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?(()=>{const y=dates[0].slice(0,4)!==dates[dates.length-1].slice(0,4);return fmtD(dates[0],y)+' → '+fmtD(dates[dates.length-1],y);})():'')+
+  kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst').replace('{d}',escHTML(fmtD(dates[0]))))+
   (B?kpi(t('rkAlpha'),sign(P.ret-B.ret)+'%',cls(P.ret-B.ret),'◆ '+escHTML(BENCH)):'')+
   kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+
-  kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'','peak-to-trough')+
+  kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'',t('rkDDMeta'))+
   kpi(t('rkWorst'),sign(P.worst.r)+'%','neg',fmtD(P.worst.d));
  // per-fund rows (+ benchmark if set)
  const rows=[];
@@ -2546,6 +2638,13 @@ function unlockDate(tax,buyDate,birth){
  return null;
 }
 function setBirth(){const v=prompt(t('birthPrompt'),localStorage.getItem('kkp_birth')||'1985-01-01');if(v&&/^\d{4}-\d{2}-\d{2}$/.test(v)){localStorage.setItem('kkp_birth',v);renderUnlock();}}
+function setStartDate(){
+ const cur=portfolioAnchor();
+ const v=prompt(t('setStartPrompt'),(cur&&cur!==null?cur:new Date().toISOString().slice(0,10)));
+ if(!v||!/^\d{4}-\d{2}-\d{2}$/.test(v))return;
+ for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(h&&+h.units>0)h.asof=v;}
+ persist();renderAll();
+}
 let unlockMode=localStorage.getItem('kkp_unlockmode')||'lot';
 function unlockLots(){
  const TAXES=new Set(['SSF','RMF','ThaiESG','ThaiESGX','LTF']);
@@ -2567,7 +2666,7 @@ function renderUnlock(){
  const rows=unlockLots();
  const H=cols=>'<tr>'+cols.map(c=>`<th>${c}</th>`).join('')+'</tr>';
  if(!rows.length){th.innerHTML='';tb.innerHTML=`<tr><td colspan="5" class="skel">${t('noLots')}</td></tr>`;return;}
- const navOf=c=>{const f=ALL.find(x=>x.code===c);return f?f.nav:(navAt(c,today)||0);};
+ const navOf=c=>{const f=ALL.find(x=>x.code===c);if(f&&f.nav!=null)return f.nav;if(f&&f.price!=null)return f.price;return navAt(c,today)||0;};
  const statusOf=r=>{
   if(r.tax==='RMF'&&!birth)return `<button type="button" class="btn ghost" data-birth="1">${t('needBirth')}</button>`;
   if(!r.date)return `<button type="button" class="btn ghost" data-setbuy="${escAttr(r.code)}">${t('setDate')}</button>`;
@@ -2649,10 +2748,11 @@ function renderConc(){
 /* ---------- CSV export ---------- */
 function exportCSV(){
  const esc=x=>`"${String(x==null?'':x).replace(/"/g,'""')}"`;
- const head=[t('thFund'),'Name','AMC','Tax','Asset','NAV','NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
+ const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
+ const noAnchor=noPeriod();
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);})
-  .map(f=>[f.code,f.name,f.amc,f.tax,f.asset,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),f.chg[RANGE].toFixed(2),f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)]);
- rows.push([t('totalWord'),'','','','','','','','',T.value.toFixed(2),'100',T.chg[RANGE].toFixed(2),T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
+  .map(f=>{const noFund=noAnchor||f.chg[RANGE]==null;return[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noFund?'':f.chg[RANGE].toFixed(2),noFund?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)];});
+ rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg[RANGE].toFixed(2),noAnchor?'':T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
  const csv='﻿'+[head,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  a.download='portfolio_'+(T.as_of||new Date().toISOString().slice(0,10))+'.csv';a.click();
@@ -2668,7 +2768,7 @@ async function openFund(code){
  if(!f)return;showDialog('modalBg');const total=ALL.reduce((s,x)=>s+x.value,0);
  m.innerHTML=`<div class="modal-h"><div><div class="code">${escHTML(code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></div><div class="nm">${escHTML(f.name)}</div></div><button class="modal-x" type="button" data-close="modalBg" aria-label="${escAttr(t('closeBtn'))}">✕</button></div>
   <div class="modal-b"><div class="m-row">
-   <div class="m-stat"><div class="l">NAV</div><div class="v">${fmt(f.nav,4)}</div></div>
+   <div class="m-stat"><div class="l">NAV</div><div class="v">${f.nav_date?fmt(f.nav,4):'—'}</div></div>
    <div class="m-stat"><div class="l">${t('mMarket')}</div><div class="v">฿${fmt0(f.value)}</div></div>
    <div class="m-stat"><div class="l">${t('mUnreal')}</div><div class="v ${cls(f.unreal)}">${sign(f.unreal_pct,1)}%</div></div>
    <div class="m-stat"><div class="l">${t('mWeight')}</div><div class="v">${fmt(total?f.value/total*100:0,1)}%</div></div>
@@ -2798,7 +2898,6 @@ async function addTxn(){
 }
 
 /* ---------- fund switch ---------- */
-function navAt(code,date){const nv=(NAVDB[code]||{}).navs||{};const ds=Object.keys(nv).sort();let v=null;for(const d of ds){if(d<=date)v=nv[d];else break;}return v;}
 function openSw(){showDialog('swBg');renderSwModal();}
 function closeSw(){hideDialog('swBg');}
 function swMsg(m,ok){const e=document.getElementById('sw-msg');if(e){e.textContent=m;e.style.color=ok?'var(--pos)':'var(--neg)';}}
@@ -2951,10 +3050,10 @@ document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importH
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
 document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-bg.show');if(e.key==='Escape'&&bg){hideDialog(bg.id);return;}const fund=e.target.closest&&e.target.closest('[data-fund]');if(fund&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFund(fund.dataset.fund);return;}if(e.key==='Tab'&&bg){const focusable=[...bg.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(!focusable.length){e.preventDefault();return;}const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 /* keep filter bar pinned right below the header */
-(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.filterbar');
+(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.sticky-controls');
  if(!hdr||!fb)return;
  // Top-bar layout: stick just below the header. Sidebar/tall layouts: stick to viewport top.
- const topOff=()=>{const r=hdr.getBoundingClientRect();return (r.width>window.innerWidth*0.6&&r.height<140)?Math.max(0,Math.round(r.height)-1):0;};
+ const topOff=()=>{const r=hdr.getBoundingClientRect();return (r.width>window.innerWidth*0.6&&r.height<160)?Math.max(0,Math.round(r.height)-1):0;};
  const adj=()=>{fb.style.top=topOff()+'px';};
  adj();window.addEventListener('resize',adj);
  let tick=false;

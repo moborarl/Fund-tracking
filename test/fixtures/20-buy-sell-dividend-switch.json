@@ -1,0 +1,31 @@
+{
+  "name": "buy, sell, dividend and switch reconcile in one window",
+  "state": {
+    "HOLDINGS_BASE": {
+      "FUND-A": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" },
+      "FUND-B": { "units": 0, "avg": 0, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" }
+    },
+    "TXNS": [
+      { "ts": 1, "date": "2026-01-06", "code": "FUND-A", "action": "buy", "units": 50, "price": 10 },
+      { "ts": 2, "date": "2026-01-07", "code": "FUND-A", "action": "sell", "units": 20, "price": 10 },
+      { "ts": 3, "date": "2026-01-08", "code": "FUND-A", "action": "dividend", "amount": 130 },
+      { "ts": 4, "date": "2026-01-09", "code": "FUND-A", "action": "sell", "units": 30, "price": 10, "sw": 1 },
+      { "ts": 5, "date": "2026-01-09", "code": "FUND-B", "action": "buy", "units": 30, "price": 10, "sw": 1 }
+    ],
+    "NAVDB": {
+      "FUND-A": { "navs": { "2026-01-05": 10, "2026-01-06": 10, "2026-01-07": 10, "2026-01-08": 10, "2026-01-09": 10 } },
+      "FUND-B": { "navs": { "2026-01-09": 10 } }
+    },
+    "histTF": "MAX"
+  },
+  "expect": {
+    "series": [
+      { "date": "2026-01-05", "value": 1000 },
+      { "date": "2026-01-06", "value": 1500 },
+      { "date": "2026-01-07", "value": 1300 },
+      { "date": "2026-01-08", "value": 1300 },
+      { "date": "2026-01-09", "value": 1300 }
+    ],
+    "twrPct": 10
+  }
+}

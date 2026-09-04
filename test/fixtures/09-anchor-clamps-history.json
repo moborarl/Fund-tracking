@@ -1,0 +1,16 @@
+{
+  "name": "series starts at the snapshot anchor, not the first stored NAV",
+  "state": {
+    "HOLDINGS_BASE": { "FUND-A": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" } },
+    "TXNS": [],
+    "NAVDB": { "FUND-A": { "navs": { "2026-01-01": 8, "2026-01-02": 9, "2026-01-05": 10, "2026-01-06": 11 } } },
+    "histTF": "MAX"
+  },
+  "expect": {
+    "series": [
+      { "date": "2026-01-05", "value": 1000 },
+      { "date": "2026-01-06", "value": 1100 }
+    ],
+    "twrPct": 10
+  }
+}

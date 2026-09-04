@@ -4,9 +4,9 @@
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Thai Equity",
-  "units": 915.9903,
+  "units": 115.9903,
   "avg": 15.4664,
-  "realized": -2147.61
+  "realized": -892.42
  },
  "KKP ACT FIXED-SSF": {
   "name": "Thai Active Fixed Income",
@@ -58,9 +58,9 @@
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 2184.8482,
+  "units": 1084.8482,
   "avg": 8.2502,
-  "realized": 2.19
+  "realized": 1687.82
  },
  "KKP GNP-H": {
   "name": "Global New Perspective (H)",
@@ -76,27 +76,27 @@
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 829.9631,
+  "units": 129.9631,
   "avg": 14.8861,
-  "realized": -42.43
+  "realized": 2115.52
  },
  "KKP GNP-SSF": {
   "name": "Global New Perspective (UH)",
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 1633.0192,
+  "units": 833.0192,
   "avg": 20.7659,
-  "realized": 1175.11
+  "realized": 5152.71
  },
  "KKP G-THEME-H-SSF": {
   "name": "Global Thematic (Hedged)",
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 3434.6996,
+  "units": 434.6996,
   "avg": 7.5596,
-  "realized": 621.25
+  "realized": 3230.87
  },
  "KKP MP": {
   "name": "Money Plus",
@@ -130,17 +130,17 @@
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 2676.8292,
+  "units": 1376.8292,
   "avg": 14.3762,
-  "realized": 3683.68
+  "realized": 9644.94
  },
  "KKP SEMICON-H-SSF": {
   "name": "Semiconductor (Hedged)",
   "amc": "KKP",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 5108.9797,
-  "avg": 20.1056,
+  "units": 8336.0852,
+  "avg": 25.2175,
   "realized": 2008.44
  },
  "KKP SET50 ESG-SSF": {
@@ -184,9 +184,9 @@
   "amc": "LH Fund",
   "tax": "SSF",
   "asset": "Fixed Income / MM",
-  "units": 903.902,
-  "avg": 11.9762,
-  "realized": 335.8
+  "units": 903.9020,
+  "avg": 12.3961,
+  "realized": 0.0
  },
  "LHTHAIESG-A": {
   "name": "Thai Equity ThaiESG",
@@ -212,7 +212,7 @@
   "tax": "SSF",
   "asset": "Foreign Equity",
   "units": 3725.2979,
-  "avg": 11.1115,
+  "avg": 10.7302,
   "realized": 0.0
  },
  "LHUSFIN-ASSF": {
@@ -221,7 +221,7 @@
   "tax": "SSF",
   "asset": "Foreign Equity",
   "units": 935.3137,
-  "avg": 10.6916,
+  "avg": 11.5704,
   "realized": 0.0
  },
  "ONE-THAIESGX-L": {
@@ -251,13 +251,13 @@
   "avg": 10.1332,
   "realized": 0.0
  },
- "BM70-TESGX": {
+ "ESGXBM70-SW": {
   "name": "Mixed 70/30 ThaiESGX",
   "amc": "Bualuang",
   "tax": "ThaiESGX",
   "asset": "Mixed",
   "units": 13464.6683,
-  "avg": 9.6022,
+  "avg": 9.6023,
   "realized": 0.0
  },
  "B-MIXED-THAIESG": {
@@ -278,7 +278,7 @@
   "avg": 9.9081,
   "realized": 0.0
  },
- "BEQD-TESGX": {
+ "ESGXBEQD-SW": {
   "name": "Thai Equity ThaiESGX",
   "amc": "Bualuang",
   "tax": "ThaiESGX",
@@ -329,7 +329,7 @@
   "tax": "SSF",
   "asset": "Foreign Equity",
   "units": 968.4897,
-  "avg": 10.2592,
+  "avg": 10.0281,
   "realized": 0.0
  },
  "UOBSHC-SSF": {
@@ -337,7 +337,7 @@
   "amc": "UOB",
   "tax": "SSF",
   "asset": "Foreign Equity",
-  "units": 4317.9327,
+  "units": 4317.9453,
   "avg": 15.0535,
   "realized": 0.0
  },
@@ -364,8 +364,8 @@
   "amc": "UOB",
   "tax": "ThaiESGX",
   "asset": "Mixed",
-  "units": 16143.9924,
-  "avg": 9.5778,
+  "units": 16143.9921,
+  "avg": 9.5779,
   "realized": 0.0
  },
  "UTSEQ-THAIESG": {
@@ -476,13 +476,13 @@
   "avg": 17.1007,
   "realized": 0.0
  },
- "ES-CHINAA-A": {
-  "name": "China A Active",
-  "amc": "Eastspring",
-  "tax": "General",
-  "asset": "Foreign Equity",
-  "units": 3711.5091,
-  "avg": 14.8188,
+ "SCBGOLDHRMF": {
+  "name": "Gold Hedged RMF",
+  "amc": "SCB",
+  "tax": "RMF",
+  "asset": "Precious Metals",
+  "units": 1108.7853,
+  "avg": 18.0377,
   "realized": 0.0
  },
  "ES-DIVTHAIESGX-LA": {
@@ -510,15 +510,6 @@
   "asset": "Mixed",
   "units": 820.6295,
   "avg": 9.7244,
-  "realized": 0.0
- },
- "ES-CASH": {
-  "name": "Cash Management",
-  "amc": "Eastspring",
-  "tax": "General",
-  "asset": "Fixed Income / MM",
-  "units": 14.339,
-  "avg": 13.948,
   "realized": 0.0
  },
  "ES-SETESG-ThaiESG-A": {
@@ -563,7 +554,7 @@
   "tax": "ThaiESG",
   "asset": "Thai Equity",
   "units": 1411.6269,
-  "avg": 10.4772,
+  "avg": 10.6260,
   "realized": 0.0
  },
  "K-ESGSI-ThaiESG": {
@@ -572,7 +563,7 @@
   "tax": "ThaiESG",
   "asset": "Fixed Income / MM",
   "units": 3304.1084,
-  "avg": 10.4295,
+  "avg": 10.5928,
   "realized": 0.0
  },
  "K-70ThaiESGX-L": {
@@ -581,7 +572,25 @@
   "tax": "ThaiESGX",
   "asset": "Mixed",
   "units": 3570.5321,
-  "avg": 9.4388,
+  "avg": 9.7167,
   "realized": 0.0
+ },
+ "ABALL-TESGX2": {
+  "name": "All Seasons ThaiESGX",
+  "amc": "Aberdeen",
+  "tax": "ThaiESGX",
+  "asset": "Mixed",
+  "units": 3900.4761,
+  "avg": 9.66,
+  "realized": 9485.57
+ },
+ "KTEQ70PLUSX-L": {
+  "name": "Global Equity Growth 70 Plus",
+  "amc": "KTAM",
+  "tax": "General",
+  "asset": "Foreign Equity",
+  "units": 47.5319,
+  "avg": 9.55,
+  "realized": 111.29
  }
 }

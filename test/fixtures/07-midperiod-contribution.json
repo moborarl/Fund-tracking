@@ -1,0 +1,19 @@
+{
+  "name": "a contribution between NAV dates books on its own date and does not move TWR",
+  "state": {
+    "HOLDINGS_BASE": { "FUND-A": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" } },
+    "TXNS": [
+      { "ts": 1, "date": "2026-01-06", "code": "FUND-A", "action": "buy", "units": 900, "price": 10 }
+    ],
+    "NAVDB": { "FUND-A": { "navs": { "2026-01-05": 10, "2026-01-08": 10 } } },
+    "histTF": "MAX"
+  },
+  "expect": {
+    "series": [
+      { "date": "2026-01-05", "value": 1000 },
+      { "date": "2026-01-06", "value": 10000 },
+      { "date": "2026-01-08", "value": 10000 }
+    ],
+    "twrPct": 0
+  }
+}

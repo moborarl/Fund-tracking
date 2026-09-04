@@ -1,0 +1,17 @@
+{
+  "name": "static single fund, no transactions: TWR equals NAV return",
+  "state": {
+    "HOLDINGS_BASE": { "FUND-A": { "units": 100, "avg": 9, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" } },
+    "TXNS": [],
+    "NAVDB": { "FUND-A": { "navs": { "2026-01-05": 10, "2026-01-06": 10.5, "2026-01-07": 11 } } },
+    "histTF": "MAX"
+  },
+  "expect": {
+    "series": [
+      { "date": "2026-01-05", "value": 1000 },
+      { "date": "2026-01-06", "value": 1050 },
+      { "date": "2026-01-07", "value": 1100 }
+    ],
+    "twrPct": 10
+  }
+}
