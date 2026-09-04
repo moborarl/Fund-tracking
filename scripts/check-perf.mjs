@@ -66,6 +66,21 @@ function runOne(src, fx) {
     if (!near(got, fx.expect.twrPct)) out.errors.push(`TWR ${got}%, expected ${fx.expect.twrPct}%`);
   }
 
+  if (fx.expect.cashflows) {
+    const w = vm.runInContext('tfWindow(' + JSON.stringify(rows.map(r => r.date)) + ')', ctx);
+    const set = new Set(w);
+    const wr = rows.filter(r => set.has(r.date));
+    const got = vm.runInContext('windowCashflows(' + JSON.stringify(wr) + ')', ctx);
+    const want = fx.expect.cashflows;
+    if (got.length !== want.length) out.errors.push(`cashflows length ${got.length}, expected ${want.length}`);
+    want.forEach((w2, i) => {
+      const g = got[i];
+      if (!g) { out.errors.push(`cashflows[${i}] missing`); return; }
+      if (g.date !== w2.date) out.errors.push(`cashflows[${i}].date ${g.date}, expected ${w2.date}`);
+      if (!near(g.amount, w2.amount)) out.errors.push(`cashflows[${i}].amount ${g.amount}, expected ${w2.amount}`);
+    });
+  }
+
   return out;
 }
 

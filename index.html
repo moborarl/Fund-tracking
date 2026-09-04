@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-cBqzJiJi05Vj3/dPK6I56jVbR+qh8zslaAMpEw/BIJM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Ci2vYWFKQcB0hmlP6JNiNNLOlr51AQL5hOgjz7NLKrg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2132,7 +2132,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  topGainers:'Top Gainers',topLosers:'Top Losers',bestPerf:'Best performers',weakPerf:'Weakest performers',rvu:'Realized vs Unrealized',plBreak:'P/L breakdown',unrealWord:'Unrealized',realWord:'Realized',
  secRisk:'Risk & Performance',riskHint:'Portfolio uses ledger-adjusted TWR · follows chart timeframe above',
  rhRet:'Return',rhVol:'Volatility (ann.)',rhDD:'Max Drawdown',rhRR:'Return ÷ Volatility',rhBest:'Best Day',rhWorst:'Worst Day',portWord:'Portfolio',
- rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Baseline cost is treated as an opening cash flow',noData:'Not enough NAV history in this window',noAnchor:'Set a portfolio start date to measure performance',setStartDate:'Set portfolio start date',setStartPrompt:'Enter the date your imported balances were accurate (YYYY-MM-DD):',
+ rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Opening market value on {d} is the initial cash flow; later ledger and coverage flows are included',noData:'Not enough NAV history in this window',noAnchor:'Set a portfolio start date to measure performance',setStartDate:'Set portfolio start date',setStartPrompt:'Enter the date your imported balances were accurate (YYYY-MM-DD):',
  secHold:'Holdings',holdHint:'Click any row for fund details · click headers to sort · change column follows selected range',
  csvBtn:'⬇ Export CSV',printBtn:'🖨 Print',thFund:'Fund',thUnits:'Units',thValue:'Market Value',thWeight:'Weight',thChange:'Change',thUnreal:'Unrealized',thReal:'Realized',totalWord:'Total',fundsWord:'funds',
  footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
@@ -2173,7 +2173,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  topGainers:'ปรับขึ้นสูงสุด',topLosers:'ปรับลงมากสุด',bestPerf:'ผลงานดีที่สุด',weakPerf:'ผลงานอ่อนแอที่สุด',rvu:'รับรู้แล้ว vs ยังไม่รับรู้',plBreak:'สรุปกำไรขาดทุน',unrealWord:'ยังไม่รับรู้',realWord:'รับรู้แล้ว',
  secRisk:'ความเสี่ยงและผลตอบแทน',riskHint:'พอร์ตใช้ TWR ที่ปรับตามรายการซื้อขาย · ตามช่วงเวลาของกราฟด้านบน',
  rhRet:'ผลตอบแทน',rhVol:'ความผันผวน (ต่อปี)',rhDD:'ขาดทุนสะสมสูงสุด',rhRR:'ผลตอบแทน ÷ ความผันผวน',rhBest:'วันที่ดีที่สุด',rhWorst:'วันแย่ที่สุด',portWord:'พอร์ตรวม',
- rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้ต้นทุนพอร์ตตั้งต้นเป็นกระแสเงินสดวันแรก',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',noAnchor:'ตั้งวันเริ่มพอร์ตก่อน จึงจะวัดผลตอบแทนได้',setStartDate:'ตั้งวันเริ่มพอร์ต',setStartPrompt:'กรอกวันที่ยอดที่นำเข้าถูกต้อง (ปปปป-ดด-วว):',
+ rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้มูลค่าตลาดต้นงวด ณ {d} เป็นกระแสเงินสดแรก รวมรายการซื้อขายและเงินที่เพิ่งเข้ามาในความคุ้มครองราคาที่ตามมา',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',noAnchor:'ตั้งวันเริ่มพอร์ตก่อน จึงจะวัดผลตอบแทนได้',setStartDate:'ตั้งวันเริ่มพอร์ต',setStartPrompt:'กรอกวันที่ยอดที่นำเข้าถูกต้อง (ปปปป-ดด-วว):',
  secHold:'กองทุนที่ถือครอง',holdHint:'คลิกแถวเพื่อดูรายละเอียด · คลิกหัวตารางเพื่อเรียง · คอลัมน์เปลี่ยนแปลงตามช่วงเวลาที่เลือก',
  csvBtn:'⬇ ส่งออก CSV',printBtn:'🖨 พิมพ์',thFund:'กองทุน',thUnits:'หน่วย',thValue:'มูลค่าตลาด',thWeight:'น้ำหนัก',thChange:'เปลี่ยนแปลง',thUnreal:'ยังไม่รับรู้',thReal:'รับรู้แล้ว',totalWord:'รวม',fundsWord:'กองทุน',
  footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
@@ -2482,6 +2482,11 @@ function xirr(cashflows){
  for(let i=0;i<120;i++){const mid=(lo+hi)/2,fm=npv(mid);if(Math.abs(fm)<1e-7)return mid*100;if(flo*fm<=0){hi=mid;fhi=fm;}else{lo=mid;flo=fm;}}
  return((lo+hi)/2)*100;
 }
+function windowCashflows(windowRows){
+ const cf=windowRows.map((x,i)=>({date:x.date,amount:i===0?-x.value:-x.flow}));
+ if(cf.length)cf[cf.length-1].amount+=windowRows[windowRows.length-1].value;
+ return cf;
+}
 function tfWindow(dates){
  if(!dates.length)return dates;
  const last=dates[dates.length-1];
@@ -2581,12 +2586,12 @@ function renderRisk(){
  const ps=portfolioSeries(),dates=tfWindow(ps.map(x=>x.date)),dateSet=new Set(dates),windowRows=ps.filter(x=>dateSet.has(x.date));
  const P=riskStats(dates,windowRows.map(x=>x.twr));
  if(!P){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t(portfolioAnchor()===null?'noAnchor':'noData')}</div>`;tb.innerHTML='';return;}
- const cashflows=windowRows.map((x,i)=>({date:x.date,amount:i===0?-x.value:-x.flow}));if(cashflows.length)cashflows[cashflows.length-1].amount+=windowRows[windowRows.length-1].value;const irr=xirr(cashflows);
+ const irr=xirr(windowCashflows(windowRows));
  let B=null;if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();const wB=windowSeries(bds,bds.map(d=>bn[d]));B=riskStats(wB.ds,wB.vs);}
  const kpi=(l,v,c,m)=>`<div class="rk"><div class="l">${l}</div><div class="v ${c||''}">${v}</div>${m?`<div class="m">${m}</div>`:''}</div>`;
  kp.innerHTML=
   kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?fmtD(dates[0])+' → '+fmtD(dates[dates.length-1]):'')+
-  kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst'))+
+  kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst').replace('{d}',escHTML(fmtD(dates[0]))))+
   (B?kpi(t('rkAlpha'),sign(P.ret-B.ret)+'%',cls(P.ret-B.ret),'◆ '+escHTML(BENCH)):'')+
   kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+
   kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'','peak-to-trough')+
