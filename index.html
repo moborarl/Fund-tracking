@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Ci2vYWFKQcB0hmlP6JNiNNLOlr51AQL5hOgjz7NLKrg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-PaOoXVaRXGRDyJJXRnp6FqKXVinyLyLuEC3xbyoGVcI='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2429,6 +2429,18 @@ function pageAsOf(){
  }
  return m;
 }
+function windowCoverage(start){
+ const asOf=pageAsOf();if(!asOf)return 0;
+ const codes=[...new Set([...Object.keys(HOLDINGS_BASE),...effectiveTxns().map(x=>x.code)])].filter(c=>c&&seriesIncluded(c));
+ let num=0,den=0;
+ for(const c of codes){
+  const u=+(HOLDINGS_BASE[c]&&HOLDINGS_BASE[c].units)||0;if(!(u>0))continue;
+  const p=effectivePrice(c,asOf);if(p==null)continue;
+  const v=u*p;den+=v;
+  if(effectivePrice(c,start)!=null)num+=v;
+ }
+ return den>0?num/den:0;
+}
 function portfolioAnchor(){
  let m='';
  for(const c in HOLDINGS_BASE){
@@ -2580,17 +2592,18 @@ function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF win
  const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)){ds.push(d);vs.push(vals[i]);}});
  return{ds,vs};
 }
-function fmtD(d){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',{day:'numeric',month:'short'}):'—';}
+function fmtD(d,withYear){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',withYear?{day:'numeric',month:'short',year:'numeric'}:{day:'numeric',month:'short'}):'—';}
 function renderRisk(){
  const kp=document.getElementById('riskKpis'),tb=document.getElementById('riskBody');if(!kp||!tb)return;
  const ps=portfolioSeries(),dates=tfWindow(ps.map(x=>x.date)),dateSet=new Set(dates),windowRows=ps.filter(x=>dateSet.has(x.date));
  const P=riskStats(dates,windowRows.map(x=>x.twr));
- if(!P){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t(portfolioAnchor()===null?'noAnchor':'noData')}</div>`;tb.innerHTML='';return;}
+ const thin=dates.length&&windowCoverage(dates[0])<0.6;
+ if(!P||thin){kp.innerHTML=`<div class="skel" style="grid-column:1/-1">${t(portfolioAnchor()===null?'noAnchor':'noData')}</div>`;tb.innerHTML='';return;}
  const irr=xirr(windowCashflows(windowRows));
  let B=null;if(BENCH&&NAVDB[BENCH]){const bn=NAVDB[BENCH].navs||{},bds=Object.keys(bn).sort();const wB=windowSeries(bds,bds.map(d=>bn[d]));B=riskStats(wB.ds,wB.vs);}
  const kpi=(l,v,c,m)=>`<div class="rk"><div class="l">${l}</div><div class="v ${c||''}">${v}</div>${m?`<div class="m">${m}</div>`:''}</div>`;
  kp.innerHTML=
-  kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?fmtD(dates[0])+' → '+fmtD(dates[dates.length-1]):'')+
+  kpi(t('rkRet'),sign(P.ret)+'%',cls(P.ret),dates[0]?(()=>{const y=dates[0].slice(0,4)!==dates[dates.length-1].slice(0,4);return fmtD(dates[0],y)+' → '+fmtD(dates[dates.length-1],y);})():'')+
   kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst').replace('{d}',escHTML(fmtD(dates[0]))))+
   (B?kpi(t('rkAlpha'),sign(P.ret-B.ret)+'%',cls(P.ret-B.ret),'◆ '+escHTML(BENCH)):'')+
   kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+

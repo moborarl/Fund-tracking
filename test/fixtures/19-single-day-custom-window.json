@@ -1,0 +1,12 @@
+{
+  "name": "a single-day custom window yields no return rather than NaN",
+  "state": {
+    "HOLDINGS_BASE": { "FUND-A": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" } },
+    "TXNS": [],
+    "NAVDB": { "FUND-A": { "navs": { "2026-01-05": 10, "2026-01-06": 11 } } },
+    "histTF": "CUSTOM",
+    "histFrom": "2026-01-06",
+    "histTo": "2026-01-06"
+  },
+  "expect": { "twrPct": 0 }
+}

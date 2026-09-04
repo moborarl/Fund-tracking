@@ -1,0 +1,16 @@
+{
+  "name": "window coverage is measured in asOf money",
+  "state": {
+    "HOLDINGS_BASE": {
+      "FUND-A": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" },
+      "FUND-C": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" }
+    },
+    "TXNS": [],
+    "NAVDB": {
+      "FUND-A": { "navs": { "2026-01-05": 10, "2026-01-08": 10 } },
+      "FUND-C": { "navs": { "2026-01-08": 10 } }
+    },
+    "histTF": "MAX"
+  },
+  "expect": { "coverageAt": { "date": "2026-01-05", "ratio": 0.5 } }
+}

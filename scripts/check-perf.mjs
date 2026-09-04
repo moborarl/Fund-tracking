@@ -62,7 +62,7 @@ function runOne(src, fx) {
     const w = vm.runInContext('tfWindow(' + JSON.stringify(rows.map(r => r.date)) + ')', ctx);
     const set = new Set(w);
     const twr = rows.filter(r => set.has(r.date)).map(r => r.twr);
-    const got = twr.length >= 2 ? (twr[twr.length - 1] / twr[0] - 1) * 100 : NaN;
+    const got = twr.length >= 1 ? (twr[twr.length - 1] / twr[0] - 1) * 100 : NaN;
     if (!near(got, fx.expect.twrPct)) out.errors.push(`TWR ${got}%, expected ${fx.expect.twrPct}%`);
   }
 
@@ -79,6 +79,11 @@ function runOne(src, fx) {
       if (g.date !== w2.date) out.errors.push(`cashflows[${i}].date ${g.date}, expected ${w2.date}`);
       if (!near(g.amount, w2.amount)) out.errors.push(`cashflows[${i}].amount ${g.amount}, expected ${w2.amount}`);
     });
+  }
+
+  if (fx.expect.coverageAt) {
+    const got = vm.runInContext(`windowCoverage(${JSON.stringify(fx.expect.coverageAt.date)})`, ctx);
+    if (!near(got, fx.expect.coverageAt.ratio)) out.errors.push(`coverage ${got}, expected ${fx.expect.coverageAt.ratio}`);
   }
 
   return out;
