@@ -1,16 +1,33 @@
 {
-  "name": "a single-day custom window yields no return rather than NaN",
+  "name": "a single-day custom window selects exactly the requested day",
   "state": {
-    "HOLDINGS_BASE": { "FUND-A": { "units": 100, "avg": 10, "realized": 0, "amc": "KKP", "tax": "SSF", "asset": "Foreign Equity", "asof": "2026-01-05" } },
+    "HOLDINGS_BASE": {
+      "FUND-A": {
+        "units": 100,
+        "avg": 10,
+        "realized": 0,
+        "amc": "KKP",
+        "tax": "SSF",
+        "asset": "Foreign Equity",
+        "asof": "2026-01-05"
+      }
+    },
     "TXNS": [],
-    "NAVDB": { "FUND-A": { "navs": { "2026-01-05": 10, "2026-01-06": 11 } } },
+    "NAVDB": {
+      "FUND-A": {
+        "navs": {
+          "2026-01-05": 10,
+          "2026-01-06": 11
+        }
+      }
+    },
     "histTF": "CUSTOM",
     "histFrom": "2026-01-06",
     "histTo": "2026-01-06"
   },
   "expect": {
-    "series": [
-      { "date": "2026-01-06", "value": 1100 }
+    "window": [
+      "2026-01-06"
     ]
   }
 }

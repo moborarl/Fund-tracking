@@ -66,6 +66,13 @@ function runOne(src, fx) {
     if (!near(got, fx.expect.twrPct)) out.errors.push(`TWR ${got}%, expected ${fx.expect.twrPct}%`);
   }
 
+  if (fx.expect.window) {
+    const w = vm.runInContext('tfWindow(' + JSON.stringify(rows.map(r => r.date)) + ')', ctx);
+    const want = fx.expect.window;
+    if (w.length !== want.length) out.errors.push(`window length ${w.length}, expected ${want.length}`);
+    want.forEach((d, i) => { if (w[i] !== d) out.errors.push(`window[${i}] ${w[i]}, expected ${d}`); });
+  }
+
   if (fx.expect.cashflows) {
     const w = vm.runInContext('tfWindow(' + JSON.stringify(rows.map(r => r.date)) + ')', ctx);
     const set = new Set(w);
