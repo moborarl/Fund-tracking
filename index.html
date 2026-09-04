@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-PaOoXVaRXGRDyJJXRnp6FqKXVinyLyLuEC3xbyoGVcI='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-oLC5ByqRdMkT3ahngbPf09lUZL6HQh82r14LPtrknbM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -463,7 +463,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
     <button class="btn ghost" id="printBtn" data-i18n="printBtn">🖨 Print</button>
    </span></div>
   <div class="tbl-wrap"><table id="tbl"><thead><tr>
-   <th class="sortable" data-k="code" data-i18n="thFund">Fund</th><th class="sortable" data-k="nav">NAV</th><th class="sortable" data-k="units" data-i18n="thUnits">Units</th>
+   <th class="sortable" data-k="code" data-i18n="thFund">Fund</th><th class="sortable" data-k="nav" data-i18n="thPrice">Valuation price</th><th class="sortable" data-k="units" data-i18n="thUnits">Units</th>
    <th class="sortable" data-k="value" data-i18n="thValue">Market Value</th><th class="sortable" data-k="weight" data-i18n="thWeight">Weight</th>
    <th class="sortable" data-k="chg"><span data-i18n="thChange">Change</span> <span id="th-tl"></span></th><th class="sortable" data-k="unreal" data-i18n="thUnreal">Unrealized</th><th class="sortable" data-k="realized" data-i18n="thReal">Realized</th>
   </tr></thead><tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot></table></div>
@@ -2089,7 +2089,6 @@ function buildHoldings(){
   let h=HOLDINGS[t.code];
   if(!h){ if(t.action!=='buy')continue;
    h=HOLDINGS[t.code]={name:t.name||t.code,amc:t.amc||'Other',tax:t.tax||'General',asset:t.asset||'Foreign Equity',units:0,avg:0,realized:0,_added:true};
-   if(!NAVDB[t.code]||!Object.keys(NAVDB[t.code].navs||{}).length)NAVDB[t.code]={navs:{[t.date||new Date().toISOString().slice(0,10)]:t.price}};
   }
   const u=+t.units||0,pr=+t.price||0;
   if(t.action==='buy'){const nu=h.units+u; h.avg=nu>0?(h.units*h.avg+u*pr)/nu:pr; h.units=nu;}
@@ -2135,6 +2134,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Opening market value on {d} is the initial cash flow; later ledger and coverage flows are included',noData:'Not enough NAV history in this window',noAnchor:'Set a portfolio start date to measure performance',setStartDate:'Set portfolio start date',setStartPrompt:'Enter the date your imported balances were accurate (YYYY-MM-DD):',
  secHold:'Holdings',holdHint:'Click any row for fund details · click headers to sort · change column follows selected range',
  csvBtn:'⬇ Export CSV',printBtn:'🖨 Print',thFund:'Fund',thUnits:'Units',thValue:'Market Value',thWeight:'Weight',thChange:'Change',thUnreal:'Unrealized',thReal:'Realized',totalWord:'Total',fundsWord:'funds',
+ thPrice:'Valuation price',srcNav:'NAV',srcExec:'Execution',
  footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
  expBtn:'⬇ Download nav_history.json',impBtn:'⬆ Import NAV database',impHoldBtn:'⬆ Import portfolio (holdings.json)',disclaimer:'For portfolio tracking only — not investment advice.',
  r_d1:'1 Day',r_w1:'1 Week',r_d15:'15 Days',r_m1:'1 Month',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
@@ -2176,6 +2176,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้มูลค่าตลาดต้นงวด ณ {d} เป็นกระแสเงินสดแรก รวมรายการซื้อขายและเงินที่เพิ่งเข้ามาในความคุ้มครองราคาที่ตามมา',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',noAnchor:'ตั้งวันเริ่มพอร์ตก่อน จึงจะวัดผลตอบแทนได้',setStartDate:'ตั้งวันเริ่มพอร์ต',setStartPrompt:'กรอกวันที่ยอดที่นำเข้าถูกต้อง (ปปปป-ดด-วว):',
  secHold:'กองทุนที่ถือครอง',holdHint:'คลิกแถวเพื่อดูรายละเอียด · คลิกหัวตารางเพื่อเรียง · คอลัมน์เปลี่ยนแปลงตามช่วงเวลาที่เลือก',
  csvBtn:'⬇ ส่งออก CSV',printBtn:'🖨 พิมพ์',thFund:'กองทุน',thUnits:'หน่วย',thValue:'มูลค่าตลาด',thWeight:'น้ำหนัก',thChange:'เปลี่ยนแปลง',thUnreal:'ยังไม่รับรู้',thReal:'รับรู้แล้ว',totalWord:'รวม',fundsWord:'กองทุน',
+ thPrice:'ราคาที่ใช้ตีมูลค่า',srcNav:'NAV',srcExec:'ราคาจากรายการ',
  footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
  expBtn:'⬇ ดาวน์โหลด nav_history.json',impBtn:'⬆ นำเข้าฐานข้อมูล NAV',impHoldBtn:'⬆ นำเข้าพอร์ต (holdings.json)',disclaimer:'ใช้เพื่อติดตามพอร์ตเท่านั้น — ไม่ใช่คำแนะนำการลงทุน',
  r_d1:'1 วัน',r_w1:'1 สัปดาห์',r_d15:'15 วัน',r_m1:'1 เดือน',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
@@ -2229,11 +2230,12 @@ function computeAll(){
    if(am){const up=am.toUpperCase();
     h.amc=up.indexOf('KKP')>=0?'KKP':up.indexOf('SCB')>=0?'SCB':up.indexOf('BBL')>=0?'Bualuang':up.indexOf('UOB')>=0?'UOB':(up.indexOf('KASSET')>=0||up.indexOf('KASIKORN')>=0)?'K-Fund':(up.indexOf('EASTSPRING')>=0||up.indexOf('TMB')>=0)?'Eastspring':up.indexOf('LH')>=0?'LH Fund':up.indexOf('ONE')>=0?'ONE':am;}}
   if(h.name===code){const det=DETAILS[code]||DETCACHE[code];/* keep code as name; nothing else needed */}
-  const ds=Object.keys(nav).sort();if(!ds.length)continue;const vs=ds.map(d=>nav[d]);
-  const _as=_pao||ds[ds.length-1];
-  const _po=priceObsAt(code,_as)||{date:ds[ds.length-1],price:vs[vs.length-1],src:'nav'};
-  const last=_po.price,prev=vs[vs.length-2]||vs[vs.length-1],ld=ds[ds.length-1];
-  const rv=n=>refLE(ds,vs,daysBefore(ld,n));
+  const ds=Object.keys(nav).sort();const vs=ds.map(d=>nav[d]);
+  const _as=_pao||new Date().toISOString().slice(0,10);
+  const _po=priceObsAt(code,_as);
+  if(!_po)continue;
+  const last=_po.price,prev=vs.length>1?vs[vs.length-2]:_po.price,ld=ds.length?ds[ds.length-1]:'';
+  const rv=n=>ds.length?refLE(ds,vs,daysBefore(ld,n)):last;
   const value=h.units*last,cost=h.units*h.avg;
   const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:vs[vs.length-1],nav_date:ld,
    price:_po.price,price_src:_po.src,price_date:_po.date,
@@ -2359,10 +2361,10 @@ function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
  const noAnchor=portfolioAnchor()===null;
  const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3;
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
-   <td data-l="NAV">${fmt(f.nav,4)}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
+   <td data-l="${escAttr(t('thPrice'))}">${fmt(f.price,4)} <span class="src-badge">${escHTML(t(f.price_src==='exec'?'srcExec':'srcNav'))} ${escHTML(fmtD(f.price_date))}</span>${f.price_src==='exec'&&f.nav_date?`<br><span style="font-size:10.5px;color:var(--muted2)">NAV ${fmt(f.nav,4)} · ${escHTML(fmtD(f.nav_date))}</span>`:''}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
    <td data-l="${escAttr(t('thWeight'))}">${fmt(w,1)}%<span class="wbar" style="width:${Math.max(2,w/maxW*45)}px"></span></td>
    <td data-l="${escAttr(t('thChange'))}" class="${noAnchor?'':cls(chg)}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span>`}</td>
    <td data-l="${escAttr(t('thUnreal'))}" class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
@@ -2743,11 +2745,11 @@ function renderConc(){
 /* ---------- CSV export ---------- */
 function exportCSV(){
  const esc=x=>`"${String(x==null?'':x).replace(/"/g,'""')}"`;
- const head=[t('thFund'),'Name','AMC','Tax','Asset','NAV','NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
+ const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
  const noAnchor=portfolioAnchor()===null;
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);})
-  .map(f=>[f.code,f.name,f.amc,f.tax,f.asset,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noAnchor?'':f.chg[RANGE].toFixed(2),noAnchor?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)]);
- rows.push([t('totalWord'),'','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg[RANGE].toFixed(2),noAnchor?'':T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
+  .map(f=>[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noAnchor?'':f.chg[RANGE].toFixed(2),noAnchor?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)]);
+ rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg[RANGE].toFixed(2),noAnchor?'':T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
  const csv='﻿'+[head,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  a.download='portfolio_'+(T.as_of||new Date().toISOString().slice(0,10))+'.csv';a.click();
@@ -2763,7 +2765,7 @@ async function openFund(code){
  if(!f)return;showDialog('modalBg');const total=ALL.reduce((s,x)=>s+x.value,0);
  m.innerHTML=`<div class="modal-h"><div><div class="code">${escHTML(code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></div><div class="nm">${escHTML(f.name)}</div></div><button class="modal-x" type="button" data-close="modalBg" aria-label="${escAttr(t('closeBtn'))}">✕</button></div>
   <div class="modal-b"><div class="m-row">
-   <div class="m-stat"><div class="l">NAV</div><div class="v">${fmt(f.nav,4)}</div></div>
+   <div class="m-stat"><div class="l">NAV</div><div class="v">${f.nav_date?fmt(f.nav,4):'—'}</div></div>
    <div class="m-stat"><div class="l">${t('mMarket')}</div><div class="v">฿${fmt0(f.value)}</div></div>
    <div class="m-stat"><div class="l">${t('mUnreal')}</div><div class="v ${cls(f.unreal)}">${sign(f.unreal_pct,1)}%</div></div>
    <div class="m-stat"><div class="l">${t('mWeight')}</div><div class="v">${fmt(total?f.value/total*100:0,1)}%</div></div>
