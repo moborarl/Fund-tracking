@@ -62,7 +62,7 @@ function runOne(src, fx) {
     const w = vm.runInContext('tfWindow(' + JSON.stringify(rows.map(r => r.date)) + ')', ctx);
     const set = new Set(w);
     const twr = rows.filter(r => set.has(r.date)).map(r => r.twr);
-    const got = twr.length >= 1 ? (twr[twr.length - 1] / twr[0] - 1) * 100 : NaN;
+    const got = twr.length >= 2 ? (twr[twr.length - 1] / twr[0] - 1) * 100 : NaN;
     if (!near(got, fx.expect.twrPct)) out.errors.push(`TWR ${got}%, expected ${fx.expect.twrPct}%`);
   }
 

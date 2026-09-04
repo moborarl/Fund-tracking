@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-iaFgiaNHGc0bJFb1nDKn35U4BmzTkygY6bGzudupnvo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-DT8DfeE3yYTQgQmNec+snnpRztInvAWPRCGbBYh0lrw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2131,7 +2131,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  topGainers:'Top Gainers',topLosers:'Top Losers',bestPerf:'Best performers',weakPerf:'Weakest performers',rvu:'Realized vs Unrealized',plBreak:'P/L breakdown',unrealWord:'Unrealized',realWord:'Realized',
  secRisk:'Risk & Performance',riskHint:'Portfolio uses ledger-adjusted TWR · follows chart timeframe above',
  rhRet:'Return',rhVol:'Volatility (ann.)',rhDD:'Max Drawdown',rhRR:'Return ÷ Volatility',rhBest:'Best Day',rhWorst:'Worst Day',portWord:'Portfolio',
- rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Opening market value on {d} is the initial cash flow; later ledger and coverage flows are included',noData:'Not enough NAV history in this window',noAnchor:'Set a portfolio start date to measure performance',setStartDate:'Set portfolio start date',setStartPrompt:'Enter the date your imported balances were accurate (YYYY-MM-DD):',
+ rkRet:'TWR',rkVol:'Volatility (annualized)',rkDD:'Max Drawdown',rkRR:'Return ÷ Volatility',rkWorst:'Worst Day',rkXirr:'Estimated XIRR',xirrEst:'Opening market value on {d} is the initial cash flow; later ledger and coverage flows are included',noData:'Not enough NAV history in this window',noAnchor:'Set a portfolio start date to measure performance',noPeriodMsg:'No measurable period yet — set the date your imported balances were accurate',setStartDate:'Set portfolio start date',setStartPrompt:'Enter the date your imported balances were accurate (YYYY-MM-DD):',
  secHold:'Holdings',holdHint:'Click any row for fund details · click headers to sort · change column follows selected range',
  csvBtn:'⬇ Export CSV',printBtn:'🖨 Print',thFund:'Fund',thUnits:'Units',thValue:'Market Value',thWeight:'Weight',thChange:'Change',thUnreal:'Unrealized',thReal:'Realized',totalWord:'Total',fundsWord:'funds',
  thPrice:'Valuation price',srcNav:'NAV',srcExec:'Execution',
@@ -2157,6 +2157,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  editWord:'edit',byLot:'By lot',byFund:'By fund',byYear:'By year',
  uhUnlocked:'Unlocked',uhLocked:'Locked',uhNext:'Next unlock',uhYear:'Unlock year',uhValue:'Est. value',uhFundsN:'Funds',unknownWord:'unknown date',pctInFund:'in fund',
  rkAlpha:'TWR vs Benchmark',
+ rkDDMeta:'peak-to-trough',
  swBtn:'⇌ Switch',swTitle:'Switch Fund',swSub:'Sell one fund, buy another · dates can differ · prices auto-resolved from NAV',
  swOut:'Switch out (sell)',swOutDate:'Switch-out date',swUnits:'Units',swIn:'Switch in (buy)',swInDate:'Switch-in date',swFee:'Switching fee (฿)',swUnitsAuto:'Units are calculated from net proceeds',
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
@@ -2173,7 +2174,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  topGainers:'ปรับขึ้นสูงสุด',topLosers:'ปรับลงมากสุด',bestPerf:'ผลงานดีที่สุด',weakPerf:'ผลงานอ่อนแอที่สุด',rvu:'รับรู้แล้ว vs ยังไม่รับรู้',plBreak:'สรุปกำไรขาดทุน',unrealWord:'ยังไม่รับรู้',realWord:'รับรู้แล้ว',
  secRisk:'ความเสี่ยงและผลตอบแทน',riskHint:'พอร์ตใช้ TWR ที่ปรับตามรายการซื้อขาย · ตามช่วงเวลาของกราฟด้านบน',
  rhRet:'ผลตอบแทน',rhVol:'ความผันผวน (ต่อปี)',rhDD:'ขาดทุนสะสมสูงสุด',rhRR:'ผลตอบแทน ÷ ความผันผวน',rhBest:'วันที่ดีที่สุด',rhWorst:'วันแย่ที่สุด',portWord:'พอร์ตรวม',
- rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้มูลค่าตลาดต้นงวด ณ {d} เป็นกระแสเงินสดแรก รวมรายการซื้อขายและเงินที่เพิ่งเข้ามาในความคุ้มครองราคาที่ตามมา',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',noAnchor:'ตั้งวันเริ่มพอร์ตก่อน จึงจะวัดผลตอบแทนได้',setStartDate:'ตั้งวันเริ่มพอร์ต',setStartPrompt:'กรอกวันที่ยอดที่นำเข้าถูกต้อง (ปปปป-ดด-วว):',
+ rkRet:'TWR',rkVol:'ความผันผวน (ต่อปี)',rkDD:'ขาดทุนสะสมสูงสุด',rkRR:'ผลตอบแทน ÷ ความผันผวน',rkWorst:'วันแย่ที่สุด',rkXirr:'XIRR โดยประมาณ',xirrEst:'ใช้มูลค่าตลาดต้นงวด ณ {d} เป็นกระแสเงินสดแรก รวมรายการซื้อขายและเงินที่เพิ่งเข้ามาในความคุ้มครองราคาที่ตามมา',noData:'ข้อมูล NAV ในช่วงเวลานี้ไม่เพียงพอ',noAnchor:'ตั้งวันเริ่มพอร์ตก่อน จึงจะวัดผลตอบแทนได้',noPeriodMsg:'ยังวัดผลตอบแทนไม่ได้ — ตั้งวันที่ยอดที่นำเข้าถูกต้อง',setStartDate:'ตั้งวันเริ่มพอร์ต',setStartPrompt:'กรอกวันที่ยอดที่นำเข้าถูกต้อง (ปปปป-ดด-วว):',
  secHold:'กองทุนที่ถือครอง',holdHint:'คลิกแถวเพื่อดูรายละเอียด · คลิกหัวตารางเพื่อเรียง · คอลัมน์เปลี่ยนแปลงตามช่วงเวลาที่เลือก',
  csvBtn:'⬇ ส่งออก CSV',printBtn:'🖨 พิมพ์',thFund:'กองทุน',thUnits:'หน่วย',thValue:'มูลค่าตลาด',thWeight:'น้ำหนัก',thChange:'เปลี่ยนแปลง',thUnreal:'ยังไม่รับรู้',thReal:'รับรู้แล้ว',totalWord:'รวม',fundsWord:'กองทุน',
  thPrice:'ราคาที่ใช้ตีมูลค่า',srcNav:'NAV',srcExec:'ราคาจากรายการ',
@@ -2199,6 +2200,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  editWord:'แก้ไข',byLot:'รายล็อต',byFund:'รายกองทุน',byYear:'รายปี',
  uhUnlocked:'ปลดล็อกแล้ว',uhLocked:'ล็อกอยู่',uhNext:'ปลดล็อกถัดไป',uhYear:'ปีที่ปลดล็อก',uhValue:'มูลค่าโดยประมาณ',uhFundsN:'จำนวนกอง',unknownWord:'ไม่ทราบวันซื้อ',pctInFund:'ในกอง',
  rkAlpha:'TWR เทียบเกณฑ์เทียบ',
+ rkDDMeta:'จากจุดสูงสุดถึงจุดต่ำสุด',
  swBtn:'⇌ สับเปลี่ยน',swTitle:'สับเปลี่ยนกองทุน',swSub:'ขายกองหนึ่ง ซื้ออีกกอง · วันที่ต่างกันได้ · ราคาดึงจาก NAV อัตโนมัติ',
  swOut:'สับเปลี่ยนออก (ขาย)',swOutDate:'วันที่สับเปลี่ยนออก',swUnits:'จำนวนหน่วย',swIn:'สับเปลี่ยนเข้า (ซื้อ)',swInDate:'วันที่สับเปลี่ยนเข้า',swFee:'ค่าธรรมเนียมสับเปลี่ยน (฿)',swUnitsAuto:'จำนวนหน่วยคำนวณจากเงินรับสุทธิ',
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
@@ -2240,7 +2242,7 @@ function computeAll(){
   const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:vs[vs.length-1],nav_date:ld,
    price:_po.price,price_src:_po.src,price_date:_po.date,
    value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
-  if(!_noAnchor)for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
+  if(!_noAnchor&&ds.length)for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
   ALL.push(o);}
  ALL.sort((a,b)=>b.value-a.value);
 }
@@ -2256,8 +2258,6 @@ function applyFilter(){
  if(psH.length>1){
   const dsP=psH.map(x=>x.date),vsP=psH.map(x=>x.value),lastD=dsP[dsP.length-1],lastV=vsP[vsP.length-1];
   for(const k in RANGES){const ref=refLE(dsP,vsP,daysBefore(lastD,RANGES[k].d));T.chg[k]=lastV-ref;T.pct[k]=ref?T.chg[k]/ref*100:0;}
- }else if(portfolioAnchor()!==null){
-  for(const k in RANGES){T.chg[k]=F.reduce((s,f)=>s+f.chg[k],0);const base=T.value-T.chg[k];T.pct[k]=base?T.chg[k]/base*100:0;}
  }
  T.as_of=ALL.reduce((m,f)=>f.price_date>m?f.price_date:m,'');
  T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
@@ -2266,6 +2266,7 @@ function applyFilter(){
  T.oldest_as_of=active.reduce((m,f)=>f.nav_date&&(!m||f.nav_date<m)?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
 }
+function noPeriod(){for(const k in RANGES)if(T.chg[k]!=null)return false;return true;}
 
 /* ---------- filters UI ---------- */
 function buildFilters(){
@@ -2304,23 +2305,22 @@ function renderConfidence(){
 }
 function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
- const noAnchor=portfolioAnchor()===null;
  const b=T.chg[RANGE],p=T.pct[RANGE];
  const tlb=document.getElementById('tl-baht');
- if(noAnchor){tlb.textContent='—';tlb.className='big mono';
+ document.getElementById('g-tl').textContent='· '+rangeLabel(RANGE);document.getElementById('l-tl').textContent='· '+rangeLabel(RANGE);
+ document.getElementById('th-tl').textContent='('+rangeLabel(RANGE)+')';
+ if(noPeriod()){tlb.textContent='—';tlb.className='big mono';
   const pe0=document.getElementById('tl-pct');pe0.textContent='';pe0.className='pct mono';
-  document.getElementById('tl-label').innerHTML=`${escHTML(t('noAnchor'))} <button type="button" class="btn ghost" id="setStartBtn">${escHTML(t('setStartDate'))}</button>`;
+  document.getElementById('tl-label').innerHTML=`${escHTML(t('noPeriodMsg'))} <button type="button" class="btn ghost" id="setStartBtn">${escHTML(t('setStartDate'))}</button>`;
   const sb=document.getElementById('setStartBtn');if(sb)sb.onclick=setStartDate;
   return;}
  tlb.textContent='฿'+sign(b);tlb.className='big mono '+cls(b);
  const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
  document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(RANGE).toLowerCase():rangeLabel(RANGE));
- document.getElementById('g-tl').textContent='· '+rangeLabel(RANGE);document.getElementById('l-tl').textContent='· '+rangeLabel(RANGE);
- document.getElementById('th-tl').textContent='('+rangeLabel(RANGE)+')';
 }
 function renderMovers(){
- if(portfolioAnchor()===null){document.getElementById('gainers').innerHTML=`<div class="skel">${t('noAnchor')}</div>`;document.getElementById('losers').innerHTML=`<div class="skel">${t('noAnchor')}</div>`;return;}
- const s=[...F].sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
+ if(noPeriod()){document.getElementById('gainers').innerHTML=`<div class="skel">${t('noAnchor')}</div>`;document.getElementById('losers').innerHTML=`<div class="skel">${t('noAnchor')}</div>`;return;}
+ const s=F.filter(f=>Number.isFinite(f.pct[RANGE])).sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
  const row=(f,i)=>`<div class="mover" role="button" tabindex="0" data-fund="${escAttr(f.code)}"><div class="rank">${i+1}</div>
   <div class="nm"><div class="c">${escHTML(f.code)}</div><div class="t">${escHTML(f.amc)} · ${escHTML(f.name)}</div></div>
   <div style="text-align:right"><div class="pct ${cls(f.pct[RANGE])}">${sign(f.pct[RANGE])}%</div><div class="baht">฿${sign(f.chg[RANGE])}</div></div></div>`;
@@ -2359,14 +2359,14 @@ function renderDonuts(){
 function valOf(f,k){if(k==='weight')return f.value;if(k==='chg'){const v=f.pct[RANGE];return Number.isFinite(v)?v:0;}if(k==='code')return f.code;return f[k];}
 function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
- const noAnchor=portfolioAnchor()===null;
+ const noAnchor=noPeriod();
  const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3;
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3,noFund=noAnchor||chg==null;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
    <td data-l="${escAttr(t('thPrice'))}">${fmt(f.price,4)} <span class="src-badge">${escHTML(t(f.price_src==='exec'?'srcExec':'srcNav'))} ${escHTML(fmtD(f.price_date))}</span>${f.price_src==='exec'&&f.nav_date?`<br><span style="font-size:10.5px;color:var(--muted2)">NAV ${fmt(f.nav,4)} · ${escHTML(fmtD(f.nav_date))}</span>`:''}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
    <td data-l="${escAttr(t('thWeight'))}">${fmt(w,1)}%<span class="wbar" style="width:${Math.max(2,w/maxW*45)}px"></span></td>
-   <td data-l="${escAttr(t('thChange'))}" class="${noAnchor?'':cls(chg)}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span>`}</td>
+   <td data-l="${escAttr(t('thChange'))}" class="${noFund?'':cls(chg)}">${noFund?'<span style="color:var(--muted2)">—</span>':`฿${sign(chg)}<br><span style="font-size:10.5px">${sign(cp)}%</span>`}</td>
    <td data-l="${escAttr(t('thUnreal'))}" class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
    <td data-l="${escAttr(t('thReal'))}" class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
  document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>${t('totalWord')} (${F.length} ${t('fundsWord')})</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
@@ -2532,7 +2532,8 @@ function fundLedgerMap(code,dates,mode){
 function buildHist(){
  const ps=portfolioSeries();const dateSet=new Set(ps.map(x=>x.date));F.forEach(f=>f.dates.forEach(d=>dateSet.add(d)));
  if(BENCH&&NAVDB[BENCH])Object.keys(NAVDB[BENCH].navs||{}).forEach(d=>dateSet.add(d));
- const dates=tfWindow([...dateSet].sort());
+ const _anchor=portfolioAnchor();
+ const dates=tfWindow([...dateSet].sort()).filter(d=>_anchor===null?false:(!_anchor||d>=_anchor));
  const ent=[];
  if(histSel.has('__PORT__')&&histMode!=='nav'){
   const byDate=Object.fromEntries(ps.map(x=>[x.date,x]));const m={};dates.forEach(d=>m[d]=byDate[d]?(histMode==='norm'?byDate[d].twr:byDate[d].value):null);
@@ -2610,7 +2611,7 @@ function renderRisk(){
   kpi(t('rkXirr'),irr==null?'—':sign(irr)+'%',irr==null?'':cls(irr),t('xirrEst').replace('{d}',escHTML(fmtD(dates[0]))))+
   (B?kpi(t('rkAlpha'),sign(P.ret-B.ret)+'%',cls(P.ret-B.ret),'◆ '+escHTML(BENCH)):'')+
   kpi(t('rkVol'),fmt(P.vol,1)+'%','','σ · '+(LANG==='th'?'รายวัน×√252':'daily ×√252'))+
-  kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'','peak-to-trough')+
+  kpi(t('rkDD'),fmt(P.maxDD,1)+'%',P.maxDD<0?'neg':'',t('rkDDMeta'))+
   kpi(t('rkWorst'),sign(P.worst.r)+'%','neg',fmtD(P.worst.d));
  // per-fund rows (+ benchmark if set)
  const rows=[];
@@ -2638,9 +2639,10 @@ function unlockDate(tax,buyDate,birth){
 }
 function setBirth(){const v=prompt(t('birthPrompt'),localStorage.getItem('kkp_birth')||'1985-01-01');if(v&&/^\d{4}-\d{2}-\d{2}$/.test(v)){localStorage.setItem('kkp_birth',v);renderUnlock();}}
 function setStartDate(){
- const v=prompt(t('setStartPrompt'),new Date().toISOString().slice(0,10));
+ const cur=portfolioAnchor();
+ const v=prompt(t('setStartPrompt'),(cur&&cur!==null?cur:new Date().toISOString().slice(0,10)));
  if(!v||!/^\d{4}-\d{2}-\d{2}$/.test(v))return;
- for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(h&&+h.units>0&&!h.asof)h.asof=v;}
+ for(const c in HOLDINGS_BASE){const h=HOLDINGS_BASE[c];if(h&&+h.units>0)h.asof=v;}
  persist();renderAll();
 }
 let unlockMode=localStorage.getItem('kkp_unlockmode')||'lot';
@@ -2747,9 +2749,9 @@ function renderConc(){
 function exportCSV(){
  const esc=x=>`"${String(x==null?'':x).replace(/"/g,'""')}"`;
  const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
- const noAnchor=portfolioAnchor()===null;
+ const noAnchor=noPeriod();
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);})
-  .map(f=>[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noAnchor?'':f.chg[RANGE].toFixed(2),noAnchor?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)]);
+  .map(f=>{const noFund=noAnchor||f.chg[RANGE]==null;return[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noFund?'':f.chg[RANGE].toFixed(2),noFund?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)];});
  rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg[RANGE].toFixed(2),noAnchor?'':T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
  const csv='﻿'+[head,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
