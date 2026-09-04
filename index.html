@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-4aIcvBLxYP4jHvTdzmtqeN1OjDGi0xC/DK99uGj86UQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-iaFgiaNHGc0bJFb1nDKn35U4BmzTkygY6bGzudupnvo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2589,9 +2589,10 @@ async function setBench(code){
 }
 
 /* ---------- risk & performance ---------- */
-function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF window
+function windowSeries(dates,vals){ // filter a fund's (dates,vals) to the TF window, clamped to the reliable-history anchor
+ const anchor=portfolioAnchor();if(anchor===null)return{ds:[],vs:[]};
  const w=tfWindow(dates);const wset=new Set(w);
- const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)){ds.push(d);vs.push(vals[i]);}});
+ const ds=[],vs=[];dates.forEach((d,i)=>{if(wset.has(d)&&(!anchor||d>=anchor)){ds.push(d);vs.push(vals[i]);}});
  return{ds,vs};
 }
 function fmtD(d,withYear){return d?new Date(d+'T00:00:00').toLocaleDateString(LANG==='th'?'th-TH':'en-GB',withYear?{day:'numeric',month:'short',year:'numeric'}:{day:'numeric',month:'short'}):'—';}
