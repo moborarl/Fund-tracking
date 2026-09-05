@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-oMnTRaeYUJqO68aj2uwgKZjCgFCfcXVwGduTgNxq4Q4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-WvrspoBVrDut9C+SmVhmn18hfI9Xw11KCABkmg4bU4c='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -376,8 +376,6 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    <div class="hero-sub"><div class="it"><span data-i18n="costBasis">Cost Basis</span><b class="mono" id="h-cost"></b></div>
     <div class="it"><span data-i18n="unrealPL">Unrealized P/L</span><b class="mono pos" id="h-unreal"></b></div>
     <div class="it"><span data-i18n="fundsLbl">Funds</span><b id="h-count"></b></div></div>
-   <div class="range-pills" id="pills">
-    <button data-r="d1">1D</button><button data-r="w1">1W</button><button data-r="d15" class="on">15D</button><button data-r="m1">1M</button></div>
    <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span></div>
    <div class="tl-label" id="tl-label"></div>
   </div>
@@ -401,7 +399,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    </div>
    <div class="ms-list" id="msList"></div>
    <div class="tf-row">
-    <div class="ms-modes" id="tfBtns"><button data-tf="1W">1W</button><button data-tf="1M">1M</button><button data-tf="3M">3M</button><button data-tf="6M">6M</button><button data-tf="1Y">1Y</button><button data-tf="YTD">YTD</button><button data-tf="MAX" class="on">MAX</button></div>
+    <div class="ms-modes" id="tfBtns"><button data-tf="1D">1D</button><button data-tf="1W">1W</button><button data-tf="1M">1M</button><button data-tf="3M">3M</button><button data-tf="6M">6M</button><button data-tf="1Y">1Y</button><button data-tf="YTD">YTD</button><button data-tf="MAX" class="on">MAX</button></div>
     <div class="tf-custom"><input type="date" id="tfFrom"><span>→</span><input type="date" id="tfTo"><button class="btn ghost" id="tfApply" data-i18n="applyBtn">Apply</button></div>
     <select class="bench-sel" id="benchSel" style="margin-left:auto"></select>
    </div>
@@ -2105,17 +2103,17 @@ const cls=n=>n>=0?'pos':'neg';
 const escHTML=v=>String(v==null?'':v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const escAttr=escHTML;
 const isoDayDiff=(a,b)=>Math.round((new Date(a+'T00:00:00Z')-new Date(b+'T00:00:00Z'))/86400000);
-const RANGES={d1:{d:1,l:'1 Day'},w1:{d:7,l:'1 Week'},d15:{d:15,l:'15 Days'},m1:{d:30,l:'1 Month'}};
 const C={pos:'#57c59b',neg:'#e76f61',accent:'#c7a760',gold:'#e1aa54',violet:'#7fa59a',muted:'#9ca8a2',grid:'#303936',panel:'#171d1b'};
 const ASSET_COL={'Foreign Equity':'#57c59b','Thai Equity':'#c7a760','Mixed':'#5fa9a0','Fixed Income / MM':'#9ca8a2'};
 const TAX_COL={'SSF':'#c7a760','ThaiESG':'#57c59b','ThaiESGX':'#7fa59a','General':'#9ca8a2','LTF':'#e1aa54','RMF':'#5fa9a0'};
 const AMC_COL={'KKP':'#c7a760','SCB':'#7fa59a','UOB':'#e1aa54','Bualuang':'#57c59b','K-Fund':'#e76f61','Eastspring':'#5fa9a0','LH Fund':'#a7b77b','ONE':'#d28c5d'};
 const PALETTE=['#c7a760','#57c59b','#5fa9a0','#7fa59a','#e76f61','#e1aa54','#9ca8a2','#d28c5d','#8eb47f','#b89068','#6e9790','#d0bd86','#c77670','#829d8f','#b5a46f'];
 
-let RANGE='d15',histMode='value',histSel=new Set(['__PORT__']),msFilter='',histSort='value',sortK='value',sortDir=-1;
+let histMode='value',histSel=new Set(['__PORT__']),msFilter='',histSort='value',sortK='value',sortDir=-1;
 let filterAMC=new Set(),filterTax=new Set();
 let ALL=[],F=[],T={};
-let histTF=localStorage.getItem('kkp_histtf')||'MAX',histFrom='',histTo='';
+let histTF=localStorage.getItem('kkp_histtf')||'MAX',histFrom=localStorage.getItem('kkp_histfrom')||'',histTo=localStorage.getItem('kkp_histto')||'';
+if(histTF==='CUSTOM'&&(!histFrom||!histTo||!/^\d{4}-\d{2}-\d{2}$/.test(histFrom)||!/^\d{4}-\d{2}-\d{2}$/.test(histTo))){histTF='MAX';histFrom='';histTo='';localStorage.setItem('kkp_histtf','MAX');localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');}
 let BENCH=localStorage.getItem('kkp_bench')||'';
 let LANG=localStorage.getItem('kkp_lang')||'en';
 
@@ -2137,7 +2135,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  thPrice:'Valuation price',srcNav:'NAV',srcExec:'Execution',
  footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
  expBtn:'⬇ Download nav_history.json',impBtn:'⬆ Import NAV database',impHoldBtn:'⬆ Import portfolio (holdings.json)',disclaimer:'For portfolio tracking only — not investment advice.',
- r_d1:'1 Day',r_w1:'1 Week',r_d15:'15 Days',r_m1:'1 Month',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
+ r_1D:'1 Day',r_1W:'1 Week',r_1M:'1 Month',r_3M:'3 Months',r_6M:'6 Months',r_1Y:'1 Year',r_YTD:'Year to date',r_MAX:'All history',r_CUSTOM:'Custom range',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
  plFoot:'Total P/L <b style="color:var(--txt)">฿{t}</b> — unrealized gains on paper make up the majority; realized P/L ฿{r} comes from past partial redemptions.',
  wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',mMarket:'Market Value',mUnreal:'Unrealized',mWeight:'Weight',mCategory:'Category',mRisk:'Risk level',mDividend:'Dividend policy',mInception:'Inception',mNetAssets:'Net assets',divYes:'Pays dividends',divNo:'No dividends',
@@ -2180,7 +2178,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  thPrice:'ราคาที่ใช้ตีมูลค่า',srcNav:'NAV',srcExec:'ราคาจากรายการ',
  footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
  expBtn:'⬇ ดาวน์โหลด nav_history.json',impBtn:'⬆ นำเข้าฐานข้อมูล NAV',impHoldBtn:'⬆ นำเข้าพอร์ต (holdings.json)',disclaimer:'ใช้เพื่อติดตามพอร์ตเท่านั้น — ไม่ใช่คำแนะนำการลงทุน',
- r_d1:'1 วัน',r_w1:'1 สัปดาห์',r_d15:'15 วัน',r_m1:'1 เดือน',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
+ r_1D:'1 วัน',r_1W:'1 สัปดาห์',r_1M:'1 เดือน',r_3M:'3 เดือน',r_6M:'6 เดือน',r_1Y:'1 ปี',r_YTD:'ตั้งแต่ต้นปี',r_MAX:'ทั้งหมด',r_CUSTOM:'ช่วงที่กำหนดเอง',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
  plFoot:'กำไร/ขาดทุนรวม <b style="color:var(--txt)">฿{t}</b> — ส่วนใหญ่เป็นกำไรที่ยังไม่รับรู้ · กำไรรับรู้แล้ว ฿{r} จากการขายคืนบางส่วนที่ผ่านมา',
  wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',mMarket:'มูลค่าตลาด',mUnreal:'กำไร/ขาดทุนยังไม่รับรู้',mWeight:'น้ำหนัก',mCategory:'ประเภทกองทุน',mRisk:'ระดับความเสี่ยง',mDividend:'นโยบายปันผล',mInception:'วันจัดตั้งกองทุน',mNetAssets:'สินทรัพย์สุทธิ',divYes:'จ่ายปันผล',divNo:'ไม่จ่ายปันผล',
@@ -2224,7 +2222,7 @@ function applyLang(){
 
 function computeAll(){
  ALL=[];
- const _pao=pageAsOf(),_noAnchor=portfolioAnchor()===null;
+ const _pao=pageAsOf(),_anchor=portfolioAnchor(),_noAnchor=_anchor===null;
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
   if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
    if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
@@ -2237,12 +2235,11 @@ function computeAll(){
   const _po=priceObsAt(code,_as);
   if(!_po)continue;
   const last=_po.price,prev=vs.length>1?vs[vs.length-2]:_po.price,ld=ds.length?ds[ds.length-1]:'';
-  const rv=n=>ds.length?refLE(ds,vs,daysBefore(ld,n)):last;
   const value=h.units*last,cost=h.units*h.avg;
   const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:vs[vs.length-1],nav_date:ld,
    price:_po.price,price_src:_po.src,price_date:_po.date,
-   value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
-  if(!_noAnchor&&ds.length)for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
+   value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:null,pct:null};
+  if(!_noAnchor&&ds.length){const from=periodStart(histTF,_as)||_anchor||ds[0];const r=refLE(ds,vs,from);o.chg=h.units*(last-r);o.pct=(last/r-1)*100;}
   ALL.push(o);}
  ALL.sort((a,b)=>b.value-a.value);
 }
@@ -2250,14 +2247,16 @@ function applyFilter(){
  F=ALL.filter(f=>(filterAMC.size===0||filterAMC.has(f.amc))&&(filterTax.size===0||filterTax.has(f.tax)));
  const S=k=>F.reduce((s,f)=>s+f[k],0);
  T={value:S('value'),cost:S('cost'),unreal:S('unreal'),realized:S('realized')};
- T.unreal_pct=T.cost?T.unreal/T.cost*100:0;T.chg={};T.pct={};
- // Range changes use the same calendar basis as the history chart:
- // portfolio value on the latest valued date minus value n days earlier
- // (per-fund NAVs carried forward), so headline and chart always agree.
+ T.unreal_pct=T.cost?T.unreal/T.cost*100:0;T.chg=null;T.pct=null;T.chgFrom=null;
+ // Period changes use the same calendar basis as the history chart: portfolio
+ // value on the latest valued date minus value at the resolved boundary date
+ // (per-fund prices carried forward), so headline and chart always agree.
  const psH=portfolioSeries();
  if(psH.length>1){
   const dsP=psH.map(x=>x.date),vsP=psH.map(x=>x.value),lastD=dsP[dsP.length-1],lastV=vsP[vsP.length-1];
-  for(const k in RANGES){const ref=refLE(dsP,vsP,daysBefore(lastD,RANGES[k].d));T.chg[k]=lastV-ref;T.pct[k]=ref?T.chg[k]/ref*100:0;}
+  const from=periodStart(histTF,lastD)||portfolioAnchor()||dsP[0];
+  const refDate=[...dsP].reverse().find(d=>d<=from)||dsP[0];
+  const ref=refLE(dsP,vsP,from);T.chg=lastV-ref;T.pct=ref?T.chg/ref*100:0;T.chgFrom=refDate;
  }
  T.as_of=ALL.reduce((m,f)=>f.price_date>m?f.price_date:m,'');
  T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
@@ -2266,7 +2265,7 @@ function applyFilter(){
  T.oldest_as_of=active.reduce((m,f)=>f.nav_date&&(!m||f.nav_date<m)?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
 }
-function noPeriod(){for(const k in RANGES)if(T.chg[k]!=null)return false;return true;}
+function noPeriod(){return T.chg==null;}
 
 /* ---------- filters UI ---------- */
 function buildFilters(){
@@ -2305,10 +2304,10 @@ function renderConfidence(){
 }
 function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
- const b=T.chg[RANGE],p=T.pct[RANGE];
+ const b=T.chg,p=T.pct;
  const tlb=document.getElementById('tl-baht');
- document.getElementById('g-tl').textContent='· '+rangeLabel(RANGE);document.getElementById('l-tl').textContent='· '+rangeLabel(RANGE);
- document.getElementById('th-tl').textContent='('+rangeLabel(RANGE)+')';
+ document.getElementById('g-tl').textContent='· '+rangeLabel(histTF);document.getElementById('l-tl').textContent='· '+rangeLabel(histTF);
+ document.getElementById('th-tl').textContent='('+rangeLabel(histTF)+')';
  if(noPeriod()){tlb.textContent='—';tlb.className='big mono';
   const pe0=document.getElementById('tl-pct');pe0.textContent='';pe0.className='pct mono';
   document.getElementById('tl-label').innerHTML=`${escHTML(t('noPeriodMsg'))} <button type="button" class="btn ghost" id="setStartBtn">${escHTML(t('setStartDate'))}</button>`;
@@ -2316,14 +2315,14 @@ function renderTL(){
   return;}
  tlb.textContent='฿'+sign(b);tlb.className='big mono '+cls(b);
  const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
- document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(RANGE).toLowerCase():rangeLabel(RANGE));
+ document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(histTF).toLowerCase():rangeLabel(histTF));
 }
 function renderMovers(){
  if(noPeriod()){const _m=t(portfolioAnchor()===null?'noAnchor':'noPeriodMsg');document.getElementById('gainers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;document.getElementById('losers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;return;}
- const s=F.filter(f=>Number.isFinite(f.pct[RANGE])).sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
+ const s=F.filter(f=>Number.isFinite(f.pct)).sort((a,b)=>b.pct-a.pct);
  const row=(f,i)=>`<div class="mover" role="button" tabindex="0" data-fund="${escAttr(f.code)}"><div class="rank">${i+1}</div>
   <div class="nm"><div class="c">${escHTML(f.code)}</div><div class="t">${escHTML(f.amc)} · ${escHTML(f.name)}</div></div>
-  <div style="text-align:right"><div class="pct ${cls(f.pct[RANGE])}">${sign(f.pct[RANGE])}%</div><div class="baht">฿${sign(f.chg[RANGE])}</div></div></div>`;
+  <div style="text-align:right"><div class="pct ${cls(f.pct)}">${sign(f.pct)}%</div><div class="baht">฿${sign(f.chg)}</div></div></div>`;
  document.getElementById('gainers').innerHTML=s.slice(0,6).map(row).join('')||`<div class="skel">${t('noFunds')}</div>`;
  document.getElementById('losers').innerHTML=s.slice(-6).reverse().map(row).join('')||'';
 }
@@ -2356,12 +2355,12 @@ function renderDonuts(){
 }
 
 /* ---------- table ---------- */
-function valOf(f,k){if(k==='weight')return f.value;if(k==='chg'){const v=f.pct[RANGE];return Number.isFinite(v)?v:0;}if(k==='code')return f.code;return f[k];}
+function valOf(f,k){if(k==='weight')return f.value;if(k==='chg'){const v=f.pct;return Number.isFinite(v)?v:0;}if(k==='code')return f.code;return f[k];}
 function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
  const noAnchor=noPeriod();
  const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3,noFund=noAnchor||chg==null;
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg,cp=f.pct,stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3,noFund=noAnchor||chg==null;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
    <td data-l="${escAttr(t('thPrice'))}">${fmt(f.price,4)} <span class="src-badge">${escHTML(t(f.price_src==='exec'?'srcExec':'srcNav'))} ${escHTML(fmtD(f.price_date))}</span>${f.price_src==='exec'&&f.nav_date?`<br><span style="font-size:10.5px;color:var(--muted2)">NAV ${fmt(f.nav,4)} · ${escHTML(fmtD(f.nav_date))}</span>`:''}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
@@ -2370,7 +2369,7 @@ function renderTable(){
    <td data-l="${escAttr(t('thUnreal'))}" class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
    <td data-l="${escAttr(t('thReal'))}" class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
  document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>${t('totalWord')} (${F.length} ${t('fundsWord')})</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
-   <td class="${noAnchor?'':cls(T.chg[RANGE])}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(T.chg[RANGE])}<br><span style="font-size:10.5px">${sign(T.pct[RANGE])}%</span>`}</td>
+   <td class="${noAnchor?'':cls(T.chg)}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(T.chg)}<br><span style="font-size:10.5px">${sign(T.pct)}%</span>`}</td>
    <td class="${cls(T.unreal)}">฿${sign(T.unreal)}<br><span style="font-size:10.5px">${sign(T.unreal_pct)}%</span></td>
    <td class="${cls(T.realized)}">฿${sign(T.realized)}</td></tr>`;
 }
@@ -2501,16 +2500,19 @@ function windowCashflows(windowRows){
  if(cf.length)cf[cf.length-1].amount+=windowRows[windowRows.length-1].value;
  return cf;
 }
+function periodStart(tf,lastDateStr){
+ if(tf==='CUSTOM')return histFrom||null;
+ const D={'1D':1,'1W':7,'1M':30,'3M':91,'6M':182,'1Y':365};
+ if(tf==='YTD')return lastDateStr.slice(0,4)+'-01-01';
+ if(D[tf])return daysBefore(lastDateStr,D[tf]);
+ return null; // MAX, or CUSTOM with no bound set
+}
 function tfWindow(dates){
  if(!dates.length)return dates;
  const last=dates[dates.length-1];
- if(histTF==='CUSTOM'){const from=histFrom||dates[0],to=histTo||last;return dates.filter(d=>d>=from&&d<=to);}
- const D={'1W':7,'1M':30,'3M':91,'6M':182,'1Y':365};
- let from;
- if(histTF==='YTD')from=last.slice(0,4)+'-01-01';
- else if(D[histTF])from=daysBefore(last,D[histTF]);
- else return dates; // MAX
- return dates.filter(d=>d>=from);
+ const from=periodStart(histTF,last)||dates[0];
+ const to=histTF==='CUSTOM'&&histTo?histTo:last;
+ return dates.filter(d=>d>=from&&d<=to);
 }
 function riskStats(ds,vs){
  if(!vs||vs.length<3)return null;
@@ -2748,11 +2750,11 @@ function renderConc(){
 /* ---------- CSV export ---------- */
 function exportCSV(){
  const esc=x=>`"${String(x==null?'':x).replace(/"/g,'""')}"`;
- const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
+ const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(histTF)+')',t('thChange')+' % ('+rangeLabel(histTF)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
  const noAnchor=noPeriod();
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);})
-  .map(f=>{const noFund=noAnchor||f.chg[RANGE]==null;return[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noFund?'':f.chg[RANGE].toFixed(2),noFund?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)];});
- rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg[RANGE].toFixed(2),noAnchor?'':T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
+  .map(f=>{const noFund=noAnchor||f.chg==null;return[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noFund?'':f.chg.toFixed(2),noFund?'':f.pct.toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)];});
+ rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg.toFixed(2),noAnchor?'':T.pct.toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
  const csv='﻿'+[head,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  a.download='portfolio_'+(T.as_of||new Date().toISOString().slice(0,10))+'.csv';a.click();
@@ -2969,7 +2971,6 @@ async function doSwitch(){
 }
 
 /* ---------- wire ---------- */
-document.querySelectorAll('#pills button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pills button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RANGE=b.dataset.r;renderTL();renderMovers();renderTable();});
 document.querySelectorAll('th.sortable').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderTable();});
 document.querySelectorAll('.ms-modes button[data-m]').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histMode=b.dataset.m;renderHist();});
 document.querySelectorAll('#msSortBtns button').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histSort=b.dataset.s;renderMSList();renderHist();});
@@ -2986,13 +2987,16 @@ document.getElementById('expBtn').onclick=exportDB;
 document.querySelectorAll('#tfBtns button').forEach(b=>{
  if(b.dataset.tf===histTF)b.classList.add('on');else b.classList.remove('on');
  b.onclick=()=>{document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  histTF=b.dataset.tf;histFrom='';histTo='';localStorage.setItem('kkp_histtf',histTF);renderHist();renderRisk();};});
+  histTF=b.dataset.tf;histFrom='';histTo='';
+  localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
+  renderAll();};});
 document.getElementById('tfApply').onclick=()=>{
  const f=document.getElementById('tfFrom').value,to=document.getElementById('tfTo').value;
  if(!f&&!to)return;
  histTF='CUSTOM';histFrom=f;histTo=to;
+ localStorage.setItem('kkp_histtf','CUSTOM');localStorage.setItem('kkp_histfrom',histFrom);localStorage.setItem('kkp_histto',histTo);
  document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));
- renderHist();renderRisk();};
+ renderAll();};
 /* benchmark */
 document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
 /* AI import prompt */
