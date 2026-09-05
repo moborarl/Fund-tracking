@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-idRAjHpJozdeP4lv/Vz8yVI2TC89/u6Csu3InqXCt18='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-kE3ZJFhtuXkV7HWLNNCOEr5wKOz3AGWGIRfwaY+KSV0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,6 +86,17 @@ body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-em
 .tf-segmented{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
 .tf-segmented button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 12px;border-radius:8px;cursor:pointer}
 .tf-segmented button.on{background:linear-gradient(135deg,#4d8dff,#3b6fd4);color:#fff}
+@media(max-width:1239px){
+ .tf-segmented{display:none}
+ .narrow-tf{display:flex!important}
+}
+@media(min-width:1240px){
+ .narrow-tf{display:none!important}
+}
+@media(max-width:1023px){
+ #amcTrigger,#taxTrigger{display:none}
+}
+@media(max-width:1023px){#ovFilters{display:block!important}}
 .shell{display:flex;flex-direction:column;min-height:100vh}
 .tabbar-wrap{background:var(--bg);border-bottom:1px solid var(--line)}
 .tablist{display:flex;gap:4px;overflow-x:auto;max-width:1340px;margin:0 auto;padding:0 22px}
@@ -383,6 +394,10 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
  </div>
 
  <div class="tf-segmented" id="cmdTf"></div>
+ <div class="cmdbar-group narrow-tf" id="narrowTfGroup" style="display:none">
+  <button type="button" class="btn ghost popover-trigger" id="periodTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="periodPopover"><span id="periodTriggerLabel"></span></button>
+  <div class="popover" id="periodPopover" role="dialog" aria-label="Timeframe" data-i18n-aria-label="lblPeriod"></div>
+ </div>
 
  <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
   <div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
@@ -2179,7 +2194,7 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 /* ---------- i18n ---------- */
 const I18N={
 en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',langBtnLbl:'Language',
- lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',eyebrowFiltered:'Filtered value',vsDate:'vs {d}',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
+ lblAMC:'AMC',lblTax:'Tax',lblPeriod:'Timeframe',eyebrow:'Total Market Value',eyebrowFiltered:'Filtered value',vsDate:'vs {d}',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
  portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
@@ -2223,7 +2238,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in',
  tabHoldings:'Holdings',tabReturns:'Returns',tabAllocation:'Allocation',tabRisk:'Risk',tabTax:'Tax'},
 th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
- lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
+ lblAMC:'บลจ.',lblTax:'สิทธิภาษี',lblPeriod:'ช่วงเวลา',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
  portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
@@ -2345,17 +2360,33 @@ function buildFilters(){
  const taxes=[...new Set(ALL.map(f=>f.tax))];
  buildFilterPopover('amcPopover','amcTriggerLabel',amcs,filterAMC,AMC_COL,'lblAMC');
  buildFilterPopover('taxPopover','taxTriggerLabel',taxes,filterTax,TAX_COL,'lblTax');
+ buildFilterList('ovAmcList',amcs,filterAMC);
+ buildFilterList('ovTaxList',taxes,filterTax);
+}
+function buildFilterList(elId,items,activeSet){
+ const el=document.getElementById(elId);
+ el.innerHTML=items.map(x=>`<label class="popover-row"><input type="checkbox" data-v="${escAttr(x)}" ${activeSet.has(x)?'checked':''}><span>${escHTML(x)}</span></label>`).join('');
+ el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();});
 }
 function renderTfControl(){
  const tf=document.getElementById('cmdTf');
  const opts=['1D','1W','1M','3M','6M','1Y','YTD','MAX'];
  tf.innerHTML=opts.map(o=>`<button type="button" data-tf="${o}" class="${histTF===o?'on':''}">${o}</button>`).join('');
- tf.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-  histTF=b.dataset.tf;histFrom='';histTo='';
-  localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
-  renderAll();
- });
- const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
+ tf.querySelectorAll('button').forEach(b=>b.onclick=()=>setTimeframe(b.dataset.tf));
+
+ const label=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
+ document.getElementById('periodTriggerLabel').textContent=label;
+ const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=label;
+
+ const pop=document.getElementById('periodPopover');
+ pop.innerHTML=`<h4 data-i18n="lblPeriod"></h4>`+opts.map(o=>`<label class="popover-row"><input type="radio" name="periodPop" value="${o}" ${histTF===o?'checked':''}><span>${o}</span></label>`).join('');
+ pop.querySelector('h4').textContent=t('lblPeriod');
+ pop.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{setTimeframe(r.value);closePopover(pop,true);});
+}
+function setTimeframe(tf){
+ histTF=tf;histFrom='';histTo='';
+ localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
+ renderAll();
 }
 
 /* ---------- header / KPIs ---------- */
@@ -2902,6 +2933,8 @@ document.querySelectorAll('.popover-trigger').forEach(btn=>{
  btn.onclick=()=>{const panel=document.getElementById(btn.getAttribute('aria-controls'));
   if(panel.classList.contains('open'))closePopover(panel,true);else openPopover(btn,panel);};
 });
+document.getElementById('statusTf').onclick=()=>{const p=document.getElementById('periodPopover');
+ if(p.classList.contains('open'))closePopover(p,true);else openPopover(document.getElementById('statusTf'),p);};
 const TAB_IDS=['holdings','returns','allocation','risk','tax'];
 function activateTab(id,focus){
  TAB_IDS.forEach(x=>{
@@ -3138,6 +3171,13 @@ async function doSwitch(){
 
 /* ---------- wire ---------- */
 document.getElementById('overflowPanel').innerHTML=`
+ <div id="ovFilters" style="display:none">
+  <h4 data-i18n="lblAMC" style="margin:4px 0 6px;font-size:12px;color:var(--muted2);text-transform:uppercase"></h4>
+  <div id="ovAmcList"></div>
+  <h4 data-i18n="lblTax" style="margin:10px 0 6px;font-size:12px;color:var(--muted2);text-transform:uppercase"></h4>
+  <div id="ovTaxList"></div>
+  <hr style="border-color:var(--line);margin:6px 0">
+ </div>
  <button type="button" class="btn ghost" id="ovLang" style="justify-content:space-between"><span data-i18n="langBtnLbl">Language</span><span id="ovLangVal">ไทย</span></button>
  <button type="button" class="btn ghost" id="ovAuth"></button>
  <button type="button" class="btn ghost" id="ovTxn" data-i18n="txnBtn">⇄ Buy / Sell</button>
