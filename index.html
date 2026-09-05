@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-GtLPw1UTTUBUcOm0ytxwhdC9OyVwyDose2Gzvzmc2q0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-wvdM9fQPYeZegtQeOLdthc7rJX63MUFpAdU+S20WhA0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,6 +58,9 @@ body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .con
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
 .totval{font-size:42px;font-weight:800;letter-spacing:-1.3px;margin:5px 0 2px}.totval .cur{font-size:20px;color:var(--muted);font-weight:600;margin-right:5px}
 .hero-sub{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
+.scope-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;margin-left:10px}
+.chg-from{font-size:11px;color:var(--muted2);margin-left:8px;font-weight:500}
+.spark{display:block;margin-top:10px}
 .hero-sub .it{font-size:12px;color:var(--muted)}.hero-sub .it b{display:block;font-size:16px;color:var(--txt);font-weight:700;margin-top:2px}
 .range-pills{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:4px;gap:3px;margin-top:18px}
 .range-pills button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 15px;border-radius:8px;cursor:pointer;transition:.15s}
@@ -374,34 +377,35 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 </header>
 
 <div class="wrap">
- <div class="confidence" id="confidenceBar" aria-live="polite">
-  <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
-  <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
-  <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
- </div>
-
  <div class="empty-state" id="emptyState" hidden>
   <h2 data-i18n="emptyTitle">Build your portfolio view</h2>
   <p data-i18n="emptyBody">Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.</p>
   <div class="empty-actions"><button class="btn" id="emptySignIn" type="button" data-i18n="emptySignIn">Sign in</button><button class="btn ghost" id="emptyImport" type="button" data-i18n="emptyImport">Import portfolio</button></div>
  </div>
 
- <div class="hero"><div class="hero-grid">
+ <div class="hero" id="pfHeader"><div class="hero-grid">
   <div class="hero-main">
-   <div class="eyebrow" data-i18n="eyebrow">Total Market Value</div>
+   <div style="display:flex;align-items:baseline;flex-wrap:wrap"><div class="eyebrow" id="eyebrowLbl" data-i18n="eyebrow">Total Market Value</div><span class="scope-chip" id="scopeChip" hidden></span></div>
    <div class="totval"><span class="cur">฿</span><span id="h-value" class="mono"></span></div>
    <div class="hero-sub"><div class="it"><span data-i18n="costBasis">Cost Basis</span><b class="mono" id="h-cost"></b></div>
     <div class="it"><span data-i18n="unrealPL">Unrealized P/L</span><b class="mono pos" id="h-unreal"></b></div>
     <div class="it"><span data-i18n="fundsLbl">Funds</span><b id="h-count"></b></div></div>
-   <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span></div>
+   <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span><span class="chg-from" id="tl-from"></span></div>
    <div class="tl-label" id="tl-label"></div>
+   <svg class="spark" id="spark" width="100%" height="36" viewBox="0 0 300 36" preserveAspectRatio="none" aria-hidden="true"></svg>
   </div>
   <div class="hero-side">
    <div class="mini"><div class="lab" data-i18n="heroUnrealLab">Unrealized P/L (on current holdings)</div><div class="val mono pos" id="m-unreal"></div>
     <div class="meta"><span data-i18n="vsCost">vs cost</span> <span class="chip2" id="m-unreal-pct" style="background:rgba(31,210,134,.14);color:var(--pos)"></span></div></div>
    <div class="mini"><div class="lab" data-i18n="heroRealLab">Realized P/L (cumulative)</div><div class="val mono" id="m-real"></div><div class="meta" data-i18n="heroRealMeta">from past redemptions</div></div>
   </div>
- </div></div>
+ </div>
+ <div class="confidence" id="confidenceBar" aria-live="polite">
+  <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
+  <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
+  <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
+ </div>
+ </div>
 
  <!-- HISTORY MULTI-SELECT -->
  <section>
@@ -2134,7 +2138,7 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 /* ---------- i18n ---------- */
 const I18N={
 en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',langBtnLbl:'Language',
- lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
+ lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',eyebrowFiltered:'Filtered value',vsDate:'vs {d}',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
  portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
@@ -2177,7 +2181,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
  swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
 th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
- lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
+ lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
  portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
@@ -2344,10 +2348,32 @@ function renderTL(){
   const pe0=document.getElementById('tl-pct');pe0.textContent='';pe0.className='pct mono';
   document.getElementById('tl-label').innerHTML=`${escHTML(t('noPeriodMsg'))} <button type="button" class="btn ghost" id="setStartBtn">${escHTML(t('setStartDate'))}</button>`;
   const sb=document.getElementById('setStartBtn');if(sb)sb.onclick=setStartDate;
+  document.getElementById('tl-from').textContent='';
   return;}
  tlb.textContent='฿'+sign(b);tlb.className='big mono '+cls(b);
  const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
  document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(histTF).toLowerCase():rangeLabel(histTF));
+ document.getElementById('tl-from').textContent=T.chgFrom?t('vsDate').replace('{d}',fmtD(T.chgFrom)):'';
+}
+function renderScope(){
+ const chip=document.getElementById('scopeChip'),lbl=document.getElementById('eyebrowLbl');
+ const active=filterAMC.size>0||filterTax.size>0;
+ if(!active){chip.hidden=true;lbl.textContent=t('eyebrow');return;}
+ chip.hidden=false;lbl.textContent=t('eyebrowFiltered');
+ const parts=[...filterAMC,...filterTax];
+ chip.textContent=parts.join(' · ')+` — ${F.length}/${ALL.length}`;
+}
+function renderSparkline(){
+ const svg=document.getElementById('spark');
+ const ps=portfolioSeries();const dates=ps.map(r=>r.date);const w=tfWindow(dates);const wset=new Set(w);
+ const pts=ps.filter(r=>wset.has(r.date)).map(r=>r.value);
+ if(pts.length<2){svg.innerHTML='';return;}
+ const min=Math.min(...pts),max=Math.max(...pts),span=(max-min)||1;
+ const W=300,H=36;
+ const xy=pts.map((v,i)=>[i/(pts.length-1)*W,H-((v-min)/span)*H]);
+ const d='M'+xy.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L');
+ const up=pts[pts.length-1]>=pts[0];
+ svg.innerHTML=`<path d="${d}" fill="none" stroke="${up?'var(--pos)':'var(--neg)'}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
 }
 function renderMovers(){
  if(noPeriod()){const _m=t(portfolioAnchor()===null?'noAnchor':'noPeriodMsg');document.getElementById('gainers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;document.getElementById('losers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;return;}
@@ -3142,7 +3168,7 @@ document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-
 function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);}}
 function renderAll(){
  buildHoldings();computeAll();applyFilter();
- safe(buildFilters);safe(renderTfControl);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
+ safe(buildFilters);safe(renderTfControl);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderScope);safe(renderSparkline);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
  safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);safe(renderUnlock);safe(renderConc);
 }
 /* ---------- auth + cloud sync ---------- */
