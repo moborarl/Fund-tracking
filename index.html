@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-WvrspoBVrDut9C+SmVhmn18hfI9Xw11KCABkmg4bU4c='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-KZMmmZs2z7C4CQCKmma2l3mIP3QMdXC7kJp23LGni+E='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,6 +69,20 @@ body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .con
 .mini{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;justify-content:center}
 .mini .lab{font-size:11.5px;color:var(--muted);font-weight:500}.mini .val{font-size:24px;font-weight:800;margin-top:6px}.mini .meta{font-size:11.5px;color:var(--muted);margin-top:3px}
 .chip2{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+.cmdbar{display:flex;align-items:center;gap:10px;padding:10px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cmdbar-group{position:relative;display:flex;align-items:center;gap:8px}
+.popover-trigger{display:inline-flex;align-items:center;gap:6px}
+.popover{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:220px;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-md,12px);box-shadow:var(--shadow);padding:12px;display:none}
+.popover.open{display:block}
+.popover h4{margin:0 0 8px;font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
+.popover-row{display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px}
+.popover-row:hover{background:var(--panel2)}
+.popover-row input[type=checkbox],.popover-row input[type=radio]{accent-color:var(--accent)}
+.popover-actions{display:flex;flex-direction:column;gap:4px;min-width:240px}
+.popover-actions .btn{justify-content:flex-start}
+.tf-segmented{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
+.tf-segmented button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 12px;border-radius:8px;cursor:pointer}
+.tf-segmented button.on{background:linear-gradient(135deg,#4d8dff,#3b6fd4);color:#fff}
 section{margin-top:26px}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;gap:12px;flex-wrap:wrap}
 .sec-head h2{font-size:15px;font-weight:700}.sec-head .hint{font-size:11.5px;color:var(--muted2)}
@@ -335,32 +349,35 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner">
+<header class="cmdbar" id="cmdbar">
  <div class="brand"><div class="logo">PORT</div><div><h1>Portfolio Monitor</h1><div class="sub" data-i18n="brandSub">Multi-AMC · NAV-based valuation</div></div></div>
- <button class="btn ghost mobile-only menu-btn" id="mobileMenuBtn" type="button" aria-expanded="false" aria-controls="headerActions" data-i18n-aria="menuBtn">☰</button>
- <div class="upd" id="headerActions"><div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
-  <button class="btn ghost" id="langBtn" style="font-size:13px;padding:9px 13px;min-width:52px;justify-content:center">ไทย</button>
-  <button class="btn ghost" id="authBtn" style="font-size:13px;padding:9px 13px">☁ Sign in</button>
-  <button class="btn ghost" id="txnBtn" style="font-size:13px;padding:9px 13px" data-i18n="txnBtn">⇄ Buy / Sell</button>
-  <button class="btn ghost" id="swBtn" style="font-size:13px;padding:9px 13px" data-i18n="swBtn">⇌ Switch</button>
-  <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt" data-i18n="updNav">Update NAV</span></button></div>
-</div></header>
 
-<div class="wrap">
- <!-- FILTER BAR -->
- <div id="fbSentinel" aria-hidden="true"></div>
- <div class="sticky-controls">
- <div class="filterbar">
-  <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
-  <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
-  <div class="fstatus" id="fstatus"></div>
+ <div class="cmdbar-group">
+  <button type="button" class="btn ghost popover-trigger" id="amcTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="amcPopover"><span data-i18n="lblAMC">AMC</span><span id="amcTriggerLabel"></span></button>
+  <div class="popover" id="amcPopover" role="dialog" aria-label="AMC" data-i18n-aria="lblAMC"></div>
+ </div>
+ <div class="cmdbar-group">
+  <button type="button" class="btn ghost popover-trigger" id="taxTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="taxPopover"><span data-i18n="lblTax">Tax</span><span id="taxTriggerLabel"></span></button>
+  <div class="popover" id="taxPopover" role="dialog" aria-label="Tax" data-i18n-aria="lblTax"></div>
  </div>
 
+ <div class="tf-segmented" id="cmdTf"></div>
+
+ <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+  <div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
+  <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt" data-i18n="updNav">Update NAV</span></button>
+  <div class="cmdbar-group">
+   <button type="button" class="btn ghost popover-trigger" id="overflowTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="overflowPanel" aria-label="More" data-i18n-aria="menuBtn">⋯</button>
+   <div class="popover popover-actions" id="overflowPanel" role="dialog" aria-label="More actions" data-i18n-aria="menuBtn" style="right:0;left:auto"></div>
+  </div>
+ </div>
+</header>
+
+<div class="wrap">
  <div class="confidence" id="confidenceBar" aria-live="polite">
   <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
   <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
   <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
- </div>
  </div>
 
  <div class="empty-state" id="emptyState" hidden>
@@ -399,7 +416,6 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    </div>
    <div class="ms-list" id="msList"></div>
    <div class="tf-row">
-    <div class="ms-modes" id="tfBtns"><button data-tf="1D">1D</button><button data-tf="1W">1W</button><button data-tf="1M">1M</button><button data-tf="3M">3M</button><button data-tf="6M">6M</button><button data-tf="1Y">1Y</button><button data-tf="YTD">YTD</button><button data-tf="MAX" class="on">MAX</button></div>
     <div class="tf-custom"><input type="date" id="tfFrom"><span>→</span><input type="date" id="tfTo"><button class="btn ghost" id="tfApply" data-i18n="applyBtn">Apply</button></div>
     <select class="bench-sel" id="benchSel" style="margin-left:auto"></select>
    </div>
@@ -468,12 +484,10 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
  </section>
 
  <div class="foot">
-  <span data-i18n="footNote">Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.</span><br>
-  <button class="btn ghost" id="expBtn" data-i18n="expBtn">⬇ Download nav_history.json</button>
-  <button class="btn ghost" id="impBtn" data-i18n="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
-  <button class="btn ghost" id="impHoldBtn" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
-  <button class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>
+  <span data-i18n="footNote">Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.</span>
   <div style="margin-top:9px" data-i18n="disclaimer">For portfolio tracking only — not investment advice.</div>
+  <input type="file" id="impFile" accept="application/json" style="display:none">
+  <input type="file" id="impHoldFile" accept="application/json" style="display:none">
  </div>
 </div>
 
@@ -2119,7 +2133,7 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 
 /* ---------- i18n ---------- */
 const I18N={
-en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
+en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',langBtnLbl:'Language',
  lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
@@ -2162,7 +2176,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
  swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
  swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
-th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
+th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
@@ -2215,6 +2229,7 @@ function applyLang(){
  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAria));});
  const lb=document.getElementById('langBtn');if(lb)lb.textContent=LANG==='en'?'ไทย':'EN';
  updateAuthUI();renderBenchSel();
+ const ovLangVal=document.getElementById('ovLangVal');if(ovLangVal)ovLangVal.textContent=LANG==='en'?'ไทย':'English';
 }
 
 // Loading skeletons instead of empty values (replaced by first render with data)
@@ -2268,14 +2283,31 @@ function applyFilter(){
 function noPeriod(){return T.chg==null;}
 
 /* ---------- filters UI ---------- */
+function buildFilterPopover(panelId,triggerLabelId,items,activeSet,colorMap,allLabelKey){
+ const panel=document.getElementById(panelId);
+ panel.innerHTML=`<h4></h4>`+items.map(x=>`<label class="popover-row"><input type="checkbox" data-v="${escAttr(x)}" ${activeSet.has(x)?'checked':''}><span>${escHTML(x)}</span></label>`).join('');
+ panel.querySelector('h4').textContent=t(allLabelKey);
+ panel.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();});
+ const label=document.getElementById(triggerLabelId);
+ if(activeSet.size===0)label.textContent='';
+ else if(activeSet.size===1)label.textContent=': '+[...activeSet][0];
+ else label.textContent=': '+[...activeSet][0]+' +'+(activeSet.size-1);
+}
 function buildFilters(){
  const amcs=[...new Set(ALL.map(f=>f.amc))];
  const taxes=[...new Set(ALL.map(f=>f.tax))];
- document.getElementById('amcFilter').innerHTML=amcs.map(a=>`<button type="button" class="fchip amc ${filterAMC.has(a)?'on':''}" data-a="${escAttr(a)}" style="${filterAMC.has(a)?`background:${AMC_COL[a]||'#c7a760'};color:#10130f`:''}">${escHTML(a)}</button>`).join('');
- document.getElementById('taxFilter').innerHTML=taxes.map(x=>`<button type="button" class="fchip tax ${filterTax.has(x)?'on':''}" data-t="${escAttr(x)}" style="${filterTax.has(x)?`background:${TAX_COL[x]||'#c7a760'};color:#10130f`:''}">${escHTML(x)}</button>`).join('');
- document.querySelectorAll('.fchip.amc').forEach(c=>c.onclick=()=>{const a=c.dataset.a;filterAMC.has(a)?filterAMC.delete(a):filterAMC.add(a);renderAll();});
- document.querySelectorAll('.fchip.tax').forEach(c=>c.onclick=()=>{const t=c.dataset.t;filterTax.has(t)?filterTax.delete(t):filterTax.add(t);renderAll();});
- document.getElementById('fstatus').innerHTML=t('showing').replace('{a}',F.length).replace('{b}',ALL.length);
+ buildFilterPopover('amcPopover','amcTriggerLabel',amcs,filterAMC,AMC_COL,'lblAMC');
+ buildFilterPopover('taxPopover','taxTriggerLabel',taxes,filterTax,TAX_COL,'lblTax');
+}
+function renderTfControl(){
+ const tf=document.getElementById('cmdTf');
+ const opts=['1D','1W','1M','3M','6M','1Y','YTD','MAX'];
+ tf.innerHTML=opts.map(o=>`<button type="button" data-tf="${o}" class="${histTF===o?'on':''}">${o}</button>`).join('');
+ tf.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  histTF=b.dataset.tf;histFrom='';histTo='';
+  localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
+  renderAll();
+ });
 }
 
 /* ---------- header / KPIs ---------- */
@@ -2765,6 +2797,39 @@ function exportCSV(){
 let LAST_FOCUS=null;
 function showDialog(id){const bg=document.getElementById(id);LAST_FOCUS=document.activeElement;bg.classList.add('show');bg.setAttribute('aria-hidden','false');requestAnimationFrame(()=>{const m=bg.querySelector('.modal');if(m)m.focus();});}
 function hideDialog(id){const bg=document.getElementById(id);bg.classList.remove('show');bg.setAttribute('aria-hidden','true');if(LAST_FOCUS&&LAST_FOCUS.focus)LAST_FOCUS.focus();}
+let OPEN_POPOVER=null;
+function openPopover(trigger,panel){
+ if(OPEN_POPOVER&&OPEN_POPOVER.panel!==panel)closePopover(OPEN_POPOVER.panel);
+ panel.classList.add('open');trigger.setAttribute('aria-expanded','true');
+ OPEN_POPOVER={trigger,panel};
+ const focusable=panel.querySelector('button,input,[tabindex]');
+ if(focusable)focusable.focus();
+}
+function closePopover(panel,restoreFocus){
+ if(!panel||!panel.classList.contains('open'))return;
+ panel.classList.remove('open');
+ const trigger=document.querySelector(`[aria-controls="${panel.id}"]`);
+ if(trigger)trigger.setAttribute('aria-expanded','false');
+ if(restoreFocus&&trigger)trigger.focus();
+ if(OPEN_POPOVER&&OPEN_POPOVER.panel===panel)OPEN_POPOVER=null;
+}
+document.addEventListener('click',e=>{
+ if(!OPEN_POPOVER)return;
+ if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
+ closePopover(OPEN_POPOVER.panel);
+},true);
+document.addEventListener('focusin',e=>{
+ if(!OPEN_POPOVER)return;
+ if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
+ closePopover(OPEN_POPOVER.panel);
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&OPEN_POPOVER){closePopover(OPEN_POPOVER.panel,true);}
+},true);
+document.querySelectorAll('.popover-trigger').forEach(btn=>{
+ btn.onclick=()=>{const panel=document.getElementById(btn.getAttribute('aria-controls'));
+  if(panel.classList.contains('open'))closePopover(panel,true);else openPopover(btn,panel);};
+});
 async function openFund(code){
  const f=ALL.find(x=>x.code===code);const bg=document.getElementById('modalBg'),m=document.getElementById('modal');
  if(!f)return;showDialog('modalBg');const total=ALL.reduce((s,x)=>s+x.value,0);
@@ -2971,18 +3036,38 @@ async function doSwitch(){
 }
 
 /* ---------- wire ---------- */
+document.getElementById('overflowPanel').innerHTML=`
+ <button type="button" class="btn ghost" id="ovLang" style="justify-content:space-between"><span data-i18n="langBtnLbl">Language</span><span id="ovLangVal">ไทย</span></button>
+ <button type="button" class="btn ghost" id="ovAuth"></button>
+ <button type="button" class="btn ghost" id="ovTxn" data-i18n="txnBtn">⇄ Buy / Sell</button>
+ <button type="button" class="btn ghost" id="ovSw" data-i18n="swBtn">⇌ Switch</button>
+ <hr style="border-color:var(--line);margin:6px 0">
+ <button type="button" class="btn ghost" id="ovCsv" data-i18n="csvBtn">⬇ Export CSV</button>
+ <button type="button" class="btn ghost" id="ovPrint" data-i18n="printBtn">🖨 Print</button>
+ <hr style="border-color:var(--line);margin:6px 0">
+ <button type="button" class="btn ghost" id="ovExp" data-i18n="expBtn">⬇ Download nav_history.json</button>
+ <button type="button" class="btn ghost" id="ovImp" data-i18n="impBtn">⬆ Import NAV database</button>
+ <button type="button" class="btn ghost" id="ovImpHold" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button>
+ <button type="button" class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>`;
+applyLang();
+document.getElementById('ovLang').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
+document.getElementById('ovAuth').onclick=openAuth;
+document.getElementById('ovTxn').onclick=()=>openTxn('');
+document.getElementById('ovSw').onclick=openSw;
+document.getElementById('ovCsv').onclick=exportCSV;
+document.getElementById('ovPrint').onclick=()=>window.print();
+document.getElementById('ovExp').onclick=exportDB;
+document.getElementById('ovImp').onclick=()=>document.getElementById('impFile').click();
+document.getElementById('ovImpHold').onclick=()=>document.getElementById('impHoldFile').click();
 document.querySelectorAll('th.sortable').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderTable();});
 document.querySelectorAll('.ms-modes button[data-m]').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histMode=b.dataset.m;renderHist();});
 document.querySelectorAll('#msSortBtns button').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histSort=b.dataset.s;renderMSList();renderHist();});
-document.getElementById('txnBtn').onclick=()=>openTxn('');
 document.getElementById('txnBg').onclick=e=>{if(e.target.id==='txnBg')closeTxn();};
-document.getElementById('swBtn').onclick=openSw;
 document.getElementById('swBg').onclick=e=>{if(e.target.id==='swBg')closeSw();};
 document.getElementById('msSearch').oninput=e=>{msFilter=e.target.value.toLowerCase().trim();renderMSList();};
 document.getElementById('msPort').onclick=()=>{histSel=new Set(['__PORT__']);renderMSList();renderHist();};
 document.getElementById('msNone').onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 document.getElementById('updBtn').onclick=updateNAV;
-document.getElementById('expBtn').onclick=exportDB;
 /* timeframe pills + custom range */
 document.querySelectorAll('#tfBtns button').forEach(b=>{
  if(b.dataset.tf===histTF)b.classList.add('on');else b.classList.remove('on');
@@ -3044,12 +3129,8 @@ document.getElementById('birthBtn').onclick=setBirth;
 document.querySelectorAll('#unlockModes button').forEach(b=>{
  if(b.dataset.um===unlockMode)b.classList.add('on');else b.classList.remove('on');
  b.onclick=()=>{document.querySelectorAll('#unlockModes button').forEach(x=>x.classList.remove('on'));b.classList.add('on');unlockMode=b.dataset.um;localStorage.setItem('kkp_unlockmode',unlockMode);renderUnlock();};});
-/* language toggle */
-document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
-document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
 function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];delete h._verify;h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;if(+h.units>0)h.asof=h.asof||new Date().toISOString().slice(0,10);if(Array.isArray(h.lots)){h.lots=h.lots.filter(L=>L&&L.date&&+L.units>0).map(L=>({date:String(L.date),units:+L.units,cost:+L.cost||0}));if(h.lots.length&&!h.firstBuy)h.firstBuy=h.lots.map(L=>L.date).sort()[0];if(!h.lots.length)delete h.lots;}else delete h.lots;}let merged=o;if(Object.keys(HOLDINGS_BASE).length&&confirm(t('mergeAsk'))){merged={...HOLDINGS_BASE};for(const c in o)merged[c]=o[c];}for(const c of Object.keys(merged)){if(!(+merged[c].units>0))delete merged[c];/* units:0 = remove fund */}HOLDINGS_BASE=merged;persist();if(SB&&USER){try{const reg=Object.keys(o).filter(c=>+o[c].units>0);if(reg.length)SB.from('fund_universe').upsert(reg.map(c=>({code:c})),{onConflict:'code'}).then(({error})=>{if(error)console.error('fund universe',error);});}catch(e){console.error(e);}}renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
-document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
 document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-bg.show');if(e.key==='Escape'&&bg){hideDialog(bg.id);return;}const fund=e.target.closest&&e.target.closest('[data-fund]');if(fund&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFund(fund.dataset.fund);return;}if(e.key==='Tab'&&bg){const focusable=[...bg.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(!focusable.length){e.preventDefault();return;}const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
@@ -3068,7 +3149,7 @@ document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-
 function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);}}
 function renderAll(){
  buildHoldings();computeAll();applyFilter();
- safe(buildFilters);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
+ safe(buildFilters);safe(renderTfControl);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
  safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);safe(renderUnlock);safe(renderConc);
 }
 /* ---------- auth + cloud sync ---------- */
@@ -3077,7 +3158,7 @@ function sbReady(){const u=SB_BAKED.url||localStorage.getItem('sb_url'),k=SB_BAK
 function openAuth(){showDialog('authBg');renderAuth();}
 function closeAuth(){hideDialog('authBg');}
 function authMsg(m){const e=document.getElementById('au-msg');if(e)e.textContent=m;}
-function updateAuthUI(){const b=document.getElementById('authBtn');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):t('signIn');}
+function updateAuthUI(){const b=document.getElementById('ovAuth');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):t('signIn');}
 function renderAuth(){const m=document.getElementById('authModal');
  const close=`<button class="modal-x" type="button" data-close="authBg" aria-label="${escAttr(t('closeBtn'))}">✕</button>`;
  if(USER){m.innerHTML=`<div class="modal-h"><div><div class="code">${t('accountTitle')}</div><div class="nm">${escHTML(USER.email)}</div></div>${close}</div><div class="modal-b"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">${t('accountSub')}</p><button class="btn" id="auth-logout" type="button" style="width:100%;justify-content:center">${t('signOut')}</button></div>`;document.getElementById('auth-logout').onclick=doLogout;return;}
@@ -3092,7 +3173,6 @@ async function doSignIn(){if(!sbReady())return;authMsg(t('signingIn'));const{dat
 async function doSignUp(){if(!sbReady())return;authMsg(t('creatingAccount'));const{data,error}=await SB.auth.signUp({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}if(data.session){USER=data.user;await afterLogin();}else{authMsg(t('accountCreated'));}}
 async function doLogout(){if(SB){try{await SB.auth.signOut();}catch(e){}}USER=null;try{localStorage.removeItem('kkp_holdings');localStorage.removeItem(LS_TXN);}catch(e){}HOLDINGS_BASE={};TXNS=[];updateAuthUI();closeAuth();renderAll();toast(t('signedOut'),'ok');}
 async function afterLogin(){updateAuthUI();try{const{data}=await SB.from('portfolios').select('holdings,transactions').eq('user_id',USER.id).maybeSingle();if(data&&data.holdings&&Object.keys(data.holdings).length){HOLDINGS_BASE=data.holdings;TXNS=data.transactions||[];}else{await saveCloud();}await loadMarket();}catch(e){console.error(e);}renderAll();closeAuth();toast(t('signedIn')+' '+USER.email,'ok');}
-document.getElementById('authBtn').onclick=openAuth;
 document.getElementById('authBg').onclick=e=>{if(e.target.id==='authBg')closeAuth();};
 if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=data.session.user;afterLogin();}else updateAuthUI();});
  SB.auth.onAuthStateChange((ev,session)=>{if(ev==='SIGNED_IN'&&session&&(!USER||USER.id!==session.user.id)){USER=session.user;afterLogin();}});}
@@ -3163,7 +3243,6 @@ async function autoFetchNAV(){
 }
 
 applyLang();
-document.getElementById('mobileMenuBtn').onclick=()=>{const a=document.getElementById('headerActions'),b=document.getElementById('mobileMenuBtn'),open=a.classList.toggle('open');b.setAttribute('aria-expanded',String(open));};
 document.getElementById('emptySignIn').onclick=openAuth;
 document.getElementById('emptyImport').onclick=()=>document.getElementById('impHoldFile').click();
 renderAll();
