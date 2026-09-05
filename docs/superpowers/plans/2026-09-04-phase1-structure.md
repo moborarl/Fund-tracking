@@ -1365,7 +1365,7 @@ Implements the width-based collapse table from §1: the AMC/Tax popovers become 
 - Modify: `index.html`
 
 **Interfaces:**
-- Consumes: `openPopover`/`closePopover` (Task 2), `renderTfControl` (Task 2), `activateTab` (Task 4).
+- Consumes: `openPopover`/`closePopover` (Task 2), `renderTfControl` (Task 2).
 - Produces: a period popover (`#periodPopover`) used at narrow desktop and on mobile via `#statusTf`.
 
 - [ ] **Step 1: Add the period-popover markup and its trigger**
