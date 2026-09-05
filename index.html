@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-wvdM9fQPYeZegtQeOLdthc7rJX63MUFpAdU+S20WhA0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-idRAjHpJozdeP4lv/Vz8yVI2TC89/u6Csu3InqXCt18='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@ header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);backgroun
 .conf-item b{color:var(--txt);font-weight:700;white-space:nowrap}.conf-dot{width:7px;height:7px;border-radius:50%;background:var(--pos);flex:0 0 auto}.conf-dot.warn{background:var(--gold)}.conf-dot.bad{background:var(--neg)}
 .empty-state{margin:28px 0 0;border:1px solid var(--line);background:var(--panel);padding:34px 24px;text-align:center;border-radius:12px}
 .empty-state h2{font-size:18px}.empty-state p{max-width:560px;margin:8px auto 18px;color:var(--muted);font-size:13px}.empty-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .confidence{display:none}
+body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-empty .foot{display:none}
 /* hero */
 .hero{padding:18px 0 4px}.hero-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
 @media(max-width:880px){.hero-grid{grid-template-columns:1fr}}
@@ -86,6 +86,23 @@ body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .con
 .tf-segmented{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
 .tf-segmented button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 12px;border-radius:8px;cursor:pointer}
 .tf-segmented button.on{background:linear-gradient(135deg,#4d8dff,#3b6fd4);color:#fff}
+.shell{display:flex;flex-direction:column;min-height:100vh}
+.tabbar-wrap{background:var(--bg);border-bottom:1px solid var(--line)}
+.tablist{display:flex;gap:4px;overflow-x:auto;max-width:1340px;margin:0 auto;padding:0 22px}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font:inherit;font-weight:600;font-size:13.5px;padding:12px 14px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected=true]{color:var(--txt);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.status-row{display:none;align-items:center;gap:10px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);max-width:1340px;margin:0 auto;padding:8px 22px}
+.tabbody{max-width:1340px;margin:0 auto;padding:0 22px 56px}
+.tabpanel{padding-top:4px}
+@media(min-width:1024px){
+ .shell{height:100dvh;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);min-height:0}
+ .tabbody{overflow-y:auto;min-height:0}
+}
+@media(max-width:1023px){
+ .tabbar-wrap{position:sticky;top:0;z-index:40}
+ .status-row{display:flex}
+}
 section{margin-top:26px}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;gap:12px;flex-wrap:wrap}
 .sec-head h2{font-size:15px;font-weight:700}.sec-head .hint{font-size:11.5px;color:var(--muted2)}
@@ -352,6 +369,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 </style>
 </head>
 <body>
+<div class="shell">
 <header class="cmdbar" id="cmdbar">
  <div class="brand"><div class="logo">PORT</div><div><h1>Portfolio Monitor</h1><div class="sub" data-i18n="brandSub">Multi-AMC · NAV-based valuation</div></div></div>
 
@@ -406,7 +424,24 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
   <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
  </div>
  </div>
+ </div>
+ <div class="tabbar-wrap" id="tabbarWrap">
+  <div class="status-row" id="statusRow">
+   <button type="button" class="btn ghost" id="statusTf" style="padding:4px 10px;font-size:12px"></button>
+   <span id="statusFresh"></span>
+   <span id="statusScope"></span>
+  </div>
+  <div class="tablist" role="tablist" id="tablist" aria-label="Portfolio sections">
+   <button class="tab" role="tab" id="tab-holdings" aria-controls="panel-holdings" aria-selected="true" tabindex="0" data-i18n="tabHoldings">ถือครอง</button>
+   <button class="tab" role="tab" id="tab-returns" aria-controls="panel-returns" aria-selected="false" tabindex="-1" data-i18n="tabReturns">ผลตอบแทน</button>
+   <button class="tab" role="tab" id="tab-allocation" aria-controls="panel-allocation" aria-selected="false" tabindex="-1" data-i18n="tabAllocation">สัดส่วน</button>
+   <button class="tab" role="tab" id="tab-risk" aria-controls="panel-risk" aria-selected="false" tabindex="-1" data-i18n="tabRisk">ความเสี่ยง</button>
+   <button class="tab" role="tab" id="tab-tax" aria-controls="panel-tax" aria-selected="false" tabindex="-1" data-i18n="tabTax">ภาษี</button>
+  </div>
+ </div>
+ <main class="tabbody" id="tabbody">
 
+ <div role="tabpanel" class="tabpanel" id="panel-returns" aria-labelledby="tab-returns">
  <!-- HISTORY MULTI-SELECT -->
  <section>
   <div class="sec-head"><h2 data-i18n="secHist">Historical Comparison</h2><span class="hint" data-i18n="histHint">Select portfolio &amp; multiple funds · switch Value / % Change / NAV</span></div>
@@ -427,16 +462,6 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
   </div>
  </section>
 
- <!-- ALLOCATION (3 donuts) -->
- <section>
-  <div class="sec-head"><h2 data-i18n="secAlloc">Allocation</h2><span class="hint" data-i18n="allocHint">Reflects current filter</span></div>
-  <div class="grid3">
-   <div class="card"><h3 data-i18n="byAsset">By Asset Class</h3><div class="csub" data-i18n="byAssetSub">Asset allocation</div><div class="chart-sm"><canvas id="assetChart"></canvas></div><div class="legend" id="assetLegend"></div></div>
-   <div class="card"><h3 data-i18n="byAMC">By AMC</h3><div class="csub" data-i18n="byAMCSub">Asset management company</div><div class="chart-sm"><canvas id="amcChart"></canvas></div><div class="legend" id="amcLegend"></div></div>
-   <div class="card"><h3 data-i18n="byTax">By Tax Benefit</h3><div class="csub">SSF / ThaiESG / ThaiESGX</div><div class="chart-sm"><canvas id="taxChart"></canvas></div><div class="legend" id="taxLegend"></div></div>
-  </div>
- </section>
-
  <!-- MOVERS + PL -->
  <section><div class="grid3">
   <div class="card"><h3><span data-i18n="topGainers">Top Gainers</span> <span style="color:var(--muted2);font-weight:500" id="g-tl"></span></h3><div class="csub" data-i18n="bestPerf">Best performers</div><div id="gainers"></div></div>
@@ -449,7 +474,22 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    <div class="pl-foot" id="pl-foot"></div>
   </div>
  </div></section>
-
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-allocation" aria-labelledby="tab-allocation" hidden>
+ <!-- ALLOCATION (3 donuts) -->
+ <section>
+  <div class="sec-head"><h2 data-i18n="secAlloc">Allocation</h2><span class="hint" data-i18n="allocHint">Reflects current filter</span></div>
+  <div class="grid3">
+   <div class="card"><h3 data-i18n="byAsset">By Asset Class</h3><div class="csub" data-i18n="byAssetSub">Asset allocation</div><div class="chart-sm"><canvas id="assetChart"></canvas></div><div class="legend" id="assetLegend"></div></div>
+   <div class="card"><h3 data-i18n="byAMC">By AMC</h3><div class="csub" data-i18n="byAMCSub">Asset management company</div><div class="chart-sm"><canvas id="amcChart"></canvas></div><div class="legend" id="amcLegend"></div></div>
+   <div class="card"><h3 data-i18n="byTax">By Tax Benefit</h3><div class="csub">SSF / ThaiESG / ThaiESGX</div><div class="chart-sm"><canvas id="taxChart"></canvas></div><div class="legend" id="taxLegend"></div></div>
+  </div>
+  <div class="card"><h3 data-i18n="secConc">Look-Through Holdings</h3><div class="csub" data-i18n="concHint">What your funds actually hold, combined</div>
+   <div class="risk-wrap"><table class="risk-tbl" style="min-width:420px"><thead><tr><th data-i18n="chName">Security</th><th data-i18n="chExp">Exposure</th><th data-i18n="chPct">% of port</th><th data-i18n="chVia">Funds</th></tr></thead><tbody id="concBody"></tbody></table></div>
+   <div class="pl-foot" data-i18n="concNote">Estimated from each fund's top-5 holdings — actual exposure can be higher.</div></div>
+ </section>
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-risk" aria-labelledby="tab-risk" hidden>
  <!-- RISK & PERFORMANCE -->
  <section>
   <div class="sec-head"><h2 data-i18n="secRisk">Risk &amp; Performance</h2><span class="hint" data-i18n="riskHint">Computed from NAV history · follows chart timeframe above</span></div>
@@ -460,18 +500,17 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    </tr></thead><tbody id="riskBody"></tbody></table></div>
   </div>
  </section>
-
- <!-- TAX UNLOCK + LOOK-THROUGH -->
- <section><div class="grid2">
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-tax" aria-labelledby="tab-tax" hidden>
+ <!-- TAX UNLOCK -->
+ <section>
   <div class="card"><h3 data-i18n="secUnlock">Tax-Fund Unlock Schedule</h3><div class="csub" data-i18n="unlockHint">SSF 10y · ThaiESG/X 5y · RMF age 55 &amp; 5y from first buy</div>
    <div class="ms-modes" id="unlockModes" style="margin-bottom:10px"><button type="button" data-um="lot" class="on" data-i18n="byLot">By lot</button><button type="button" data-um="fund" data-i18n="byFund">By fund</button><button type="button" data-um="year" data-i18n="byYear">By year</button></div>
    <div class="risk-wrap"><table class="risk-tbl" style="min-width:520px"><thead id="unlockHead"></thead><tbody id="unlockBody"></tbody></table></div>
    <div style="margin-top:10px"><button class="btn ghost" id="birthBtn" type="button" data-i18n="setBirth">🎂 Set birth date (for RMF)</button></div></div>
-  <div class="card"><h3 data-i18n="secConc">Look-Through Holdings</h3><div class="csub" data-i18n="concHint">What your funds actually hold, combined</div>
-   <div class="risk-wrap"><table class="risk-tbl" style="min-width:420px"><thead><tr><th data-i18n="chName">Security</th><th data-i18n="chExp">Exposure</th><th data-i18n="chPct">% of port</th><th data-i18n="chVia">Funds</th></tr></thead><tbody id="concBody"></tbody></table></div>
-   <div class="pl-foot" data-i18n="concNote">Estimated from each fund's top-5 holdings — actual exposure can be higher.</div></div>
- </div></section>
-
+ </section>
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-holdings" aria-labelledby="tab-holdings">
  <!-- TABLE -->
  <section>
   <div class="sec-head"><h2 data-i18n="secHold">Holdings</h2>
@@ -486,6 +525,8 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    <th class="sortable" data-k="chg"><span data-i18n="thChange">Change</span> <span id="th-tl"></span></th><th class="sortable" data-k="unreal" data-i18n="thUnreal">Unrealized</th><th class="sortable" data-k="realized" data-i18n="thReal">Realized</th>
   </tr></thead><tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot></table></div>
  </section>
+ </div>
+ </main>
 
  <div class="foot">
   <span data-i18n="footNote">Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.</span>
@@ -2179,7 +2220,8 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
  swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
  swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
- swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
+ swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in',
+ tabHoldings:'Holdings',tabReturns:'Returns',tabAllocation:'Allocation',tabRisk:'Risk',tabTax:'Tax'},
 th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
@@ -2222,7 +2264,8 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
  swDo:'ยืนยันการสับเปลี่ยน',swHeld:'ถืออยู่',swInvalid:'กรุณากรอกข้อมูลให้ครบถ้วน',swSame:'กองทุนออกและเข้าต้องต่างกัน',
  swTooMany:'จำนวนหน่วยที่ถือไม่เพียงพอ',swDateOrder:'วันที่สับเปลี่ยนเข้าต้องไม่อยู่ก่อนวันที่สับเปลี่ยนออก',swFetch:'กำลังดึงข้อมูลกองทุนจาก Finnomena…',swFetchFail:'ดึงข้อมูลกองทุนไม่สำเร็จ',
- swNoNav:'ไม่มีข้อมูล NAV ณ วันที่เลือกสำหรับ',swDone:'สับเปลี่ยนแล้ว',swNavOut:'NAV ขาออก',swNavIn:'NAV ขาเข้า'}
+ swNoNav:'ไม่มีข้อมูล NAV ณ วันที่เลือกสำหรับ',swDone:'สับเปลี่ยนแล้ว',swNavOut:'NAV ขาออก',swNavIn:'NAV ขาเข้า',
+ tabHoldings:'ถือครอง',tabReturns:'ผลตอบแทน',tabAllocation:'สัดส่วน',tabRisk:'ความเสี่ยง',tabTax:'ภาษี'}
 };
 const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
 const rangeLabel=k=>t('r_'+k);
@@ -2312,6 +2355,7 @@ function renderTfControl(){
   localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
   renderAll();
  });
+ const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
 }
 
 /* ---------- header / KPIs ---------- */
@@ -2337,6 +2381,7 @@ function renderConfidence(){
  stale.textContent=T.stale?String(T.stale):t('confFresh');
  document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
  document.getElementById('rangeDot').className='conf-dot'+(T.stale?' warn':'');document.getElementById('staleDot').className='conf-dot'+(T.stale?' bad':'');
+ const sf=document.getElementById('statusFresh');if(sf)sf.textContent=T.stale?`${T.stale} stale`:'';
 }
 function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
@@ -2362,6 +2407,7 @@ function renderScope(){
  chip.hidden=false;lbl.textContent=t('eyebrowFiltered');
  const parts=[...filterAMC,...filterTax];
  chip.textContent=parts.join(' · ')+` — ${F.length}/${ALL.length}`;
+ const ss=document.getElementById('statusScope');if(ss)ss.textContent=active?chip.textContent:'';
 }
 function renderSparkline(){
  const svg=document.getElementById('spark');
@@ -2856,6 +2902,35 @@ document.querySelectorAll('.popover-trigger').forEach(btn=>{
  btn.onclick=()=>{const panel=document.getElementById(btn.getAttribute('aria-controls'));
   if(panel.classList.contains('open'))closePopover(panel,true);else openPopover(btn,panel);};
 });
+const TAB_IDS=['holdings','returns','allocation','risk','tax'];
+function activateTab(id,focus){
+ TAB_IDS.forEach(x=>{
+  const tab=document.getElementById('tab-'+x),panel=document.getElementById('panel-'+x);
+  const on=x===id;
+  tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;
+  panel.hidden=!on;
+ });
+ localStorage.setItem('kkp_tab',id);
+ const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
+ if(focus)document.getElementById('tab-'+id).focus();
+}
+document.querySelectorAll('#tablist .tab').forEach((tab,i)=>{
+ tab.onclick=()=>activateTab(TAB_IDS[i]);
+});
+document.getElementById('tablist').addEventListener('keydown',e=>{
+ const i=TAB_IDS.indexOf(document.activeElement.id.replace('tab-',''));
+ if(i<0)return;
+ let next=null;
+ if(e.key==='ArrowRight')next=TAB_IDS[(i+1)%TAB_IDS.length];
+ else if(e.key==='ArrowLeft')next=TAB_IDS[(i-1+TAB_IDS.length)%TAB_IDS.length];
+ else if(e.key==='Home')next=TAB_IDS[0];
+ else if(e.key==='End')next=TAB_IDS[TAB_IDS.length-1];
+ else if(e.key==='Enter'||e.key===' '){e.preventDefault();activateTab(TAB_IDS[i]);return;}
+ if(next){e.preventDefault();document.getElementById('tab-'+next).tabIndex=0;document.getElementById('tab-'+next).focus();
+  document.getElementById('tab-'+TAB_IDS[i]).tabIndex=-1;}
+});
+const _storedTab=localStorage.getItem('kkp_tab');
+activateTab(TAB_IDS.includes(_storedTab)?_storedTab:'holdings');
 async function openFund(code){
  const f=ALL.find(x=>x.code===code);const bg=document.getElementById('modalBg'),m=document.getElementById('modal');
  if(!f)return;showDialog('modalBg');const total=ALL.reduce((s,x)=>s+x.value,0);
