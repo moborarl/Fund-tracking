@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-KZMmmZs2z7C4CQCKmma2l3mIP3QMdXC7kJp23LGni+E='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-GtLPw1UTTUBUcOm0ytxwhdC9OyVwyDose2Gzvzmc2q0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3068,19 +3068,12 @@ document.getElementById('msSearch').oninput=e=>{msFilter=e.target.value.toLowerC
 document.getElementById('msPort').onclick=()=>{histSel=new Set(['__PORT__']);renderMSList();renderHist();};
 document.getElementById('msNone').onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 document.getElementById('updBtn').onclick=updateNAV;
-/* timeframe pills + custom range */
-document.querySelectorAll('#tfBtns button').forEach(b=>{
- if(b.dataset.tf===histTF)b.classList.add('on');else b.classList.remove('on');
- b.onclick=()=>{document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  histTF=b.dataset.tf;histFrom='';histTo='';
-  localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
-  renderAll();};});
+/* custom range (fixed-period buttons live in the command bar; see renderTfControl) */
 document.getElementById('tfApply').onclick=()=>{
  const f=document.getElementById('tfFrom').value,to=document.getElementById('tfTo').value;
  if(!f&&!to)return;
  histTF='CUSTOM';histFrom=f;histTo=to;
  localStorage.setItem('kkp_histtf','CUSTOM');localStorage.setItem('kkp_histfrom',histFrom);localStorage.setItem('kkp_histto',histTo);
- document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));
  renderAll();};
 /* benchmark */
 document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
