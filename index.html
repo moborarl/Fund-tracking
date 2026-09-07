@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-KKipYL6Qn4/XS9RhmOWJrfN5gseD537dZW+2T8yF/Ug='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-HtxAAqvjztAodNXw4KEBUzrUo8J/juwSLi/x2ldowFg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,7 +81,8 @@ body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-em
 .popover-row{display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px}
 .popover-row:hover{background:var(--panel2)}
 .popover-row input[type=checkbox],.popover-row input[type=radio]{accent-color:var(--accent)}
-.popover-actions{display:flex;flex-direction:column;gap:4px;min-width:240px}
+.popover-actions{display:none;flex-direction:column;gap:4px;min-width:240px}
+.popover-actions.open{display:flex}
 .popover-actions .btn{justify-content:flex-start}
 .tf-segmented{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
 .tf-segmented button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 12px;border-radius:8px;cursor:pointer}
@@ -442,7 +443,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
  </div>
  <div class="tabbar-wrap" id="tabbarWrap">
   <div class="status-row" id="statusRow">
-   <button type="button" class="btn ghost" id="statusTf" style="padding:4px 10px;font-size:12px"></button>
+   <button type="button" class="btn ghost" id="statusTf" aria-haspopup="dialog" aria-expanded="false" aria-controls="periodPopover" style="padding:4px 10px;font-size:12px"></button>
    <span id="statusFresh"></span>
    <span id="statusScope"></span>
   </div>
@@ -2349,7 +2350,7 @@ function buildFilterPopover(panelId,triggerLabelId,items,activeSet,colorMap,allL
  const panel=document.getElementById(panelId);
  panel.innerHTML=`<h4></h4>`+items.map(x=>`<label class="popover-row"><input type="checkbox" data-v="${escAttr(x)}" ${activeSet.has(x)?'checked':''}><span>${escHTML(x)}</span></label>`).join('');
  panel.querySelector('h4').textContent=t(allLabelKey);
- panel.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();});
+ panel.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();const next=[...panel.querySelectorAll('input[type=checkbox]')].find(x=>x.dataset.v===v);if(next)next.focus();});
  const label=document.getElementById(triggerLabelId);
  if(activeSet.size===0)label.textContent='';
  else if(activeSet.size===1)label.textContent=': '+[...activeSet][0];
@@ -2366,7 +2367,7 @@ function buildFilters(){
 function buildFilterList(elId,items,activeSet){
  const el=document.getElementById(elId);
  el.innerHTML=items.map(x=>`<label class="popover-row"><input type="checkbox" data-v="${escAttr(x)}" ${activeSet.has(x)?'checked':''}><span>${escHTML(x)}</span></label>`).join('');
- el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();});
+ el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();const next=[...el.querySelectorAll('input[type=checkbox]')].find(x=>x.dataset.v===v);if(next)next.focus();});
 }
 function renderTfControl(){
  const tf=document.getElementById('cmdTf');
@@ -2385,6 +2386,7 @@ function renderTfControl(){
 }
 function setTimeframe(tf){
  histTF=tf;histFrom='';histTo='';
+ const from=document.getElementById('tfFrom'),to=document.getElementById('tfTo');if(from)from.value='';if(to)to.value='';
  localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
  renderAll();
 }
@@ -2901,9 +2903,7 @@ let LAST_FOCUS=null;
 function showDialog(id){const bg=document.getElementById(id);LAST_FOCUS=document.activeElement;bg.classList.add('show');bg.setAttribute('aria-hidden','false');requestAnimationFrame(()=>{const m=bg.querySelector('.modal');if(m)m.focus();});}
 function hideDialog(id){const bg=document.getElementById(id);bg.classList.remove('show');bg.setAttribute('aria-hidden','true');if(LAST_FOCUS&&LAST_FOCUS.focus)LAST_FOCUS.focus();}
 let OPEN_POPOVER=null;
-function openPopover(trigger,panel){
- if(OPEN_POPOVER&&OPEN_POPOVER.panel!==panel)closePopover(OPEN_POPOVER.panel);
- panel.classList.add('open');
+function positionPopover(trigger,panel){
  const r=trigger.getBoundingClientRect();
  const panelWidth=Math.max(panel.offsetWidth,220);
  let left=r.left;
@@ -2911,6 +2911,11 @@ function openPopover(trigger,panel){
  let top=r.bottom+6;
  if(top+panel.offsetHeight>window.innerHeight-8)top=Math.max(8,r.top-panel.offsetHeight-6);
  panel.style.left=left+'px';panel.style.top=top+'px';panel.style.right='auto';
+}
+function openPopover(trigger,panel){
+ if(OPEN_POPOVER&&OPEN_POPOVER.panel!==panel)closePopover(OPEN_POPOVER.panel);
+ panel.classList.add('open');
+ positionPopover(trigger,panel);
  trigger.setAttribute('aria-expanded','true');
  OPEN_POPOVER={trigger,panel};
  const focusable=panel.querySelector('button,input,[tabindex]');
@@ -2925,6 +2930,7 @@ function closePopover(panel,restoreFocus){
  if(restoreFocus&&trigger)trigger.focus();
  if(OPEN_POPOVER&&OPEN_POPOVER.panel===panel)OPEN_POPOVER=null;
 }
+window.addEventListener('resize',()=>{if(OPEN_POPOVER)positionPopover(OPEN_POPOVER.trigger,OPEN_POPOVER.panel);});
 document.addEventListener('click',e=>{
  if(!OPEN_POPOVER)return;
  if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
