@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-HtxAAqvjztAodNXw4KEBUzrUo8J/juwSLi/x2ldowFg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Uhj+LUmM0lusj7ogYbOLmoH6+encGY/H3a5/4YIrLGA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2930,7 +2930,12 @@ function closePopover(panel,restoreFocus){
  if(restoreFocus&&trigger)trigger.focus();
  if(OPEN_POPOVER&&OPEN_POPOVER.panel===panel)OPEN_POPOVER=null;
 }
-window.addEventListener('resize',()=>{if(OPEN_POPOVER)positionPopover(OPEN_POPOVER.trigger,OPEN_POPOVER.panel);});
+window.addEventListener('resize',()=>{
+ if(!OPEN_POPOVER)return;
+ const {trigger,panel}=OPEN_POPOVER,r=trigger.getBoundingClientRect(),cs=getComputedStyle(trigger);
+ if(cs.display==='none'||cs.visibility==='hidden'||!r.width||!r.height){closePopover(panel,false);return;}
+ positionPopover(trigger,panel);
+});
 document.addEventListener('click',e=>{
  if(!OPEN_POPOVER)return;
  if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
