@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-oMnTRaeYUJqO68aj2uwgKZjCgFCfcXVwGduTgNxq4Q4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-LkfevunO31J1sxWp89haVqqswqTWImZhKd+k5QH4lpg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,26 +18,19 @@
 body{background:radial-gradient(1200px 600px at 80% -10%,#13203a 0%,transparent 55%),var(--bg);color:var(--txt);font-family:'Inter','IBM Plex Sans Thai',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45;padding-bottom:60px}
 .wrap{max-width:1340px;margin:0 auto;padding:0 22px}
 .mono{font-variant-numeric:tabular-nums}.pos{color:var(--pos)}.neg{color:var(--neg)}
-header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:rgba(7,11,20,.82);border-bottom:1px solid var(--line)}
-.top-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;max-width:1340px;margin:0 auto;gap:14px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#4d8dff,#9b7bff);display:grid;place-items:center;font-weight:800;font-size:13px;box-shadow:0 4px 14px rgba(77,141,255,.4)}
 .brand h1{font-size:15.5px;font-weight:700}.brand .sub{font-size:11px;color:var(--muted)}
-.upd{display:flex;align-items:center;gap:12px}
 .asof{font-size:11.5px;color:var(--muted);text-align:right}.asof b{color:var(--txt);font-weight:600}
 .btn{background:linear-gradient(135deg,#4d8dff,#3b6fd4);border:none;color:#fff;font:inherit;font-weight:600;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.15s;box-shadow:0 3px 10px rgba(77,141,255,.3)}
 .btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.6;cursor:default}
 .btn.ghost{background:var(--panel);border:1px solid var(--line2);box-shadow:none;color:var(--muted);font-size:11px;padding:6px 11px}
 .btn.ghost:hover{color:var(--txt)}
 .btn:focus-visible,.fchip:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #8fb6ff;outline-offset:2px}
-.mobile-only{display:none}
 .spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--panel);border:1px solid var(--line2);color:var(--txt);padding:13px 20px;border-radius:11px;font-size:13px;box-shadow:var(--shadow);z-index:200;transition:.3s;max-width:90vw}
 .toast.show{transform:translateX(-50%) translateY(0)}.toast.err{border-color:var(--neg)}.toast.ok{border-color:var(--pos)}
-/* filter bar */
-.filterbar{margin-top:18px;background:#101a2c;border:1px solid var(--line2);border-radius:14px;padding:13px 16px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;box-shadow:0 12px 32px rgba(0,0,0,.65);position:sticky;top:66px;z-index:45}
-.filterbar.stuck{border-radius:0;border-left:none;border-right:none;margin-left:-22px;margin-right:-22px;padding-left:22px;padding-right:22px;box-shadow:0 16px 34px rgba(0,0,0,.7)}
 .fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fgroup .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);font-weight:700;margin-right:2px}
 .fchip{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:8px;cursor:pointer;border:1px solid var(--line2);background:var(--panel2);color:var(--muted);transition:.12s;user-select:none}
@@ -49,7 +42,7 @@ header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);backgroun
 .conf-item b{color:var(--txt);font-weight:700;white-space:nowrap}.conf-dot{width:7px;height:7px;border-radius:50%;background:var(--pos);flex:0 0 auto}.conf-dot.warn{background:var(--gold)}.conf-dot.bad{background:var(--neg)}
 .empty-state{margin:28px 0 0;border:1px solid var(--line);background:var(--panel);padding:34px 24px;text-align:center;border-radius:12px}
 .empty-state h2{font-size:18px}.empty-state p{max-width:560px;margin:8px auto 18px;color:var(--muted);font-size:13px}.empty-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .confidence{display:none}
+body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-empty .foot{display:none}
 /* hero */
 .hero{padding:18px 0 4px}.hero-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
 @media(max-width:880px){.hero-grid{grid-template-columns:1fr}}
@@ -58,6 +51,9 @@ body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .con
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
 .totval{font-size:42px;font-weight:800;letter-spacing:-1.3px;margin:5px 0 2px}.totval .cur{font-size:20px;color:var(--muted);font-weight:600;margin-right:5px}
 .hero-sub{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
+.scope-chip:not([hidden]){display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;margin-left:10px}
+.chg-from{font-size:11px;color:var(--muted2);margin-left:8px;font-weight:500}
+.spark{display:block;margin-top:10px}
 .hero-sub .it{font-size:12px;color:var(--muted)}.hero-sub .it b{display:block;font-size:16px;color:var(--txt);font-weight:700;margin-top:2px}
 .range-pills{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:4px;gap:3px;margin-top:18px}
 .range-pills button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 15px;border-radius:8px;cursor:pointer;transition:.15s}
@@ -69,6 +65,49 @@ body.is-empty .hero,body.is-empty section,body.is-empty .foot,body.is-empty .con
 .mini{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;justify-content:center}
 .mini .lab{font-size:11.5px;color:var(--muted);font-weight:500}.mini .val{font-size:24px;font-weight:800;margin-top:6px}.mini .meta{font-size:11.5px;color:var(--muted);margin-top:3px}
 .chip2{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+.cmdbar{display:flex;align-items:center;gap:10px;padding:10px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cmdbar-group{position:relative;display:flex;align-items:center;gap:8px}
+.popover-trigger{display:inline-flex;align-items:center;gap:6px}
+.popover{position:fixed;z-index:60;min-width:220px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow-y:auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-md,12px);box-shadow:var(--shadow);padding:12px;display:none}
+.popover.open{display:block}
+.popover h4{margin:0 0 8px;font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
+.popover-row{display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px}
+.popover-row:hover{background:var(--panel2)}
+.popover-row input[type=checkbox],.popover-row input[type=radio]{accent-color:var(--accent)}
+.popover-actions{display:none;flex-direction:column;gap:4px;min-width:240px}
+.popover-actions.open{display:flex}
+.popover-actions .btn{justify-content:flex-start}
+.tf-segmented{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px}
+.tf-segmented button{background:none;border:none;color:var(--muted);font:inherit;font-weight:600;font-size:12.5px;padding:6px 12px;border-radius:8px;cursor:pointer}
+.tf-segmented button.on{background:linear-gradient(135deg,#4d8dff,#3b6fd4);color:#fff}
+@media(max-width:1239px){
+ .tf-segmented{display:none}
+ .narrow-tf{display:flex!important}
+}
+@media(min-width:1240px){
+ .narrow-tf{display:none!important}
+}
+@media(max-width:1023px){
+ #amcTrigger,#taxTrigger{display:none}
+}
+@media(max-width:1023px){#ovFilters{display:block!important}}
+.shell{display:flex;flex-direction:column;min-height:100vh}
+.tabbar-wrap{background:var(--bg);border-bottom:1px solid var(--line)}
+.tablist{display:flex;gap:4px;overflow-x:auto;max-width:1340px;margin:0 auto;padding:0 22px}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font:inherit;font-weight:600;font-size:13.5px;padding:12px 14px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected=true]{color:var(--txt);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.status-row{display:none;align-items:center;gap:10px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);max-width:1340px;margin:0 auto;padding:8px 22px}
+.tabbody{width:100%;min-width:0;max-width:1340px;margin:0 auto;padding:0 22px 56px}
+.tabpanel{padding-top:4px}
+@media(min-width:1024px){
+ .shell{height:100dvh;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);min-height:0}
+ .tabbody{overflow-y:auto;min-height:0}
+}
+@media(max-width:1023px){
+ .tabbar-wrap{position:sticky;top:0;z-index:40}
+ .status-row{display:flex}
+}
 section{margin-top:26px}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;gap:12px;flex-wrap:wrap}
 .sec-head h2{font-size:15px;font-weight:700}.sec-head .hint{font-size:11.5px;color:var(--muted2)}
@@ -179,16 +218,14 @@ input[type=file]{display:none}
 .risk-tbl tr:last-child td{border-bottom:none}
 @media(max-width:720px){
  body{overflow-x:hidden;padding-bottom:32px}.wrap{padding:0 14px}
- .top-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;padding:10px 14px;gap:8px}.brand{min-width:0}.brand>div:last-child{min-width:0}.brand .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .mobile-only{display:inline-flex}.menu-btn{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}
- .upd{display:none;grid-column:1/-1;width:100%;gap:8px;padding-top:8px;border-top:1px solid var(--line);flex-wrap:wrap}.upd.open{display:flex}.upd .asof{width:100%;text-align:left}.upd .btn{flex:1 1 calc(50% - 4px);justify-content:center;min-height:40px}
- .filterbar{top:61px;margin-top:10px;border-radius:8px;padding:10px 11px;gap:10px}.fgroup{width:100%}.fstatus{width:100%;margin-left:0}
+ .brand{min-width:0}.brand>div:last-child{min-width:0}.brand .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  .confidence{grid-template-columns:1fr}.hero{padding-top:12px}.hero-main,.card{padding:16px}.totval{font-size:34px}.hero-sub{gap:14px}.hero-side{gap:12px}
  section{margin-top:20px}.sec-head{align-items:flex-start}.sec-head .hint{width:100%}.ms-top>*{max-width:100%}.ms-search{width:100%;flex-basis:100%}.ms-modes{max-width:100%;overflow-x:auto}.tf-row{align-items:stretch}.tf-custom{width:100%}.tf-custom input{min-width:0;width:100%}.bench-sel{max-width:none;width:100%;margin-left:0!important}.chart-box{height:280px}
  .modal-bg{padding:12px 8px}.modal{border-radius:10px}.modal-h,.modal-b{padding:16px}.tf2{grid-template-columns:1fr}.txn-row{align-items:flex-start;flex-wrap:wrap}.txn-c{flex-basis:55%}.risk-kpis{grid-template-columns:1fr 1fr;gap:8px}
 }
 /* print */
-@media print{header.top,.filterbar,.ms-top,.ms-list,.tf-row,.foot,#pills,.btn,.range-pills{display:none!important}
+@media print{.cmdbar,.tabbar-wrap,.ms-top,.ms-list,.tf-row,.foot,.btn,.tf-segmented,.scope-chip{display:none!important}
+ .tabpanel{display:block!important}.shell{display:block!important;height:auto!important}.tabbody{overflow:visible!important}
  body{background:#fff;color:#000;padding-bottom:0}
  .card,.hero-main,.mini,.tbl-wrap{box-shadow:none;border-color:#bbb;background:#fff;color:#000}
  .hero-main{background:#fff}.hero-main::after{display:none}}
@@ -221,28 +258,13 @@ html{scrollbar-color:var(--line2) var(--bg)}
 body{background:var(--bg);color:var(--txt);padding-bottom:0}
 body::before{display:none}
 .mono,.totval,.mini .val,.rk .v,table{font-variant-numeric:tabular-nums lining-nums}
-header.top{position:fixed;inset:0 auto 0 0;width:214px;background:#0a0e0d;border:0;border-right:1px solid var(--line);backdrop-filter:none;overflow:hidden}
-.top-inner{height:100vh;max-width:none;margin:0;padding:24px 18px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;overflow-y:auto}
 .brand{align-items:flex-start;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .logo{width:36px;height:36px;border-radius:7px;background:rgba(199,167,96,.07);border:1px solid var(--accent);color:var(--accent);box-shadow:none;font-size:10px}
 .brand h1{font-size:14px;font-weight:600;color:var(--txt)}
 .brand .sub{max-width:118px;margin-top:3px;font-size:9.5px;line-height:1.45;color:var(--muted2)}
-.upd{display:flex;flex-direction:column;align-items:stretch;gap:6px;margin-top:18px;width:100%}
-.upd .asof{order:-1;text-align:left;padding:0 2px 14px;margin-bottom:8px;border-bottom:1px solid var(--line);line-height:1.65}
-.upd .btn{width:100%;justify-content:flex-start;min-height:36px;padding:8px 10px}
-.upd #updBtn{margin-top:8px;background:var(--accent);border-color:var(--accent);color:#10130f;font-weight:700}
-.wrap{max-width:none;margin:0 0 0 214px;padding:0 28px 56px;display:grid;grid-template-columns:minmax(0,1fr)}
-.wrap>.sticky-controls{order:1}.wrap>.empty-state{order:3}.wrap>.hero{order:4}
-.wrap>section:nth-of-type(1){order:5}.wrap>section:nth-of-type(6){order:6}.wrap>section:nth-of-type(4){order:7}
-.wrap>section:nth-of-type(2){order:8}.wrap>section:nth-of-type(3){order:9}.wrap>section:nth-of-type(5){order:10}.wrap>.foot{order:11}
 .btn,.btn.ghost{border-radius:var(--radius-sm);background:transparent;border:1px solid var(--line2);box-shadow:none;color:var(--muted);transition:background-color .15s,color .15s,border-color .15s}
 .btn:hover,.btn.ghost:hover{filter:none;background:rgba(199,167,96,.08);border-color:var(--accent);color:var(--txt)}
 .btn:focus-visible,.fchip:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.filterbar{position:relative;top:auto;margin:18px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-md);background:rgba(17,22,20,.94);box-shadow:var(--shadow);backdrop-filter:blur(14px);z-index:10}
-.sticky-controls{position:sticky;top:0;z-index:45;background:var(--bg);padding-bottom:10px;transition:box-shadow .15s}
-.sticky-controls>.filterbar{margin-top:14px}
-.sticky-controls>.confidence{margin-bottom:0}
-.sticky-controls.stuck{box-shadow:0 16px 30px rgba(0,0,0,.45)}
 .fgroup .lbl,.eyebrow,.rk .l,.m-stat .l,.tf label,.m-sec h4,thead th,.risk-tbl th{letter-spacing:0;color:var(--muted2)}
 .fchip,.ms-chip,.ms-modes,.range-pills,.bench-sel,.ms-search,.tf-custom input[type=date],.tf select,.tf input{border-radius:var(--radius-sm);background:var(--panel2);border-color:var(--line);box-shadow:none}
 .fchip.on,.ms-chip.on,.ms-modes button.on,.range-pills button.on{background:var(--accent);color:#10130f;box-shadow:none}
@@ -305,24 +327,17 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 .sk{border-radius:1px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(max-width:1100px){
- .wrap{padding-right:20px;padding-left:20px}.filterbar{margin-right:0;margin-left:0;padding-right:14px;padding-left:14px}
+ .wrap{padding-right:20px;padding-left:20px}
  .hero-grid{grid-template-columns:minmax(0,1.5fr) minmax(230px,.75fr)}
  .totval{font-size:40px}.grid3{grid-template-columns:1fr 1fr}.grid3>.card:last-child{grid-column:1/-1}
 }
 @media(max-width:900px){
- header.top{position:sticky;inset:auto;top:0;width:auto;height:auto;border-right:0;border-bottom:1px solid var(--line);background:rgba(10,14,13,.96)}
- .top-inner{height:auto;overflow:visible;display:grid;grid-template-columns:minmax(0,1fr) auto;padding:10px 14px;gap:8px}
- .brand{align-items:center;padding-bottom:0;border-bottom:0}.brand .sub{max-width:none}
- .mobile-only{display:inline-flex}.menu-btn{width:40px;height:40px;padding:0;justify-content:center}
- .upd{display:none!important;grid-column:1/-1;width:100%;margin-top:0;padding-top:10px;border-top:1px solid var(--line);flex-direction:row;flex-wrap:wrap}
- .upd.open{display:flex!important}.upd .asof{width:100%;padding:0 0 8px;margin:0;text-align:left;border:0}.upd .btn{width:auto;flex:1 1 calc(50% - 4px);justify-content:center}
- .wrap{margin-left:0;padding:0 16px 44px}.filterbar{position:relative;top:auto;margin:12px 0 0;padding:11px 12px}
+ .wrap{padding:0 16px 44px}
  .hero-grid{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr;grid-template-rows:none}
  .grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.grid3>.card:last-child{grid-column:auto}
 }
 @media(max-width:680px){
- body::before{display:none}.wrap{padding-right:12px;padding-left:12px}.filterbar{position:relative;top:auto;margin:10px 0 0;padding:10px}
- .filterbar .fgroup{width:100%}.fstatus{width:100%;margin-left:0}
+ body::before{display:none}.wrap{padding-right:12px;padding-left:12px}
  .confidence{grid-template-columns:1fr;gap:6px}.conf-item{padding:9px 10px;border:1px solid var(--line)}.conf-item:first-child{padding-left:10px}.conf-item:last-child{border-right:1px solid var(--line)}
  .hero{padding-top:16px}.hero-main{padding:21px 16px}.totval{font-size:34px}.hero-side{grid-template-columns:1fr}.mini{padding:16px}
  section{margin-top:28px}.sec-head{align-items:flex-start}.sec-head .hint{width:100%}.card{padding:15px 12px}.chart-box{height:300px}
@@ -335,59 +350,83 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner">
+<div class="shell">
+<header class="cmdbar" id="cmdbar">
  <div class="brand"><div class="logo">PORT</div><div><h1>Portfolio Monitor</h1><div class="sub" data-i18n="brandSub">Multi-AMC · NAV-based valuation</div></div></div>
- <button class="btn ghost mobile-only menu-btn" id="mobileMenuBtn" type="button" aria-expanded="false" aria-controls="headerActions" data-i18n-aria="menuBtn">☰</button>
- <div class="upd" id="headerActions"><div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
-  <button class="btn ghost" id="langBtn" style="font-size:13px;padding:9px 13px;min-width:52px;justify-content:center">ไทย</button>
-  <button class="btn ghost" id="authBtn" style="font-size:13px;padding:9px 13px">☁ Sign in</button>
-  <button class="btn ghost" id="txnBtn" style="font-size:13px;padding:9px 13px" data-i18n="txnBtn">⇄ Buy / Sell</button>
-  <button class="btn ghost" id="swBtn" style="font-size:13px;padding:9px 13px" data-i18n="swBtn">⇌ Switch</button>
-  <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt" data-i18n="updNav">Update NAV</span></button></div>
-</div></header>
+
+ <div class="cmdbar-group">
+  <button type="button" class="btn ghost popover-trigger" id="amcTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="amcPopover"><span data-i18n="lblAMC">AMC</span><span id="amcTriggerLabel"></span></button>
+  <div class="popover" id="amcPopover" role="dialog" aria-label="AMC" data-i18n-aria="lblAMC"></div>
+ </div>
+ <div class="cmdbar-group">
+  <button type="button" class="btn ghost popover-trigger" id="taxTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="taxPopover"><span data-i18n="lblTax">Tax</span><span id="taxTriggerLabel"></span></button>
+  <div class="popover" id="taxPopover" role="dialog" aria-label="Tax" data-i18n-aria="lblTax"></div>
+ </div>
+
+ <div class="tf-segmented" id="cmdTf"></div>
+ <div class="cmdbar-group narrow-tf" id="narrowTfGroup" style="display:none">
+  <button type="button" class="btn ghost popover-trigger" id="periodTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="periodPopover"><span id="periodTriggerLabel"></span></button>
+  <div class="popover" id="periodPopover" role="dialog" aria-label="Timeframe" data-i18n-aria="lblPeriod"></div>
+ </div>
+
+ <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+  <div class="asof"><div><span data-i18n="asOf">As of</span> <b id="asof"></b></div><div id="srcline" style="font-size:10.5px;color:var(--muted2)"></div></div>
+  <button class="btn" id="updBtn"><span id="updIco">↻</span><span id="updTxt" data-i18n="updNav">Update NAV</span></button>
+  <div class="cmdbar-group">
+   <button type="button" class="btn ghost popover-trigger" id="overflowTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="overflowPanel" aria-label="More" data-i18n-aria="menuBtn">⋯</button>
+   <div class="popover popover-actions" id="overflowPanel" role="dialog" aria-label="More actions" data-i18n-aria="menuBtn" style="right:0;left:auto"></div>
+  </div>
+ </div>
+</header>
 
 <div class="wrap">
- <!-- FILTER BAR -->
- <div id="fbSentinel" aria-hidden="true"></div>
- <div class="sticky-controls">
- <div class="filterbar">
-  <div class="fgroup"><span class="lbl" data-i18n="lblAMC">AMC</span><span id="amcFilter"></span></div>
-  <div class="fgroup"><span class="lbl" data-i18n="lblTax">Tax</span><span id="taxFilter"></span></div>
-  <div class="fstatus" id="fstatus"></div>
- </div>
-
- <div class="confidence" id="confidenceBar" aria-live="polite">
-  <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
-  <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
-  <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
- </div>
- </div>
-
  <div class="empty-state" id="emptyState" hidden>
   <h2 data-i18n="emptyTitle">Build your portfolio view</h2>
   <p data-i18n="emptyBody">Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.</p>
   <div class="empty-actions"><button class="btn" id="emptySignIn" type="button" data-i18n="emptySignIn">Sign in</button><button class="btn ghost" id="emptyImport" type="button" data-i18n="emptyImport">Import portfolio</button></div>
  </div>
 
- <div class="hero"><div class="hero-grid">
+ <div class="hero" id="pfHeader"><div class="hero-grid">
   <div class="hero-main">
-   <div class="eyebrow" data-i18n="eyebrow">Total Market Value</div>
+   <div style="display:flex;align-items:baseline;flex-wrap:wrap"><div class="eyebrow" id="eyebrowLbl" data-i18n="eyebrow">Total Market Value</div><span class="scope-chip" id="scopeChip" hidden></span></div>
    <div class="totval"><span class="cur">฿</span><span id="h-value" class="mono"></span></div>
    <div class="hero-sub"><div class="it"><span data-i18n="costBasis">Cost Basis</span><b class="mono" id="h-cost"></b></div>
     <div class="it"><span data-i18n="unrealPL">Unrealized P/L</span><b class="mono pos" id="h-unreal"></b></div>
     <div class="it"><span data-i18n="fundsLbl">Funds</span><b id="h-count"></b></div></div>
-   <div class="range-pills" id="pills">
-    <button data-r="d1">1D</button><button data-r="w1">1W</button><button data-r="d15" class="on">15D</button><button data-r="m1">1M</button></div>
-   <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span></div>
+   <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span><span class="chg-from" id="tl-from"></span></div>
    <div class="tl-label" id="tl-label"></div>
+   <svg class="spark" id="spark" width="100%" height="36" viewBox="0 0 300 36" preserveAspectRatio="none" aria-hidden="true"></svg>
   </div>
   <div class="hero-side">
    <div class="mini"><div class="lab" data-i18n="heroUnrealLab">Unrealized P/L (on current holdings)</div><div class="val mono pos" id="m-unreal"></div>
     <div class="meta"><span data-i18n="vsCost">vs cost</span> <span class="chip2" id="m-unreal-pct" style="background:rgba(31,210,134,.14);color:var(--pos)"></span></div></div>
    <div class="mini"><div class="lab" data-i18n="heroRealLab">Realized P/L (cumulative)</div><div class="val mono" id="m-real"></div><div class="meta" data-i18n="heroRealMeta">from past redemptions</div></div>
   </div>
- </div></div>
+ </div>
+ <div class="confidence" id="confidenceBar" aria-live="polite">
+  <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
+  <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
+  <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
+ </div>
+ </div>
+ </div>
+ <div class="tabbar-wrap" id="tabbarWrap">
+  <div class="status-row" id="statusRow">
+   <button type="button" class="btn ghost" id="statusTf" aria-haspopup="dialog" aria-expanded="false" aria-controls="periodPopover" style="padding:4px 10px;font-size:12px"></button>
+   <span id="statusFresh"></span>
+   <span id="statusScope"></span>
+  </div>
+  <div class="tablist" role="tablist" id="tablist" aria-label="Portfolio sections">
+   <button class="tab" role="tab" id="tab-holdings" aria-controls="panel-holdings" aria-selected="true" tabindex="0" data-i18n="tabHoldings">ถือครอง</button>
+   <button class="tab" role="tab" id="tab-returns" aria-controls="panel-returns" aria-selected="false" tabindex="-1" data-i18n="tabReturns">ผลตอบแทน</button>
+   <button class="tab" role="tab" id="tab-allocation" aria-controls="panel-allocation" aria-selected="false" tabindex="-1" data-i18n="tabAllocation">สัดส่วน</button>
+   <button class="tab" role="tab" id="tab-risk" aria-controls="panel-risk" aria-selected="false" tabindex="-1" data-i18n="tabRisk">ความเสี่ยง</button>
+   <button class="tab" role="tab" id="tab-tax" aria-controls="panel-tax" aria-selected="false" tabindex="-1" data-i18n="tabTax">ภาษี</button>
+  </div>
+ </div>
+ <main class="tabbody" id="tabbody">
 
+ <div role="tabpanel" class="tabpanel" id="panel-returns" aria-labelledby="tab-returns">
  <!-- HISTORY MULTI-SELECT -->
  <section>
   <div class="sec-head"><h2 data-i18n="secHist">Historical Comparison</h2><span class="hint" data-i18n="histHint">Select portfolio &amp; multiple funds · switch Value / % Change / NAV</span></div>
@@ -401,21 +440,10 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    </div>
    <div class="ms-list" id="msList"></div>
    <div class="tf-row">
-    <div class="ms-modes" id="tfBtns"><button data-tf="1W">1W</button><button data-tf="1M">1M</button><button data-tf="3M">3M</button><button data-tf="6M">6M</button><button data-tf="1Y">1Y</button><button data-tf="YTD">YTD</button><button data-tf="MAX" class="on">MAX</button></div>
     <div class="tf-custom"><input type="date" id="tfFrom"><span>→</span><input type="date" id="tfTo"><button class="btn ghost" id="tfApply" data-i18n="applyBtn">Apply</button></div>
     <select class="bench-sel" id="benchSel" style="margin-left:auto"></select>
    </div>
    <div class="chart-box"><canvas id="histChart"></canvas></div>
-  </div>
- </section>
-
- <!-- ALLOCATION (3 donuts) -->
- <section>
-  <div class="sec-head"><h2 data-i18n="secAlloc">Allocation</h2><span class="hint" data-i18n="allocHint">Reflects current filter</span></div>
-  <div class="grid3">
-   <div class="card"><h3 data-i18n="byAsset">By Asset Class</h3><div class="csub" data-i18n="byAssetSub">Asset allocation</div><div class="chart-sm"><canvas id="assetChart"></canvas></div><div class="legend" id="assetLegend"></div></div>
-   <div class="card"><h3 data-i18n="byAMC">By AMC</h3><div class="csub" data-i18n="byAMCSub">Asset management company</div><div class="chart-sm"><canvas id="amcChart"></canvas></div><div class="legend" id="amcLegend"></div></div>
-   <div class="card"><h3 data-i18n="byTax">By Tax Benefit</h3><div class="csub">SSF / ThaiESG / ThaiESGX</div><div class="chart-sm"><canvas id="taxChart"></canvas></div><div class="legend" id="taxLegend"></div></div>
   </div>
  </section>
 
@@ -431,7 +459,22 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    <div class="pl-foot" id="pl-foot"></div>
   </div>
  </div></section>
-
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-allocation" aria-labelledby="tab-allocation" hidden>
+ <!-- ALLOCATION (3 donuts) -->
+ <section>
+  <div class="sec-head"><h2 data-i18n="secAlloc">Allocation</h2><span class="hint" data-i18n="allocHint">Reflects current filter</span></div>
+  <div class="grid3">
+   <div class="card"><h3 data-i18n="byAsset">By Asset Class</h3><div class="csub" data-i18n="byAssetSub">Asset allocation</div><div class="chart-sm"><canvas id="assetChart"></canvas></div><div class="legend" id="assetLegend"></div></div>
+   <div class="card"><h3 data-i18n="byAMC">By AMC</h3><div class="csub" data-i18n="byAMCSub">Asset management company</div><div class="chart-sm"><canvas id="amcChart"></canvas></div><div class="legend" id="amcLegend"></div></div>
+   <div class="card"><h3 data-i18n="byTax">By Tax Benefit</h3><div class="csub">SSF / ThaiESG / ThaiESGX</div><div class="chart-sm"><canvas id="taxChart"></canvas></div><div class="legend" id="taxLegend"></div></div>
+  </div>
+  <div class="card"><h3 data-i18n="secConc">Look-Through Holdings</h3><div class="csub" data-i18n="concHint">What your funds actually hold, combined</div>
+   <div class="risk-wrap"><table class="risk-tbl" style="min-width:420px"><thead><tr><th data-i18n="chName">Security</th><th data-i18n="chExp">Exposure</th><th data-i18n="chPct">% of port</th><th data-i18n="chVia">Funds</th></tr></thead><tbody id="concBody"></tbody></table></div>
+   <div class="pl-foot" data-i18n="concNote">Estimated from each fund's top-5 holdings — actual exposure can be higher.</div></div>
+ </section>
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-risk" aria-labelledby="tab-risk" hidden>
  <!-- RISK & PERFORMANCE -->
  <section>
   <div class="sec-head"><h2 data-i18n="secRisk">Risk &amp; Performance</h2><span class="hint" data-i18n="riskHint">Computed from NAV history · follows chart timeframe above</span></div>
@@ -442,18 +485,17 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    </tr></thead><tbody id="riskBody"></tbody></table></div>
   </div>
  </section>
-
- <!-- TAX UNLOCK + LOOK-THROUGH -->
- <section><div class="grid2">
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-tax" aria-labelledby="tab-tax" hidden>
+ <!-- TAX UNLOCK -->
+ <section>
   <div class="card"><h3 data-i18n="secUnlock">Tax-Fund Unlock Schedule</h3><div class="csub" data-i18n="unlockHint">SSF 10y · ThaiESG/X 5y · RMF age 55 &amp; 5y from first buy</div>
    <div class="ms-modes" id="unlockModes" style="margin-bottom:10px"><button type="button" data-um="lot" class="on" data-i18n="byLot">By lot</button><button type="button" data-um="fund" data-i18n="byFund">By fund</button><button type="button" data-um="year" data-i18n="byYear">By year</button></div>
    <div class="risk-wrap"><table class="risk-tbl" style="min-width:520px"><thead id="unlockHead"></thead><tbody id="unlockBody"></tbody></table></div>
    <div style="margin-top:10px"><button class="btn ghost" id="birthBtn" type="button" data-i18n="setBirth">🎂 Set birth date (for RMF)</button></div></div>
-  <div class="card"><h3 data-i18n="secConc">Look-Through Holdings</h3><div class="csub" data-i18n="concHint">What your funds actually hold, combined</div>
-   <div class="risk-wrap"><table class="risk-tbl" style="min-width:420px"><thead><tr><th data-i18n="chName">Security</th><th data-i18n="chExp">Exposure</th><th data-i18n="chPct">% of port</th><th data-i18n="chVia">Funds</th></tr></thead><tbody id="concBody"></tbody></table></div>
-   <div class="pl-foot" data-i18n="concNote">Estimated from each fund's top-5 holdings — actual exposure can be higher.</div></div>
- </div></section>
-
+ </section>
+ </div>
+ <div role="tabpanel" class="tabpanel" id="panel-holdings" aria-labelledby="tab-holdings">
  <!-- TABLE -->
  <section>
   <div class="sec-head"><h2 data-i18n="secHold">Holdings</h2>
@@ -468,15 +510,15 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
    <th class="sortable" data-k="chg"><span data-i18n="thChange">Change</span> <span id="th-tl"></span></th><th class="sortable" data-k="unreal" data-i18n="thUnreal">Unrealized</th><th class="sortable" data-k="realized" data-i18n="thReal">Realized</th>
   </tr></thead><tbody id="tbody"></tbody><tfoot id="tfoot"></tfoot></table></div>
  </section>
+ </div>
 
  <div class="foot">
-  <span data-i18n="footNote">Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.</span><br>
-  <button class="btn ghost" id="expBtn" data-i18n="expBtn">⬇ Download nav_history.json</button>
-  <button class="btn ghost" id="impBtn" data-i18n="impBtn">⬆ Import NAV database</button><input type="file" id="impFile" accept="application/json">
-  <button class="btn ghost" id="impHoldBtn" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button><input type="file" id="impHoldFile" accept="application/json">
-  <button class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>
+  <span data-i18n="footNote">Market value = units × latest NAV (Finnomena). Cost basis &amp; realized P/L from your statements. NAV database accumulates locally on each update.</span>
   <div style="margin-top:9px" data-i18n="disclaimer">For portfolio tracking only — not investment advice.</div>
+  <input type="file" id="impFile" accept="application/json" style="display:none">
+  <input type="file" id="impHoldFile" accept="application/json" style="display:none">
  </div>
+ </main>
 </div>
 
 <div class="modal-bg" id="modalBg" aria-hidden="true"><div class="modal" id="modal" role="dialog" aria-modal="true" tabindex="-1"></div></div>
@@ -2082,9 +2124,9 @@ let SB=null, USER=null, _saveT=null;
 function persist(){ try{localStorage.setItem('kkp_holdings',JSON.stringify(HOLDINGS_BASE));localStorage.setItem(LS_TXN,JSON.stringify(TXNS));}catch(e){} if(SB&&USER){clearTimeout(_saveT);_saveT=setTimeout(saveCloud,800);} }
 async function saveCloud(){ if(!SB||!USER)return; try{const{error}=await SB.from('portfolios').upsert({user_id:USER.id,holdings:HOLDINGS_BASE,transactions:TXNS,updated_at:new Date().toISOString()});if(error)console.error('cloud save',error);}catch(e){console.error(e);} }
 function saveTxns(){persist();}
-function buildHoldings(){
+function buildHoldings(asOf){
  HOLDINGS=JSON.parse(JSON.stringify(HOLDINGS_BASE));
- const tx=effectiveTxns();
+ const tx=effectiveTxns().filter(x=>!asOf||!x.date||x.date<=asOf);
  for(const t of tx){
   let h=HOLDINGS[t.code];
   if(!h){ if(t.action!=='buy')continue;
@@ -2105,24 +2147,24 @@ const cls=n=>n>=0?'pos':'neg';
 const escHTML=v=>String(v==null?'':v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const escAttr=escHTML;
 const isoDayDiff=(a,b)=>Math.round((new Date(a+'T00:00:00Z')-new Date(b+'T00:00:00Z'))/86400000);
-const RANGES={d1:{d:1,l:'1 Day'},w1:{d:7,l:'1 Week'},d15:{d:15,l:'15 Days'},m1:{d:30,l:'1 Month'}};
 const C={pos:'#57c59b',neg:'#e76f61',accent:'#c7a760',gold:'#e1aa54',violet:'#7fa59a',muted:'#9ca8a2',grid:'#303936',panel:'#171d1b'};
 const ASSET_COL={'Foreign Equity':'#57c59b','Thai Equity':'#c7a760','Mixed':'#5fa9a0','Fixed Income / MM':'#9ca8a2'};
 const TAX_COL={'SSF':'#c7a760','ThaiESG':'#57c59b','ThaiESGX':'#7fa59a','General':'#9ca8a2','LTF':'#e1aa54','RMF':'#5fa9a0'};
 const AMC_COL={'KKP':'#c7a760','SCB':'#7fa59a','UOB':'#e1aa54','Bualuang':'#57c59b','K-Fund':'#e76f61','Eastspring':'#5fa9a0','LH Fund':'#a7b77b','ONE':'#d28c5d'};
 const PALETTE=['#c7a760','#57c59b','#5fa9a0','#7fa59a','#e76f61','#e1aa54','#9ca8a2','#d28c5d','#8eb47f','#b89068','#6e9790','#d0bd86','#c77670','#829d8f','#b5a46f'];
 
-let RANGE='d15',histMode='value',histSel=new Set(['__PORT__']),msFilter='',histSort='value',sortK='value',sortDir=-1;
+let histMode='value',histSel=new Set(['__PORT__']),msFilter='',histSort='value',sortK='value',sortDir=-1;
 let filterAMC=new Set(),filterTax=new Set();
 let ALL=[],F=[],T={};
-let histTF=localStorage.getItem('kkp_histtf')||'MAX',histFrom='',histTo='';
+let histTF=localStorage.getItem('kkp_histtf')||'MAX',histFrom=localStorage.getItem('kkp_histfrom')||'',histTo=localStorage.getItem('kkp_histto')||'';
+if(histTF==='CUSTOM'&&(!histFrom||!histTo||!/^\d{4}-\d{2}-\d{2}$/.test(histFrom)||!/^\d{4}-\d{2}-\d{2}$/.test(histTo))){histTF='MAX';histFrom='';histTo='';localStorage.setItem('kkp_histtf','MAX');localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');}
 let BENCH=localStorage.getItem('kkp_bench')||'';
 let LANG=localStorage.getItem('kkp_lang')||'en';
 
 /* ---------- i18n ---------- */
 const I18N={
-en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',
- lblAMC:'AMC',lblTax:'Tax',eyebrow:'Total Market Value',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
+en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',langBtnLbl:'Language',
+ lblAMC:'AMC',lblTax:'Tax',lblPeriod:'Timeframe',eyebrow:'Total Market Value',eyebrowFiltered:'Filtered value',vsDate:'vs {d}',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
  portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
@@ -2137,13 +2179,13 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  thPrice:'Valuation price',srcNav:'NAV',srcExec:'Execution',
  footNote:'Market value = units × latest NAV (Finnomena). Cost basis & realized P/L from your statements. NAV database accumulates locally on each update.',
  expBtn:'⬇ Download nav_history.json',impBtn:'⬆ Import NAV database',impHoldBtn:'⬆ Import portfolio (holdings.json)',disclaimer:'For portfolio tracking only — not investment advice.',
- r_d1:'1 Day',r_w1:'1 Week',r_d15:'15 Days',r_m1:'1 Month',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
+ r_1D:'1 Day',r_1W:'1 Week',r_1M:'1 Month',r_3M:'3 Months',r_6M:'6 Months',r_1Y:'1 Year',r_YTD:'Year to date',r_MAX:'All history',r_CUSTOM:'Custom range',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
  plFoot:'Total P/L <b style="color:var(--txt)">฿{t}</b> — unrealized gains on paper make up the majority; realized P/L ฿{r} comes from past partial redemptions.',
  wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',mMarket:'Market Value',mUnreal:'Unrealized',mWeight:'Weight',mCategory:'Category',mRisk:'Risk level',mDividend:'Dividend policy',mInception:'Inception',mNetAssets:'Net assets',divYes:'Pays dividends',divNo:'No dividends',
  csvSaved:'✅ CSV exported',
  mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',promptBtn:'📋 Copy AI import prompt',promptCopied:'Prompt copied — paste it into any AI together with photos of your fund statements, then import the JSON it returns',mergeAsk:'Merge with your existing portfolio?\n\nOK = update/add only the funds in this file\nCancel = REPLACE the whole portfolio with this file',
- confCoverage:'Valuation coverage',confRange:'NAV date range',confStale:'Stale funds',confFresh:'All current',navPoints:'{n} NAV points stored',noAsOf:'No valuation yet',navDate:'NAV',stale:'stale',updateBlocked:'NAV update is unavailable. Check the Worker domain or import a NAV database.',syncDone:'Synced {ok}/{total} funds · {added} new NAV points',syncFailed:'{n} failed',dbImported:'NAV database imported',portfolioImported:'Portfolio imported',invalidFile:'Invalid file',urlInvalid:'Use a URL like https://xxxx.supabase.co',keyInvalid:'The anon public key looks too short',
+ confCoverage:'Valuation coverage',confRange:'NAV date range',confStale:'Stale funds',confFresh:'All current',staleStatus:'{n} stale',navPoints:'{n} NAV points stored',noAsOf:'No valuation yet',navDate:'NAV',stale:'stale',updateBlocked:'NAV update is unavailable. Check the Worker domain or import a NAV database.',syncDone:'Synced {ok}/{total} funds · {added} new NAV points',syncFailed:'{n} failed',dbImported:'NAV database imported',portfolioImported:'Portfolio imported',invalidFile:'Invalid file',urlInvalid:'Use a URL like https://xxxx.supabase.co',keyInvalid:'The anon public key looks too short',
  emptyTitle:'Build your portfolio view',emptyBody:'Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.',missingNavTitle:'Portfolio loaded · waiting for NAV',missingNavBody:'The holdings ledger is available, but no current NAV is loaded yet. Update NAV or verify the Worker connection.',emptySignIn:'Sign in',emptyImport:'Import portfolio',noFunds:'No funds',
  txnTitle:'Buy / Sell',txnSub:'Append-only ledger · holdings, cost and realized P/L are recomputed',txnFund:'Fund',txnNewFund:'+ New fund (not listed)…',txnNewCode:'New fund code (must match Finnomena)',txnName:'Display name',txnAmc:'AMC',txnAsset:'Asset class',txnTax:'Tax benefit',txnAction:'Action',txnDate:'Date',txnUnits:'Units',txnPrice:'Price / NAV (฿)',txnAdd:'Add transaction',txnHistory:'History',txnEmpty:'No transactions yet',txnCorrect:'Reverse',txnCorrected:'Reversed',txnVoid:'Correction',txnEnterCode:'Enter a fund code',txnInvalid:'Enter valid units and price',txnRecorded:'recorded',txnNeedsNav:'run Update NAV to fetch history',buyWord:'Buy',sellWord:'Sell',
  accountTitle:'Account',accountSub:'Your portfolio is synced to the cloud and follows you on every signed-in device.',signOut:'Sign out',connectTitle:'Connect cloud',connectSub:'One-time Supabase connection setup',projectUrl:'Supabase project URL',anonKey:'Anon public key',connectBtn:'Connect',signInTitle:'Sign in',signInSub:'Access your portfolio on any device',emailLbl:'Email',passwordLbl:'Password (min 6 chars)',createAccount:'Create account',resetConnection:'Wrong project? Reset connection',redirectGoogle:'Redirecting to Google…',signingIn:'Signing in…',creatingAccount:'Creating account…',accountCreated:'Account created. Confirm your email if required, then sign in.',signedOut:'Signed out',signedIn:'Signed in as',detailsUnavailable:'Details unavailable for this fund.',openFinnomena:'Open on Finnomena ↗',closeBtn:'Close',correctedToast:'Correction appended to the ledger',assetForeign:'Foreign Equity',assetThai:'Thai Equity',assetMixed:'Mixed',assetFixed:'Fixed Income / MM',taxGeneral:'General',
@@ -2163,9 +2205,10 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  swNewOpt:'+ New fund (not listed)…',swNewCode:'New fund code (must match Finnomena)',taxLbl:'Tax benefit',assetLbl:'Asset class',
  swDo:'Confirm switch',swHeld:'held',swInvalid:'Fill all fields with valid values',swSame:'Out and in funds must be different',
  swTooMany:'Not enough units held',swDateOrder:'Switch-in date cannot be before switch-out date',swFetch:'Fetching fund data from Finnomena…',swFetchFail:'Could not fetch fund',
- swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in'},
-th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',
- lblAMC:'บลจ.',lblTax:'สิทธิภาษี',eyebrow:'มูลค่าตลาดรวม',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
+ swNoNav:'No NAV available on that date for',swDone:'Switched',swNavOut:'NAV out',swNavIn:'NAV in',
+ tabHoldings:'Holdings',tabReturns:'Returns',tabAllocation:'Allocation',tabRisk:'Risk',tabTax:'Tax'},
+th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
+ lblAMC:'บลจ.',lblTax:'สิทธิภาษี',lblPeriod:'ช่วงเวลา',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
  portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
@@ -2180,13 +2223,13 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  thPrice:'ราคาที่ใช้ตีมูลค่า',srcNav:'NAV',srcExec:'ราคาจากรายการ',
  footNote:'มูลค่าตลาด = จำนวนหน่วย × NAV ล่าสุด (Finnomena) · ต้นทุนและกำไรรับรู้แล้วจากรายการของคุณ · ฐานข้อมูล NAV สะสมในเครื่องทุกครั้งที่อัปเดต',
  expBtn:'⬇ ดาวน์โหลด nav_history.json',impBtn:'⬆ นำเข้าฐานข้อมูล NAV',impHoldBtn:'⬆ นำเข้าพอร์ต (holdings.json)',disclaimer:'ใช้เพื่อติดตามพอร์ตเท่านั้น — ไม่ใช่คำแนะนำการลงทุน',
- r_d1:'1 วัน',r_w1:'1 สัปดาห์',r_d15:'15 วัน',r_m1:'1 เดือน',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
+ r_1D:'1 วัน',r_1W:'1 สัปดาห์',r_1M:'1 เดือน',r_3M:'3 เดือน',r_6M:'6 เดือน',r_1Y:'1 ปี',r_YTD:'ตั้งแต่ต้นปี',r_MAX:'ทั้งหมด',r_CUSTOM:'ช่วงที่กำหนดเอง',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
  plFoot:'กำไร/ขาดทุนรวม <b style="color:var(--txt)">฿{t}</b> — ส่วนใหญ่เป็นกำไรที่ยังไม่รับรู้ · กำไรรับรู้แล้ว ฿{r} จากการขายคืนบางส่วนที่ผ่านมา',
  wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',mMarket:'มูลค่าตลาด',mUnreal:'กำไร/ขาดทุนยังไม่รับรู้',mWeight:'น้ำหนัก',mCategory:'ประเภทกองทุน',mRisk:'ระดับความเสี่ยง',mDividend:'นโยบายปันผล',mInception:'วันจัดตั้งกองทุน',mNetAssets:'สินทรัพย์สุทธิ',divYes:'จ่ายปันผล',divNo:'ไม่จ่ายปันผล',
  csvSaved:'✅ ส่งออก CSV แล้ว',
  mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',promptBtn:'📋 คัดลอกพรอมป์ต AI สำหรับนำเข้าพอร์ต',promptCopied:'คัดลอกแล้ว — นำไปวางใน AI พร้อมรูป statement กองทุน แล้วนำ JSON ที่ได้มากดนำเข้าพอร์ต',mergeAsk:'รวมกับพอร์ตเดิมหรือไม่?\n\nOK = อัปเดต/เพิ่มเฉพาะกองที่อยู่ในไฟล์นี้\nCancel = แทนที่พอร์ตทั้งหมดด้วยไฟล์นี้',
- confCoverage:'ความครอบคลุมมูลค่า',confRange:'ช่วงวันที่ NAV',confStale:'กองทุนข้อมูลล่าช้า',confFresh:'ข้อมูลเป็นปัจจุบันทั้งหมด',navPoints:'เก็บ NAV แล้ว {n} จุด',noAsOf:'ยังไม่มีมูลค่าพอร์ต',navDate:'NAV',stale:'ล่าช้า',updateBlocked:'อัปเดต NAV ไม่สำเร็จ กรุณาตรวจโดเมน Worker หรือนำเข้าฐานข้อมูล NAV',syncDone:'ซิงค์ {ok}/{total} กองทุน · NAV ใหม่ {added} จุด',syncFailed:'ล้มเหลว {n} กองทุน',dbImported:'นำเข้าฐานข้อมูล NAV แล้ว',portfolioImported:'นำเข้าพอร์ตแล้ว',invalidFile:'ไฟล์ไม่ถูกต้อง',urlInvalid:'กรุณาใช้ URL รูปแบบ https://xxxx.supabase.co',keyInvalid:'Anon public key สั้นเกินไป',
+confCoverage:'ความครอบคลุมมูลค่า',confRange:'ช่วงวันที่ NAV',confStale:'กองทุนข้อมูลล่าช้า',confFresh:'ข้อมูลเป็นปัจจุบันทั้งหมด',staleStatus:'ข้อมูลล่าช้า {n} กองทุน',navPoints:'เก็บ NAV แล้ว {n} จุด',noAsOf:'ยังไม่มีมูลค่าพอร์ต',navDate:'NAV',stale:'ล่าช้า',updateBlocked:'อัปเดต NAV ไม่สำเร็จ กรุณาตรวจโดเมน Worker หรือนำเข้าฐานข้อมูล NAV',syncDone:'ซิงค์ {ok}/{total} กองทุน · NAV ใหม่ {added} จุด',syncFailed:'ล้มเหลว {n} กองทุน',dbImported:'นำเข้าฐานข้อมูล NAV แล้ว',portfolioImported:'นำเข้าพอร์ตแล้ว',invalidFile:'ไฟล์ไม่ถูกต้อง',urlInvalid:'กรุณาใช้ URL รูปแบบ https://xxxx.supabase.co',keyInvalid:'Anon public key สั้นเกินไป',
  emptyTitle:'เริ่มสร้างมุมมองพอร์ต',emptyBody:'เข้าสู่ระบบเพื่อโหลดพอร์ตจากคลาวด์ หรือนำเข้าไฟล์ holdings เพื่อเริ่มติดตามมูลค่า ผลตอบแทน และความเสี่ยง',missingNavTitle:'โหลดพอร์ตแล้ว · รอข้อมูล NAV',missingNavBody:'มีบัญชีรายการพอร์ตแล้ว แต่ยังไม่มี NAV ปัจจุบัน กรุณาอัปเดต NAV หรือตรวจการเชื่อมต่อ Worker',emptySignIn:'เข้าสู่ระบบ',emptyImport:'นำเข้าพอร์ต',noFunds:'ไม่มีกองทุน',
  txnTitle:'ซื้อ / ขาย',txnSub:'บัญชีรายการแบบเพิ่มอย่างเดียว · คำนวณหน่วย ต้นทุน และกำไรรับรู้ใหม่ทุกครั้ง',txnFund:'กองทุน',txnNewFund:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',txnNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',txnName:'ชื่อที่แสดง',txnAmc:'บลจ.',txnAsset:'ประเภทสินทรัพย์',txnTax:'สิทธิประโยชน์ภาษี',txnAction:'รายการ',txnDate:'วันที่',txnUnits:'จำนวนหน่วย',txnPrice:'ราคา / NAV (฿)',txnAdd:'เพิ่มรายการ',txnHistory:'ประวัติ',txnEmpty:'ยังไม่มีรายการ',txnCorrect:'กลับรายการ',txnCorrected:'กลับรายการแล้ว',txnVoid:'รายการแก้ไข',txnEnterCode:'กรุณาใส่รหัสกองทุน',txnInvalid:'กรุณาใส่จำนวนหน่วยและราคาให้ถูกต้อง',txnRecorded:'บันทึกแล้ว',txnNeedsNav:'กดอัปเดต NAV เพื่อดึงประวัติราคา',buyWord:'ซื้อ',sellWord:'ขาย',
  accountTitle:'บัญชี',accountSub:'พอร์ตซิงค์บนคลาวด์และติดตามคุณไปทุกอุปกรณ์ที่เข้าสู่ระบบ',signOut:'ออกจากระบบ',connectTitle:'เชื่อมต่อคลาวด์',connectSub:'ตั้งค่าการเชื่อมต่อ Supabase ครั้งเดียว',projectUrl:'URL โปรเจกต์ Supabase',anonKey:'Anon public key',connectBtn:'เชื่อมต่อ',signInTitle:'เข้าสู่ระบบ',signInSub:'เข้าถึงพอร์ตได้จากทุกอุปกรณ์',emailLbl:'อีเมล',passwordLbl:'รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)',createAccount:'สร้างบัญชี',resetConnection:'โปรเจกต์ไม่ถูกต้อง? ตั้งค่าใหม่',redirectGoogle:'กำลังไปยัง Google…',signingIn:'กำลังเข้าสู่ระบบ…',creatingAccount:'กำลังสร้างบัญชี…',accountCreated:'สร้างบัญชีแล้ว หากระบบกำหนดให้ยืนยันอีเมล กรุณายืนยันก่อนเข้าสู่ระบบ',signedOut:'ออกจากระบบแล้ว',signedIn:'เข้าสู่ระบบในชื่อ',detailsUnavailable:'ไม่มีรายละเอียดของกองทุนนี้',openFinnomena:'เปิดใน Finnomena ↗',closeBtn:'ปิด',correctedToast:'เพิ่มรายการแก้ไขในบัญชีรายการแล้ว',assetForeign:'หุ้นต่างประเทศ',assetThai:'หุ้นไทย',assetMixed:'กองทุนผสม',assetFixed:'ตราสารหนี้ / ตลาดเงิน',taxGeneral:'ทั่วไป',
@@ -2206,7 +2249,8 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  swNewOpt:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',swNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',taxLbl:'สิทธิประโยชน์ภาษี',assetLbl:'ประเภทสินทรัพย์',
  swDo:'ยืนยันการสับเปลี่ยน',swHeld:'ถืออยู่',swInvalid:'กรุณากรอกข้อมูลให้ครบถ้วน',swSame:'กองทุนออกและเข้าต้องต่างกัน',
  swTooMany:'จำนวนหน่วยที่ถือไม่เพียงพอ',swDateOrder:'วันที่สับเปลี่ยนเข้าต้องไม่อยู่ก่อนวันที่สับเปลี่ยนออก',swFetch:'กำลังดึงข้อมูลกองทุนจาก Finnomena…',swFetchFail:'ดึงข้อมูลกองทุนไม่สำเร็จ',
- swNoNav:'ไม่มีข้อมูล NAV ณ วันที่เลือกสำหรับ',swDone:'สับเปลี่ยนแล้ว',swNavOut:'NAV ขาออก',swNavIn:'NAV ขาเข้า'}
+ swNoNav:'ไม่มีข้อมูล NAV ณ วันที่เลือกสำหรับ',swDone:'สับเปลี่ยนแล้ว',swNavOut:'NAV ขาออก',swNavIn:'NAV ขาเข้า',
+ tabHoldings:'ถือครอง',tabReturns:'ผลตอบแทน',tabAllocation:'สัดส่วน',tabRisk:'ความเสี่ยง',tabTax:'ภาษี'}
 };
 const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
 const rangeLabel=k=>t('r_'+k);
@@ -2217,6 +2261,7 @@ function applyLang(){
  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAria));});
  const lb=document.getElementById('langBtn');if(lb)lb.textContent=LANG==='en'?'ไทย':'EN';
  updateAuthUI();renderBenchSel();
+ const ovLangVal=document.getElementById('ovLangVal');if(ovLangVal)ovLangVal.textContent=LANG==='en'?'ไทย':'English';
 }
 
 // Loading skeletons instead of empty values (replaced by first render with data)
@@ -2224,7 +2269,7 @@ function applyLang(){
 
 function computeAll(){
  ALL=[];
- const _pao=pageAsOf(),_noAnchor=portfolioAnchor()===null;
+ const _pao=pageAsOf(),_anchor=portfolioAnchor(),_noAnchor=_anchor===null;
  for(const code in HOLDINGS){const h=HOLDINGS[code],nav=(NAVDB[code]&&NAVDB[code].navs)||{};
   if(!h.tax||h.tax==='General'){const det=DETAILS[code]||DETCACHE[code];const ft=det&&det.taxType?String(det.taxType).toUpperCase():'';
    if(ft)h.tax=ft.indexOf('SSF')>=0?'SSF':ft.indexOf('RMF')>=0?'RMF':ft.indexOf('ESGX')>=0?'ThaiESGX':ft.indexOf('ESG')>=0?'ThaiESG':ft.indexOf('LTF')>=0?'LTF':'General';}
@@ -2232,17 +2277,16 @@ function computeAll(){
    if(am){const up=am.toUpperCase();
     h.amc=up.indexOf('KKP')>=0?'KKP':up.indexOf('SCB')>=0?'SCB':up.indexOf('BBL')>=0?'Bualuang':up.indexOf('UOB')>=0?'UOB':(up.indexOf('KASSET')>=0||up.indexOf('KASIKORN')>=0)?'K-Fund':(up.indexOf('EASTSPRING')>=0||up.indexOf('TMB')>=0)?'Eastspring':up.indexOf('LH')>=0?'LH Fund':up.indexOf('ONE')>=0?'ONE':am;}}
   if(h.name===code){const det=DETAILS[code]||DETCACHE[code];/* keep code as name; nothing else needed */}
-  const ds=Object.keys(nav).sort();const vs=ds.map(d=>nav[d]);
   const _as=_pao||new Date().toISOString().slice(0,10);
+  const ds=Object.keys(nav).filter(d=>d<=_as).sort();const vs=ds.map(d=>nav[d]);
   const _po=priceObsAt(code,_as);
   if(!_po)continue;
   const last=_po.price,prev=vs.length>1?vs[vs.length-2]:_po.price,ld=ds.length?ds[ds.length-1]:'';
-  const rv=n=>ds.length?refLE(ds,vs,daysBefore(ld,n)):last;
   const value=h.units*last,cost=h.units*h.avg;
   const o={code,name:h.name,amc:h.amc,tax:h.tax,asset:h.asset,units:h.units,avg:h.avg,nav:vs[vs.length-1],nav_date:ld,
    price:_po.price,price_src:_po.src,price_date:_po.date,
-   value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:{},pct:{}};
-  if(!_noAnchor&&ds.length)for(const k in RANGES){const r=rv(RANGES[k].d);o.chg[k]=h.units*(last-r);o.pct[k]=(last/r-1)*100;}
+   value,cost,unreal:value-cost,unreal_pct:cost?(value-cost)/cost*100:0,realized:h.realized,dates:ds,vvals:vs,chg:null,pct:null};
+  if(!_noAnchor&&ds.length){const from=periodStart(histTF,_as)||_anchor||ds[0];const r=refLE(ds,vs,from);o.chg=h.units*(last-r);o.pct=(last/r-1)*100;}
   ALL.push(o);}
  ALL.sort((a,b)=>b.value-a.value);
 }
@@ -2250,14 +2294,16 @@ function applyFilter(){
  F=ALL.filter(f=>(filterAMC.size===0||filterAMC.has(f.amc))&&(filterTax.size===0||filterTax.has(f.tax)));
  const S=k=>F.reduce((s,f)=>s+f[k],0);
  T={value:S('value'),cost:S('cost'),unreal:S('unreal'),realized:S('realized')};
- T.unreal_pct=T.cost?T.unreal/T.cost*100:0;T.chg={};T.pct={};
- // Range changes use the same calendar basis as the history chart:
- // portfolio value on the latest valued date minus value n days earlier
- // (per-fund NAVs carried forward), so headline and chart always agree.
+ T.unreal_pct=T.cost?T.unreal/T.cost*100:0;T.chg=null;T.pct=null;T.chgFrom=null;
+ // Period changes use the same calendar basis as the history chart: portfolio
+ // value on the latest valued date minus value at the resolved boundary date
+ // (per-fund prices carried forward), so headline and chart always agree.
  const psH=portfolioSeries();
  if(psH.length>1){
   const dsP=psH.map(x=>x.date),vsP=psH.map(x=>x.value),lastD=dsP[dsP.length-1],lastV=vsP[vsP.length-1];
-  for(const k in RANGES){const ref=refLE(dsP,vsP,daysBefore(lastD,RANGES[k].d));T.chg[k]=lastV-ref;T.pct[k]=ref?T.chg[k]/ref*100:0;}
+  const from=periodStart(histTF,lastD)||portfolioAnchor()||dsP[0];
+  const refDate=[...dsP].reverse().find(d=>d<=from)||dsP[0];
+  const ref=refLE(dsP,vsP,from);T.chg=lastV-ref;T.pct=ref?T.chg/ref*100:0;T.chgFrom=refDate;
  }
  T.as_of=ALL.reduce((m,f)=>f.price_date>m?f.price_date:m,'');
  T.as_of_src=(ALL.find(f=>f.price_date===T.as_of)||{}).price_src||'nav';
@@ -2266,17 +2312,58 @@ function applyFilter(){
  T.oldest_as_of=active.reduce((m,f)=>f.nav_date&&(!m||f.nav_date<m)?f.nav_date:m,'');T.stale=active.filter(f=>T.nav_as_of&&isoDayDiff(T.nav_as_of,f.nav_date)>3).length;
  T.covered=active.length;T.total_active=eligible.length;
 }
-function noPeriod(){for(const k in RANGES)if(T.chg[k]!=null)return false;return true;}
+function noPeriod(){return T.chg==null;}
 
 /* ---------- filters UI ---------- */
+function buildFilterPopover(panelId,triggerLabelId,items,activeSet,colorMap,allLabelKey){
+ const panel=document.getElementById(panelId);
+ panel.innerHTML=`<h4></h4>`+items.map(x=>`<label class="popover-row"><input type="checkbox" data-v="${escAttr(x)}" ${activeSet.has(x)?'checked':''}><span>${escHTML(x)}</span></label>`).join('');
+ panel.querySelector('h4').textContent=t(allLabelKey);
+ panel.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();const next=[...panel.querySelectorAll('input[type=checkbox]')].find(x=>x.dataset.v===v);if(next)next.focus();});
+ const label=document.getElementById(triggerLabelId);
+ if(activeSet.size===0)label.textContent='';
+ else if(activeSet.size===1)label.textContent=': '+[...activeSet][0];
+ else label.textContent=': '+[...activeSet][0]+' +'+(activeSet.size-1);
+}
 function buildFilters(){
  const amcs=[...new Set(ALL.map(f=>f.amc))];
  const taxes=[...new Set(ALL.map(f=>f.tax))];
- document.getElementById('amcFilter').innerHTML=amcs.map(a=>`<button type="button" class="fchip amc ${filterAMC.has(a)?'on':''}" data-a="${escAttr(a)}" style="${filterAMC.has(a)?`background:${AMC_COL[a]||'#c7a760'};color:#10130f`:''}">${escHTML(a)}</button>`).join('');
- document.getElementById('taxFilter').innerHTML=taxes.map(x=>`<button type="button" class="fchip tax ${filterTax.has(x)?'on':''}" data-t="${escAttr(x)}" style="${filterTax.has(x)?`background:${TAX_COL[x]||'#c7a760'};color:#10130f`:''}">${escHTML(x)}</button>`).join('');
- document.querySelectorAll('.fchip.amc').forEach(c=>c.onclick=()=>{const a=c.dataset.a;filterAMC.has(a)?filterAMC.delete(a):filterAMC.add(a);renderAll();});
- document.querySelectorAll('.fchip.tax').forEach(c=>c.onclick=()=>{const t=c.dataset.t;filterTax.has(t)?filterTax.delete(t):filterTax.add(t);renderAll();});
- document.getElementById('fstatus').innerHTML=t('showing').replace('{a}',F.length).replace('{b}',ALL.length);
+ buildFilterPopover('amcPopover','amcTriggerLabel',amcs,filterAMC,AMC_COL,'lblAMC');
+ buildFilterPopover('taxPopover','taxTriggerLabel',taxes,filterTax,TAX_COL,'lblTax');
+ buildFilterList('ovAmcList',amcs,filterAMC);
+ buildFilterList('ovTaxList',taxes,filterTax);
+}
+function buildFilterList(elId,items,activeSet){
+ const el=document.getElementById(elId);
+ el.innerHTML=items.map(x=>`<label class="popover-row"><input type="checkbox" data-v="${escAttr(x)}" ${activeSet.has(x)?'checked':''}><span>${escHTML(x)}</span></label>`).join('');
+ el.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{const v=cb.dataset.v;activeSet.has(v)?activeSet.delete(v):activeSet.add(v);renderAll();const next=[...el.querySelectorAll('input[type=checkbox]')].find(x=>x.dataset.v===v);if(next)next.focus();});
+}
+function renderTfControl(){
+ const tf=document.getElementById('cmdTf');
+ const opts=['1D','1W','1M','3M','6M','1Y','YTD','MAX'];
+ const focusedTf=document.activeElement&&document.activeElement.closest?document.activeElement.closest('#cmdTf button'):null;
+ const focusedValue=focusedTf&&focusedTf.dataset.tf;
+ tf.innerHTML=opts.map(o=>`<button type="button" data-tf="${o}" class="${histTF===o?'on':''}">${o}</button>`).join('');
+ tf.querySelectorAll('button').forEach(b=>b.onclick=()=>setTimeframe(b.dataset.tf));
+ if(focusedValue){const next=[...tf.querySelectorAll('button')].find(b=>b.dataset.tf===focusedValue);if(next)next.focus();}
+
+ const label=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
+ document.getElementById('periodTriggerLabel').textContent=label;
+ const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=label;
+ const fromInput=document.getElementById('tfFrom'),toInput=document.getElementById('tfTo');
+ if(fromInput)fromInput.value=histTF==='CUSTOM'?histFrom:'';
+ if(toInput)toInput.value=histTF==='CUSTOM'?histTo:'';
+
+ const pop=document.getElementById('periodPopover');
+ pop.innerHTML=`<h4 data-i18n="lblPeriod"></h4>`+opts.map(o=>`<label class="popover-row"><input type="radio" name="periodPop" value="${o}" ${histTF===o?'checked':''}><span>${o}</span></label>`).join('');
+ pop.querySelector('h4').textContent=t('lblPeriod');
+ pop.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{setTimeframe(r.value);closePopover(pop,true);});
+}
+function setTimeframe(tf){
+ histTF=tf;histFrom='';histTo='';
+ const from=document.getElementById('tfFrom'),to=document.getElementById('tfTo');if(from)from.value='';if(to)to.value='';
+ localStorage.setItem('kkp_histtf',histTF);localStorage.removeItem('kkp_histfrom');localStorage.removeItem('kkp_histto');
+ renderAll();
 }
 
 /* ---------- header / KPIs ---------- */
@@ -2302,28 +2389,52 @@ function renderConfidence(){
  stale.textContent=T.stale?String(T.stale):t('confFresh');
  document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
  document.getElementById('rangeDot').className='conf-dot'+(T.stale?' warn':'');document.getElementById('staleDot').className='conf-dot'+(T.stale?' bad':'');
+ const sf=document.getElementById('statusFresh');if(sf)sf.textContent=T.stale?t('staleStatus').replace('{n}',String(T.stale)):'';
 }
 function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
- const b=T.chg[RANGE],p=T.pct[RANGE];
+ const b=T.chg,p=T.pct;
  const tlb=document.getElementById('tl-baht');
- document.getElementById('g-tl').textContent='· '+rangeLabel(RANGE);document.getElementById('l-tl').textContent='· '+rangeLabel(RANGE);
- document.getElementById('th-tl').textContent='('+rangeLabel(RANGE)+')';
+ document.getElementById('g-tl').textContent='· '+rangeLabel(histTF);document.getElementById('l-tl').textContent='· '+rangeLabel(histTF);
+ document.getElementById('th-tl').textContent='('+rangeLabel(histTF)+')';
  if(noPeriod()){tlb.textContent='—';tlb.className='big mono';
   const pe0=document.getElementById('tl-pct');pe0.textContent='';pe0.className='pct mono';
   document.getElementById('tl-label').innerHTML=`${escHTML(t('noPeriodMsg'))} <button type="button" class="btn ghost" id="setStartBtn">${escHTML(t('setStartDate'))}</button>`;
   const sb=document.getElementById('setStartBtn');if(sb)sb.onclick=setStartDate;
+  document.getElementById('tl-from').textContent='';
   return;}
  tlb.textContent='฿'+sign(b);tlb.className='big mono '+cls(b);
  const pe=document.getElementById('tl-pct');pe.textContent=sign(p)+'%';pe.className='pct mono '+cls(p);
- document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(RANGE).toLowerCase():rangeLabel(RANGE));
+ document.getElementById('tl-label').textContent=t('tlLabel').replace('{p}',LANG==='en'?rangeLabel(histTF).toLowerCase():rangeLabel(histTF));
+ document.getElementById('tl-from').textContent=T.chgFrom?t('vsDate').replace('{d}',fmtD(T.chgFrom)):'';
+}
+function renderScope(){
+ const chip=document.getElementById('scopeChip'),lbl=document.getElementById('eyebrowLbl');
+ const active=filterAMC.size>0||filterTax.size>0;
+ if(!active){chip.hidden=true;chip.textContent='';lbl.textContent=t('eyebrow');const ss=document.getElementById('statusScope');if(ss)ss.textContent='';return;}
+ chip.hidden=false;lbl.textContent=t('eyebrowFiltered');
+ const parts=[...filterAMC,...filterTax];
+ chip.textContent=parts.join(' · ')+` — ${F.length}/${ALL.length}`;
+ const ss=document.getElementById('statusScope');if(ss)ss.textContent=active?chip.textContent:'';
+}
+function renderSparkline(){
+ const svg=document.getElementById('spark');
+ const ps=portfolioSeries();const dates=ps.map(r=>r.date);const w=tfWindow(dates);const wset=new Set(w);
+ const pts=ps.filter(r=>wset.has(r.date)).map(r=>r.value);
+ if(pts.length<2){svg.innerHTML='';return;}
+ const min=Math.min(...pts),max=Math.max(...pts),span=(max-min)||1;
+ const W=300,H=36;
+ const xy=pts.map((v,i)=>[i/(pts.length-1)*W,H-((v-min)/span)*H]);
+ const d='M'+xy.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L');
+ const up=pts[pts.length-1]>=pts[0];
+ svg.innerHTML=`<path d="${d}" fill="none" stroke="${up?'var(--pos)':'var(--neg)'}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
 }
 function renderMovers(){
  if(noPeriod()){const _m=t(portfolioAnchor()===null?'noAnchor':'noPeriodMsg');document.getElementById('gainers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;document.getElementById('losers').innerHTML=`<div class="skel">${escHTML(_m)}</div>`;return;}
- const s=F.filter(f=>Number.isFinite(f.pct[RANGE])).sort((a,b)=>b.pct[RANGE]-a.pct[RANGE]);
+ const s=F.filter(f=>Number.isFinite(f.pct)).sort((a,b)=>b.pct-a.pct);
  const row=(f,i)=>`<div class="mover" role="button" tabindex="0" data-fund="${escAttr(f.code)}"><div class="rank">${i+1}</div>
   <div class="nm"><div class="c">${escHTML(f.code)}</div><div class="t">${escHTML(f.amc)} · ${escHTML(f.name)}</div></div>
-  <div style="text-align:right"><div class="pct ${cls(f.pct[RANGE])}">${sign(f.pct[RANGE])}%</div><div class="baht">฿${sign(f.chg[RANGE])}</div></div></div>`;
+  <div style="text-align:right"><div class="pct ${cls(f.pct)}">${sign(f.pct)}%</div><div class="baht">฿${sign(f.chg)}</div></div></div>`;
  document.getElementById('gainers').innerHTML=s.slice(0,6).map(row).join('')||`<div class="skel">${t('noFunds')}</div>`;
  document.getElementById('losers').innerHTML=s.slice(-6).reverse().map(row).join('')||'';
 }
@@ -2356,12 +2467,12 @@ function renderDonuts(){
 }
 
 /* ---------- table ---------- */
-function valOf(f,k){if(k==='weight')return f.value;if(k==='chg'){const v=f.pct[RANGE];return Number.isFinite(v)?v:0;}if(k==='code')return f.code;return f[k];}
+function valOf(f,k){if(k==='weight')return f.value;if(k==='chg'){const v=f.pct;return Number.isFinite(v)?v:0;}if(k==='code')return f.code;return f[k];}
 function renderTable(){
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);});
  const noAnchor=noPeriod();
  const maxW=Math.max(...F.map(f=>T.value?f.value/T.value*100:0),1);
- document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg[RANGE],cp=f.pct[RANGE],stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3,noFund=noAnchor||chg==null;
+ document.getElementById('tbody').innerHTML=rows.map(f=>{const w=T.value?f.value/T.value*100:0,chg=f.chg,cp=f.pct,stale=T.nav_as_of&&f.nav_date&&isoDayDiff(T.nav_as_of,f.nav_date)>3,noFund=noAnchor||chg==null;
   return `<tr role="button" tabindex="0" data-fund="${escAttr(f.code)}">
    <td><div class="fname"><span class="c">${escHTML(f.code)} <span class="amcb">${escHTML(f.amc)}</span> <span class="tag ${escAttr(f.tax)}">${escHTML(f.tax)}</span></span><span class="t">${escHTML(f.name)} · ${t('navDate')} ${escHTML(fmtD(f.nav_date))}${stale?`<span class="stale-badge">${t('stale')}</span>`:''}</span></div></td>
    <td data-l="${escAttr(t('thPrice'))}">${fmt(f.price,4)} <span class="src-badge">${escHTML(t(f.price_src==='exec'?'srcExec':'srcNav'))} ${escHTML(fmtD(f.price_date))}</span>${f.price_src==='exec'&&f.nav_date?`<br><span style="font-size:10.5px;color:var(--muted2)">NAV ${fmt(f.nav,4)} · ${escHTML(fmtD(f.nav_date))}</span>`:''}</td><td data-l="${escAttr(t('thUnits'))}">${fmt(f.units,2)}</td><td data-l="${escAttr(t('thValue'))}"><b>฿${fmt0(f.value)}</b></td>
@@ -2370,7 +2481,7 @@ function renderTable(){
    <td data-l="${escAttr(t('thUnreal'))}" class="${cls(f.unreal)}">฿${sign(f.unreal)}<br><span style="font-size:10.5px">${sign(f.unreal_pct)}%</span></td>
    <td data-l="${escAttr(t('thReal'))}" class="${f.realized==0?'':cls(f.realized)}" style="${f.realized==0?'color:var(--muted2)':''}">${f.realized==0?'—':'฿'+sign(f.realized)}</td></tr>`;}).join('');
  document.getElementById('tfoot').innerHTML=`<tr class="tfoot-row"><td>${t('totalWord')} (${F.length} ${t('fundsWord')})</td><td></td><td></td><td>฿${fmt0(T.value)}</td><td>100%</td>
-   <td class="${noAnchor?'':cls(T.chg[RANGE])}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(T.chg[RANGE])}<br><span style="font-size:10.5px">${sign(T.pct[RANGE])}%</span>`}</td>
+   <td class="${noAnchor?'':cls(T.chg)}">${noAnchor?'<span style="color:var(--muted2)">—</span>':`฿${sign(T.chg)}<br><span style="font-size:10.5px">${sign(T.pct)}%</span>`}</td>
    <td class="${cls(T.unreal)}">฿${sign(T.unreal)}<br><span style="font-size:10.5px">${sign(T.unreal_pct)}%</span></td>
    <td class="${cls(T.realized)}">฿${sign(T.realized)}</td></tr>`;
 }
@@ -2429,6 +2540,7 @@ function pageAsOf(){
   if(!codes.includes(x.code))continue;
   if((x.action==='buy'||x.action==='sell')&&+x.price>0&&(x.date||'')>m)m=x.date;
  }
+ if(histTF==='CUSTOM'&&histTo&&histTo<m)return histTo;
  return m;
 }
 function windowCoverage(start){
@@ -2501,16 +2613,22 @@ function windowCashflows(windowRows){
  if(cf.length)cf[cf.length-1].amount+=windowRows[windowRows.length-1].value;
  return cf;
 }
+function periodStart(tf,lastDateStr){
+ if(tf==='CUSTOM')return histFrom||null;
+ const D={'1D':1,'1W':7,'1M':30,'3M':91,'6M':182,'1Y':365};
+ if(tf==='YTD')return lastDateStr.slice(0,4)+'-01-01';
+ if(D[tf])return daysBefore(lastDateStr,D[tf]);
+ return null; // MAX, or CUSTOM with no bound set
+}
 function tfWindow(dates){
  if(!dates.length)return dates;
  const last=dates[dates.length-1];
- if(histTF==='CUSTOM'){const from=histFrom||dates[0],to=histTo||last;return dates.filter(d=>d>=from&&d<=to);}
- const D={'1W':7,'1M':30,'3M':91,'6M':182,'1Y':365};
- let from;
- if(histTF==='YTD')from=last.slice(0,4)+'-01-01';
- else if(D[histTF])from=daysBefore(last,D[histTF]);
- else return dates; // MAX
- return dates.filter(d=>d>=from);
+ const from=periodStart(histTF,last)||dates[0];
+ const to=histTF==='CUSTOM'&&histTo?histTo:last;
+ const rows=dates.filter(d=>d>=from&&d<=to);
+ const boundary=[...dates].reverse().find(d=>d<=from);
+ if(boundary&&rows[0]!==boundary)rows.unshift(boundary);
+ return rows;
 }
 function riskStats(ds,vs){
  if(!vs||vs.length<3)return null;
@@ -2748,11 +2866,11 @@ function renderConc(){
 /* ---------- CSV export ---------- */
 function exportCSV(){
  const esc=x=>`"${String(x==null?'':x).replace(/"/g,'""')}"`;
- const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(RANGE)+')',t('thChange')+' % ('+rangeLabel(RANGE)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
+ const head=[t('thFund'),'Name','AMC','Tax','Asset','Valuation Price','Price Source','Price Date','Published NAV','Published NAV Date','Units','Avg Cost',t('thValue'),t('thWeight')+' %',t('thChange')+' ฿ ('+rangeLabel(histTF)+')',t('thChange')+' % ('+rangeLabel(histTF)+')',t('thUnreal')+' ฿',t('thUnreal')+' %',t('thReal')+' ฿'];
  const noAnchor=noPeriod();
  const rows=[...F].sort((a,b)=>{const x=valOf(a,sortK),y=valOf(b,sortK);return typeof x==='string'?sortDir*x.localeCompare(y):sortDir*(x-y);})
-  .map(f=>{const noFund=noAnchor||f.chg[RANGE]==null;return[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noFund?'':f.chg[RANGE].toFixed(2),noFund?'':f.pct[RANGE].toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)];});
- rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg[RANGE].toFixed(2),noAnchor?'':T.pct[RANGE].toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
+  .map(f=>{const noFund=noAnchor||f.chg==null;return[f.code,f.name,f.amc,f.tax,f.asset,f.price,f.price_src==='exec'?'Execution':'NAV',f.price_date,f.nav,f.nav_date,f.units,f.avg,f.value.toFixed(2),(f.value/T.value*100).toFixed(2),noFund?'':f.chg.toFixed(2),noFund?'':f.pct.toFixed(2),f.unreal.toFixed(2),f.unreal_pct.toFixed(2),f.realized.toFixed(2)];});
+ rows.push([t('totalWord'),'','','','','','','','','','','',T.value.toFixed(2),'100',noAnchor?'':T.chg.toFixed(2),noAnchor?'':T.pct.toFixed(2),T.unreal.toFixed(2),T.unreal_pct.toFixed(2),T.realized.toFixed(2)]);
  const csv='﻿'+[head,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  a.download='portfolio_'+(T.as_of||new Date().toISOString().slice(0,10))+'.csv';a.click();
@@ -2761,8 +2879,101 @@ function exportCSV(){
 
 /* ---------- fund detail modal (live fetch) ---------- */
 let LAST_FOCUS=null;
-function showDialog(id){const bg=document.getElementById(id);LAST_FOCUS=document.activeElement;bg.classList.add('show');bg.setAttribute('aria-hidden','false');requestAnimationFrame(()=>{const m=bg.querySelector('.modal');if(m)m.focus();});}
+function showDialog(id){if(OPEN_POPOVER)closePopover(OPEN_POPOVER.panel,true);const bg=document.getElementById(id);LAST_FOCUS=document.activeElement;bg.classList.add('show');bg.setAttribute('aria-hidden','false');requestAnimationFrame(()=>{const m=bg.querySelector('.modal');if(m)m.focus();});}
 function hideDialog(id){const bg=document.getElementById(id);bg.classList.remove('show');bg.setAttribute('aria-hidden','true');if(LAST_FOCUS&&LAST_FOCUS.focus)LAST_FOCUS.focus();}
+let OPEN_POPOVER=null;
+function positionPopover(trigger,panel){
+ const r=trigger.getBoundingClientRect();
+ const panelWidth=Math.max(panel.offsetWidth,220);
+ let left=r.left;
+ if(left+panelWidth>window.innerWidth-8)left=Math.max(8,window.innerWidth-panelWidth-8);
+ let top=r.bottom+6;
+ if(top+panel.offsetHeight>window.innerHeight-8)top=Math.max(8,r.top-panel.offsetHeight-6);
+ panel.style.left=left+'px';panel.style.top=top+'px';panel.style.right='auto';
+}
+function openPopover(trigger,panel){
+ if(OPEN_POPOVER&&OPEN_POPOVER.panel!==panel)closePopover(OPEN_POPOVER.panel);
+ panel.classList.add('open');
+ positionPopover(trigger,panel);
+ trigger.setAttribute('aria-expanded','true');
+ OPEN_POPOVER={trigger,panel};
+ const focusable=[...panel.querySelectorAll('button,input,[tabindex]')].find(el=>{const cs=getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden'&&el.getClientRects().length;});
+ if(focusable)focusable.focus();
+}
+function closePopover(panel,restoreFocus){
+ if(!panel||!panel.classList.contains('open'))return;
+ panel.classList.remove('open');
+ const active=OPEN_POPOVER&&OPEN_POPOVER.panel===panel?OPEN_POPOVER:null;
+ const trigger=active?active.trigger:document.querySelector(`[aria-controls="${panel.id}"]`);
+ if(trigger)trigger.setAttribute('aria-expanded','false');
+ if(restoreFocus&&trigger)trigger.focus();
+ if(OPEN_POPOVER&&OPEN_POPOVER.panel===panel)OPEN_POPOVER=null;
+}
+window.addEventListener('resize',()=>{
+ if(!OPEN_POPOVER)return;
+ const {trigger,panel}=OPEN_POPOVER,r=trigger.getBoundingClientRect(),cs=getComputedStyle(trigger);
+ if(cs.display==='none'||cs.visibility==='hidden'||!r.width||!r.height){closePopover(panel,false);return;}
+ positionPopover(trigger,panel);
+});
+document.addEventListener('click',e=>{
+ if(!OPEN_POPOVER)return;
+ if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
+ closePopover(OPEN_POPOVER.panel);
+},true);
+document.addEventListener('focusin',e=>{
+ if(!OPEN_POPOVER)return;
+ if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
+ closePopover(OPEN_POPOVER.panel);
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&OPEN_POPOVER){closePopover(OPEN_POPOVER.panel,true);}
+},true);
+document.querySelectorAll('.popover-trigger').forEach(btn=>{
+ btn.onclick=()=>{const panel=document.getElementById(btn.getAttribute('aria-controls'));
+  if(panel.classList.contains('open'))closePopover(panel,true);else openPopover(btn,panel);};
+});
+document.getElementById('statusTf').onclick=()=>{const p=document.getElementById('periodPopover');
+ if(p.classList.contains('open'))closePopover(p,true);else openPopover(document.getElementById('statusTf'),p);};
+const TAB_IDS=['holdings','returns','allocation','risk','tax'];
+function revealActiveTab(){
+ const list=document.getElementById('tablist'),tab=list.querySelector('[aria-selected="true"]');
+ if(!tab)return;
+ const r=tab.getBoundingClientRect(),bounds=list.getBoundingClientRect();
+ if(r.left<bounds.left)list.scrollLeft+=Math.floor(r.left-bounds.left);
+ else if(r.right>bounds.right)list.scrollLeft+=Math.ceil(r.right-bounds.right);
+}
+function activateTab(id,focus){
+ TAB_IDS.forEach(x=>{
+  const tab=document.getElementById('tab-'+x),panel=document.getElementById('panel-'+x);
+  const on=x===id;
+  tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;
+  panel.hidden=!on;
+ });
+ localStorage.setItem('kkp_tab',id);
+ const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
+ const tab=document.getElementById('tab-'+id);
+ if(focus)tab.focus();
+ requestAnimationFrame(revealActiveTab);
+}
+document.querySelectorAll('#tablist .tab').forEach((tab,i)=>{
+ tab.onclick=()=>activateTab(TAB_IDS[i]);
+});
+document.getElementById('tablist').addEventListener('keydown',e=>{
+ const i=TAB_IDS.indexOf(document.activeElement.id.replace('tab-',''));
+ if(i<0)return;
+ let next=null;
+ if(e.key==='ArrowRight')next=TAB_IDS[(i+1)%TAB_IDS.length];
+ else if(e.key==='ArrowLeft')next=TAB_IDS[(i-1+TAB_IDS.length)%TAB_IDS.length];
+ else if(e.key==='Home')next=TAB_IDS[0];
+ else if(e.key==='End')next=TAB_IDS[TAB_IDS.length-1];
+ else if(e.key==='Enter'||e.key===' '){e.preventDefault();activateTab(TAB_IDS[i]);return;}
+ if(next){e.preventDefault();
+  TAB_IDS.forEach(x=>{document.getElementById('tab-'+x).tabIndex=x===next?0:-1;});
+  document.getElementById('tab-'+next).focus();}
+});
+const _storedTab=localStorage.getItem('kkp_tab');
+activateTab(TAB_IDS.includes(_storedTab)?_storedTab:'holdings');
+document.fonts.ready.then(revealActiveTab);
 async function openFund(code){
  const f=ALL.find(x=>x.code===code);const bg=document.getElementById('modalBg'),m=document.getElementById('modal');
  if(!f)return;showDialog('modalBg');const total=ALL.reduce((s,x)=>s+x.value,0);
@@ -2969,30 +3180,52 @@ async function doSwitch(){
 }
 
 /* ---------- wire ---------- */
-document.querySelectorAll('#pills button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pills button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RANGE=b.dataset.r;renderTL();renderMovers();renderTable();});
+document.getElementById('overflowPanel').innerHTML=`
+ <div id="ovFilters" style="display:none">
+  <h4 data-i18n="lblAMC" style="margin:4px 0 6px;font-size:12px;color:var(--muted2);text-transform:uppercase"></h4>
+  <div id="ovAmcList"></div>
+  <h4 data-i18n="lblTax" style="margin:10px 0 6px;font-size:12px;color:var(--muted2);text-transform:uppercase"></h4>
+  <div id="ovTaxList"></div>
+  <hr style="border-color:var(--line);margin:6px 0">
+ </div>
+ <button type="button" class="btn ghost" id="ovLang" style="justify-content:space-between"><span data-i18n="langBtnLbl">Language</span><span id="ovLangVal">ไทย</span></button>
+ <button type="button" class="btn ghost" id="ovAuth"></button>
+ <button type="button" class="btn ghost" id="ovTxn" data-i18n="txnBtn">⇄ Buy / Sell</button>
+ <button type="button" class="btn ghost" id="ovSw" data-i18n="swBtn">⇌ Switch</button>
+ <hr style="border-color:var(--line);margin:6px 0">
+ <button type="button" class="btn ghost" id="ovCsv" data-i18n="csvBtn">⬇ Export CSV</button>
+ <button type="button" class="btn ghost" id="ovPrint" data-i18n="printBtn">🖨 Print</button>
+ <hr style="border-color:var(--line);margin:6px 0">
+ <button type="button" class="btn ghost" id="ovExp" data-i18n="expBtn">⬇ Download nav_history.json</button>
+ <button type="button" class="btn ghost" id="ovImp" data-i18n="impBtn">⬆ Import NAV database</button>
+ <button type="button" class="btn ghost" id="ovImpHold" data-i18n="impHoldBtn">⬆ Import portfolio (holdings.json)</button>
+ <button type="button" class="btn ghost" id="promptBtn" data-i18n="promptBtn">📋 Copy AI import prompt</button>`;
+applyLang();
+document.getElementById('ovLang').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
+document.getElementById('ovAuth').onclick=openAuth;
+document.getElementById('ovTxn').onclick=()=>openTxn('');
+document.getElementById('ovSw').onclick=openSw;
+document.getElementById('ovCsv').onclick=exportCSV;
+document.getElementById('ovPrint').onclick=()=>window.print();
+document.getElementById('ovExp').onclick=exportDB;
+document.getElementById('ovImp').onclick=()=>document.getElementById('impFile').click();
+document.getElementById('ovImpHold').onclick=()=>document.getElementById('impHoldFile').click();
 document.querySelectorAll('th.sortable').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderTable();});
 document.querySelectorAll('.ms-modes button[data-m]').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histMode=b.dataset.m;renderHist();});
 document.querySelectorAll('#msSortBtns button').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histSort=b.dataset.s;renderMSList();renderHist();});
-document.getElementById('txnBtn').onclick=()=>openTxn('');
 document.getElementById('txnBg').onclick=e=>{if(e.target.id==='txnBg')closeTxn();};
-document.getElementById('swBtn').onclick=openSw;
 document.getElementById('swBg').onclick=e=>{if(e.target.id==='swBg')closeSw();};
 document.getElementById('msSearch').oninput=e=>{msFilter=e.target.value.toLowerCase().trim();renderMSList();};
 document.getElementById('msPort').onclick=()=>{histSel=new Set(['__PORT__']);renderMSList();renderHist();};
 document.getElementById('msNone').onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 document.getElementById('updBtn').onclick=updateNAV;
-document.getElementById('expBtn').onclick=exportDB;
-/* timeframe pills + custom range */
-document.querySelectorAll('#tfBtns button').forEach(b=>{
- if(b.dataset.tf===histTF)b.classList.add('on');else b.classList.remove('on');
- b.onclick=()=>{document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-  histTF=b.dataset.tf;histFrom='';histTo='';localStorage.setItem('kkp_histtf',histTF);renderHist();renderRisk();};});
+/* custom range (fixed-period buttons live in the command bar; see renderTfControl) */
 document.getElementById('tfApply').onclick=()=>{
  const f=document.getElementById('tfFrom').value,to=document.getElementById('tfTo').value;
  if(!f&&!to)return;
  histTF='CUSTOM';histFrom=f;histTo=to;
- document.querySelectorAll('#tfBtns button').forEach(x=>x.classList.remove('on'));
- renderHist();renderRisk();};
+ localStorage.setItem('kkp_histtf','CUSTOM');localStorage.setItem('kkp_histfrom',histFrom);localStorage.setItem('kkp_histto',histTo);
+ renderAll();};
 /* benchmark */
 document.getElementById('benchSel').onchange=e=>setBench(e.target.value);
 /* AI import prompt */
@@ -3040,31 +3273,15 @@ document.getElementById('birthBtn').onclick=setBirth;
 document.querySelectorAll('#unlockModes button').forEach(b=>{
  if(b.dataset.um===unlockMode)b.classList.add('on');else b.classList.remove('on');
  b.onclick=()=>{document.querySelectorAll('#unlockModes button').forEach(x=>x.classList.remove('on'));b.classList.add('on');unlockMode=b.dataset.um;localStorage.setItem('kkp_unlockmode',unlockMode);renderUnlock();};});
-/* language toggle */
-document.getElementById('langBtn').onclick=()=>{LANG=LANG==='en'?'th':'en';localStorage.setItem('kkp_lang',LANG);applyLang();renderAll();};
-document.getElementById('impBtn').onclick=()=>document.getElementById('impFile').click();
 document.getElementById('impFile').onchange=e=>{if(e.target.files[0])importDB(e.target.files[0]);};
 function importHoldings(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);for(const c in o){const h=o[c];delete h._verify;h.name=h.name||c;h.amc=h.amc||'Other';h.tax=h.tax||'General';h.asset=h.asset||'Foreign Equity';h.units=+h.units||0;h.avg=+h.avg||0;h.realized=+h.realized||0;if(+h.units>0)h.asof=h.asof||new Date().toISOString().slice(0,10);if(Array.isArray(h.lots)){h.lots=h.lots.filter(L=>L&&L.date&&+L.units>0).map(L=>({date:String(L.date),units:+L.units,cost:+L.cost||0}));if(h.lots.length&&!h.firstBuy)h.firstBuy=h.lots.map(L=>L.date).sort()[0];if(!h.lots.length)delete h.lots;}else delete h.lots;}let merged=o;if(Object.keys(HOLDINGS_BASE).length&&confirm(t('mergeAsk'))){merged={...HOLDINGS_BASE};for(const c in o)merged[c]=o[c];}for(const c of Object.keys(merged)){if(!(+merged[c].units>0))delete merged[c];/* units:0 = remove fund */}HOLDINGS_BASE=merged;persist();if(SB&&USER){try{const reg=Object.keys(o).filter(c=>+o[c].units>0);if(reg.length)SB.from('fund_universe').upsert(reg.map(c=>({code:c})),{onConflict:'code'}).then(({error})=>{if(error)console.error('fund universe',error);});}catch(e){console.error(e);}}renderAll();toast(t('portfolioImported'),'ok');const missing=Object.keys(o).filter(c=>!NAVDB[c]||!Object.keys((NAVDB[c]||{}).navs||{}).length);if(missing.length){localStorage.removeItem('kkp_lastNavFetch');updateNAV();}}catch(e){toast(t('invalidFile'),'err');}};fr.readAsText(file);}
-document.getElementById('impHoldBtn').onclick=()=>document.getElementById('impHoldFile').click();
 document.getElementById('impHoldFile').onchange=e=>{if(e.target.files[0])importHoldings(e.target.files[0]);};
 document.addEventListener('click',e=>{const close=e.target.closest('[data-close]');if(close&&['modalBg','txnBg','swBg','authBg'].includes(close.dataset.close)){hideDialog(close.dataset.close);return;}const txn=e.target.closest('[data-open-txn]');if(txn){closeModal();openTxn(txn.dataset.openTxn);return;}const fund=e.target.closest('[data-fund]');if(fund)openFund(fund.dataset.fund);});
 document.addEventListener('keydown',e=>{const bg=document.querySelector('.modal-bg.show');if(e.key==='Escape'&&bg){hideDialog(bg.id);return;}const fund=e.target.closest&&e.target.closest('[data-fund]');if(fund&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openFund(fund.dataset.fund);return;}if(e.key==='Tab'&&bg){const focusable=[...bg.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);if(!focusable.length){e.preventDefault();return;}const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
-/* keep filter bar pinned right below the header */
-(function(){const hdr=document.querySelector('header.top'),fb=document.querySelector('.sticky-controls');
- if(!hdr||!fb)return;
- // Top-bar layout: stick just below the header. Sidebar/tall layouts: stick to viewport top.
- const topOff=()=>{const r=hdr.getBoundingClientRect();return (r.width>window.innerWidth*0.6&&r.height<160)?Math.max(0,Math.round(r.height)-1):0;};
- const adj=()=>{fb.style.top=topOff()+'px';};
- adj();window.addEventListener('resize',adj);
- let tick=false;
- const onScroll=()=>{if(tick)return;tick=true;requestAnimationFrame(()=>{tick=false;adj();
-  fb.classList.toggle('stuck',fb.getBoundingClientRect().top<=topOff()+1&&window.scrollY>4);});};
- window.addEventListener('scroll',onScroll,{passive:true});onScroll();})();
-
 function safe(fn){try{fn();}catch(e){console.error('render error in',fn.name,e);}}
 function renderAll(){
- buildHoldings();computeAll();applyFilter();
- safe(buildFilters);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
+ buildHoldings(histTF==='CUSTOM'&&histTo?histTo:'');computeAll();applyFilter();
+ safe(buildFilters);safe(renderTfControl);safe(renderHeader);safe(renderConfidence);safe(renderEmpty);safe(renderTL);safe(renderScope);safe(renderSparkline);safe(renderMovers);safe(renderPL);safe(renderTable);safe(renderMSList);
  safe(renderDonuts);safe(renderHist);safe(renderRisk);safe(renderBenchSel);safe(renderUnlock);safe(renderConc);
 }
 /* ---------- auth + cloud sync ---------- */
@@ -3073,7 +3290,7 @@ function sbReady(){const u=SB_BAKED.url||localStorage.getItem('sb_url'),k=SB_BAK
 function openAuth(){showDialog('authBg');renderAuth();}
 function closeAuth(){hideDialog('authBg');}
 function authMsg(m){const e=document.getElementById('au-msg');if(e)e.textContent=m;}
-function updateAuthUI(){const b=document.getElementById('authBtn');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):t('signIn');}
+function updateAuthUI(){const b=document.getElementById('ovAuth');if(b)b.textContent=USER?('\u{1F464} '+USER.email.split('@')[0]):t('signIn');}
 function renderAuth(){const m=document.getElementById('authModal');
  const close=`<button class="modal-x" type="button" data-close="authBg" aria-label="${escAttr(t('closeBtn'))}">✕</button>`;
  if(USER){m.innerHTML=`<div class="modal-h"><div><div class="code">${t('accountTitle')}</div><div class="nm">${escHTML(USER.email)}</div></div>${close}</div><div class="modal-b"><p style="font-size:13px;color:var(--muted);margin-bottom:14px">${t('accountSub')}</p><button class="btn" id="auth-logout" type="button" style="width:100%;justify-content:center">${t('signOut')}</button></div>`;document.getElementById('auth-logout').onclick=doLogout;return;}
@@ -3088,7 +3305,6 @@ async function doSignIn(){if(!sbReady())return;authMsg(t('signingIn'));const{dat
 async function doSignUp(){if(!sbReady())return;authMsg(t('creatingAccount'));const{data,error}=await SB.auth.signUp({email:_v('au-email'),password:_v('au-pass')});if(error){authMsg(error.message);return;}if(data.session){USER=data.user;await afterLogin();}else{authMsg(t('accountCreated'));}}
 async function doLogout(){if(SB){try{await SB.auth.signOut();}catch(e){}}USER=null;try{localStorage.removeItem('kkp_holdings');localStorage.removeItem(LS_TXN);}catch(e){}HOLDINGS_BASE={};TXNS=[];updateAuthUI();closeAuth();renderAll();toast(t('signedOut'),'ok');}
 async function afterLogin(){updateAuthUI();try{const{data}=await SB.from('portfolios').select('holdings,transactions').eq('user_id',USER.id).maybeSingle();if(data&&data.holdings&&Object.keys(data.holdings).length){HOLDINGS_BASE=data.holdings;TXNS=data.transactions||[];}else{await saveCloud();}await loadMarket();}catch(e){console.error(e);}renderAll();closeAuth();toast(t('signedIn')+' '+USER.email,'ok');}
-document.getElementById('authBtn').onclick=openAuth;
 document.getElementById('authBg').onclick=e=>{if(e.target.id==='authBg')closeAuth();};
 if(sbReady()){SB.auth.getSession().then(({data})=>{if(data&&data.session){USER=data.session.user;afterLogin();}else updateAuthUI();});
  SB.auth.onAuthStateChange((ev,session)=>{if(ev==='SIGNED_IN'&&session&&(!USER||USER.id!==session.user.id)){USER=session.user;afterLogin();}});}
@@ -3159,7 +3375,6 @@ async function autoFetchNAV(){
 }
 
 applyLang();
-document.getElementById('mobileMenuBtn').onclick=()=>{const a=document.getElementById('headerActions'),b=document.getElementById('mobileMenuBtn'),open=a.classList.toggle('open');b.setAttribute('aria-expanded',String(open));};
 document.getElementById('emptySignIn').onclick=openAuth;
 document.getElementById('emptyImport').onclick=()=>document.getElementById('impHoldFile').click();
 renderAll();

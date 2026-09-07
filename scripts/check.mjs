@@ -26,7 +26,7 @@ try {
     if (!(k in I18N.en)) missing.en.push(k);
     if (!(k in I18N.th)) missing.th.push(k);
   }
-  ['r_d1','r_w1','r_d15','r_m1'].forEach(k => { if (!(k in I18N.en)) missing.en.push(k); if (!(k in I18N.th)) missing.th.push(k); });
+  ['r_1D','r_1W','r_1M','r_3M','r_6M','r_1Y','r_YTD','r_MAX','r_CUSTOM'].forEach(k => { if (!(k in I18N.en)) missing.en.push(k); if (!(k in I18N.th)) missing.th.push(k); });
   const parity = Object.keys(I18N.en).filter(k => !(k in I18N.th));
   if (missing.en.length) fail('i18n keys missing in en: ' + missing.en.join(', '));
   if (missing.th.length) fail('i18n keys missing in th: ' + missing.th.join(', '));
