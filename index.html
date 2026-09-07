@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-Fvb9BCJ3TLaNWPzdYwnQbspLq1cdmigvOoEWtZUx/mA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-pKla/dcs1bpfSNTjYLQt2XL7uy2vzY+okiZyVjqAMvY='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +51,7 @@ body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-em
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
 .totval{font-size:42px;font-weight:800;letter-spacing:-1.3px;margin:5px 0 2px}.totval .cur{font-size:20px;color:var(--muted);font-weight:600;margin-right:5px}
 .hero-sub{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
-.scope-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;margin-left:10px}
+.scope-chip:not([hidden]){display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;margin-left:10px}
 .chg-from{font-size:11px;color:var(--muted2);margin-left:8px;font-weight:500}
 .spark{display:block;margin-top:10px}
 .hero-sub .it{font-size:12px;color:var(--muted)}.hero-sub .it b{display:block;font-size:16px;color:var(--txt);font-weight:700;margin-top:2px}
@@ -2185,7 +2185,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',mMarket:'Market Value',mUnreal:'Unrealized',mWeight:'Weight',mCategory:'Category',mRisk:'Risk level',mDividend:'Dividend policy',mInception:'Inception',mNetAssets:'Net assets',divYes:'Pays dividends',divNo:'No dividends',
  csvSaved:'✅ CSV exported',
  mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',promptBtn:'📋 Copy AI import prompt',promptCopied:'Prompt copied — paste it into any AI together with photos of your fund statements, then import the JSON it returns',mergeAsk:'Merge with your existing portfolio?\n\nOK = update/add only the funds in this file\nCancel = REPLACE the whole portfolio with this file',
- confCoverage:'Valuation coverage',confRange:'NAV date range',confStale:'Stale funds',confFresh:'All current',navPoints:'{n} NAV points stored',noAsOf:'No valuation yet',navDate:'NAV',stale:'stale',updateBlocked:'NAV update is unavailable. Check the Worker domain or import a NAV database.',syncDone:'Synced {ok}/{total} funds · {added} new NAV points',syncFailed:'{n} failed',dbImported:'NAV database imported',portfolioImported:'Portfolio imported',invalidFile:'Invalid file',urlInvalid:'Use a URL like https://xxxx.supabase.co',keyInvalid:'The anon public key looks too short',
+ confCoverage:'Valuation coverage',confRange:'NAV date range',confStale:'Stale funds',confFresh:'All current',staleStatus:'{n} stale',navPoints:'{n} NAV points stored',noAsOf:'No valuation yet',navDate:'NAV',stale:'stale',updateBlocked:'NAV update is unavailable. Check the Worker domain or import a NAV database.',syncDone:'Synced {ok}/{total} funds · {added} new NAV points',syncFailed:'{n} failed',dbImported:'NAV database imported',portfolioImported:'Portfolio imported',invalidFile:'Invalid file',urlInvalid:'Use a URL like https://xxxx.supabase.co',keyInvalid:'The anon public key looks too short',
  emptyTitle:'Build your portfolio view',emptyBody:'Sign in to load your cloud portfolio, or import a holdings file to start tracking value, performance and risk.',missingNavTitle:'Portfolio loaded · waiting for NAV',missingNavBody:'The holdings ledger is available, but no current NAV is loaded yet. Update NAV or verify the Worker connection.',emptySignIn:'Sign in',emptyImport:'Import portfolio',noFunds:'No funds',
  txnTitle:'Buy / Sell',txnSub:'Append-only ledger · holdings, cost and realized P/L are recomputed',txnFund:'Fund',txnNewFund:'+ New fund (not listed)…',txnNewCode:'New fund code (must match Finnomena)',txnName:'Display name',txnAmc:'AMC',txnAsset:'Asset class',txnTax:'Tax benefit',txnAction:'Action',txnDate:'Date',txnUnits:'Units',txnPrice:'Price / NAV (฿)',txnAdd:'Add transaction',txnHistory:'History',txnEmpty:'No transactions yet',txnCorrect:'Reverse',txnCorrected:'Reversed',txnVoid:'Correction',txnEnterCode:'Enter a fund code',txnInvalid:'Enter valid units and price',txnRecorded:'recorded',txnNeedsNav:'run Update NAV to fetch history',buyWord:'Buy',sellWord:'Sell',
  accountTitle:'Account',accountSub:'Your portfolio is synced to the cloud and follows you on every signed-in device.',signOut:'Sign out',connectTitle:'Connect cloud',connectSub:'One-time Supabase connection setup',projectUrl:'Supabase project URL',anonKey:'Anon public key',connectBtn:'Connect',signInTitle:'Sign in',signInSub:'Access your portfolio on any device',emailLbl:'Email',passwordLbl:'Password (min 6 chars)',createAccount:'Create account',resetConnection:'Wrong project? Reset connection',redirectGoogle:'Redirecting to Google…',signingIn:'Signing in…',creatingAccount:'Creating account…',accountCreated:'Account created. Confirm your email if required, then sign in.',signedOut:'Signed out',signedIn:'Signed in as',detailsUnavailable:'Details unavailable for this fund.',openFinnomena:'Open on Finnomena ↗',closeBtn:'Close',correctedToast:'Correction appended to the ledger',assetForeign:'Foreign Equity',assetThai:'Thai Equity',assetMixed:'Mixed',assetFixed:'Fixed Income / MM',taxGeneral:'General',
@@ -2229,7 +2229,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',mMarket:'มูลค่าตลาด',mUnreal:'กำไร/ขาดทุนยังไม่รับรู้',mWeight:'น้ำหนัก',mCategory:'ประเภทกองทุน',mRisk:'ระดับความเสี่ยง',mDividend:'นโยบายปันผล',mInception:'วันจัดตั้งกองทุน',mNetAssets:'สินทรัพย์สุทธิ',divYes:'จ่ายปันผล',divNo:'ไม่จ่ายปันผล',
  csvSaved:'✅ ส่งออก CSV แล้ว',
  mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',promptBtn:'📋 คัดลอกพรอมป์ต AI สำหรับนำเข้าพอร์ต',promptCopied:'คัดลอกแล้ว — นำไปวางใน AI พร้อมรูป statement กองทุน แล้วนำ JSON ที่ได้มากดนำเข้าพอร์ต',mergeAsk:'รวมกับพอร์ตเดิมหรือไม่?\n\nOK = อัปเดต/เพิ่มเฉพาะกองที่อยู่ในไฟล์นี้\nCancel = แทนที่พอร์ตทั้งหมดด้วยไฟล์นี้',
- confCoverage:'ความครอบคลุมมูลค่า',confRange:'ช่วงวันที่ NAV',confStale:'กองทุนข้อมูลล่าช้า',confFresh:'ข้อมูลเป็นปัจจุบันทั้งหมด',navPoints:'เก็บ NAV แล้ว {n} จุด',noAsOf:'ยังไม่มีมูลค่าพอร์ต',navDate:'NAV',stale:'ล่าช้า',updateBlocked:'อัปเดต NAV ไม่สำเร็จ กรุณาตรวจโดเมน Worker หรือนำเข้าฐานข้อมูล NAV',syncDone:'ซิงค์ {ok}/{total} กองทุน · NAV ใหม่ {added} จุด',syncFailed:'ล้มเหลว {n} กองทุน',dbImported:'นำเข้าฐานข้อมูล NAV แล้ว',portfolioImported:'นำเข้าพอร์ตแล้ว',invalidFile:'ไฟล์ไม่ถูกต้อง',urlInvalid:'กรุณาใช้ URL รูปแบบ https://xxxx.supabase.co',keyInvalid:'Anon public key สั้นเกินไป',
+confCoverage:'ความครอบคลุมมูลค่า',confRange:'ช่วงวันที่ NAV',confStale:'กองทุนข้อมูลล่าช้า',confFresh:'ข้อมูลเป็นปัจจุบันทั้งหมด',staleStatus:'ข้อมูลล่าช้า {n} กองทุน',navPoints:'เก็บ NAV แล้ว {n} จุด',noAsOf:'ยังไม่มีมูลค่าพอร์ต',navDate:'NAV',stale:'ล่าช้า',updateBlocked:'อัปเดต NAV ไม่สำเร็จ กรุณาตรวจโดเมน Worker หรือนำเข้าฐานข้อมูล NAV',syncDone:'ซิงค์ {ok}/{total} กองทุน · NAV ใหม่ {added} จุด',syncFailed:'ล้มเหลว {n} กองทุน',dbImported:'นำเข้าฐานข้อมูล NAV แล้ว',portfolioImported:'นำเข้าพอร์ตแล้ว',invalidFile:'ไฟล์ไม่ถูกต้อง',urlInvalid:'กรุณาใช้ URL รูปแบบ https://xxxx.supabase.co',keyInvalid:'Anon public key สั้นเกินไป',
  emptyTitle:'เริ่มสร้างมุมมองพอร์ต',emptyBody:'เข้าสู่ระบบเพื่อโหลดพอร์ตจากคลาวด์ หรือนำเข้าไฟล์ holdings เพื่อเริ่มติดตามมูลค่า ผลตอบแทน และความเสี่ยง',missingNavTitle:'โหลดพอร์ตแล้ว · รอข้อมูล NAV',missingNavBody:'มีบัญชีรายการพอร์ตแล้ว แต่ยังไม่มี NAV ปัจจุบัน กรุณาอัปเดต NAV หรือตรวจการเชื่อมต่อ Worker',emptySignIn:'เข้าสู่ระบบ',emptyImport:'นำเข้าพอร์ต',noFunds:'ไม่มีกองทุน',
  txnTitle:'ซื้อ / ขาย',txnSub:'บัญชีรายการแบบเพิ่มอย่างเดียว · คำนวณหน่วย ต้นทุน และกำไรรับรู้ใหม่ทุกครั้ง',txnFund:'กองทุน',txnNewFund:'+ กองทุนใหม่ (ไม่อยู่ในรายการ)…',txnNewCode:'รหัสกองทุนใหม่ (ต้องตรงกับ Finnomena)',txnName:'ชื่อที่แสดง',txnAmc:'บลจ.',txnAsset:'ประเภทสินทรัพย์',txnTax:'สิทธิประโยชน์ภาษี',txnAction:'รายการ',txnDate:'วันที่',txnUnits:'จำนวนหน่วย',txnPrice:'ราคา / NAV (฿)',txnAdd:'เพิ่มรายการ',txnHistory:'ประวัติ',txnEmpty:'ยังไม่มีรายการ',txnCorrect:'กลับรายการ',txnCorrected:'กลับรายการแล้ว',txnVoid:'รายการแก้ไข',txnEnterCode:'กรุณาใส่รหัสกองทุน',txnInvalid:'กรุณาใส่จำนวนหน่วยและราคาให้ถูกต้อง',txnRecorded:'บันทึกแล้ว',txnNeedsNav:'กดอัปเดต NAV เพื่อดึงประวัติราคา',buyWord:'ซื้อ',sellWord:'ขาย',
  accountTitle:'บัญชี',accountSub:'พอร์ตซิงค์บนคลาวด์และติดตามคุณไปทุกอุปกรณ์ที่เข้าสู่ระบบ',signOut:'ออกจากระบบ',connectTitle:'เชื่อมต่อคลาวด์',connectSub:'ตั้งค่าการเชื่อมต่อ Supabase ครั้งเดียว',projectUrl:'URL โปรเจกต์ Supabase',anonKey:'Anon public key',connectBtn:'เชื่อมต่อ',signInTitle:'เข้าสู่ระบบ',signInSub:'เข้าถึงพอร์ตได้จากทุกอุปกรณ์',emailLbl:'อีเมล',passwordLbl:'รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)',createAccount:'สร้างบัญชี',resetConnection:'โปรเจกต์ไม่ถูกต้อง? ตั้งค่าใหม่',redirectGoogle:'กำลังไปยัง Google…',signingIn:'กำลังเข้าสู่ระบบ…',creatingAccount:'กำลังสร้างบัญชี…',accountCreated:'สร้างบัญชีแล้ว หากระบบกำหนดให้ยืนยันอีเมล กรุณายืนยันก่อนเข้าสู่ระบบ',signedOut:'ออกจากระบบแล้ว',signedIn:'เข้าสู่ระบบในชื่อ',detailsUnavailable:'ไม่มีรายละเอียดของกองทุนนี้',openFinnomena:'เปิดใน Finnomena ↗',closeBtn:'ปิด',correctedToast:'เพิ่มรายการแก้ไขในบัญชีรายการแล้ว',assetForeign:'หุ้นต่างประเทศ',assetThai:'หุ้นไทย',assetMixed:'กองทุนผสม',assetFixed:'ตราสารหนี้ / ตลาดเงิน',taxGeneral:'ทั่วไป',
@@ -2277,8 +2277,8 @@ function computeAll(){
    if(am){const up=am.toUpperCase();
     h.amc=up.indexOf('KKP')>=0?'KKP':up.indexOf('SCB')>=0?'SCB':up.indexOf('BBL')>=0?'Bualuang':up.indexOf('UOB')>=0?'UOB':(up.indexOf('KASSET')>=0||up.indexOf('KASIKORN')>=0)?'K-Fund':(up.indexOf('EASTSPRING')>=0||up.indexOf('TMB')>=0)?'Eastspring':up.indexOf('LH')>=0?'LH Fund':up.indexOf('ONE')>=0?'ONE':am;}}
   if(h.name===code){const det=DETAILS[code]||DETCACHE[code];/* keep code as name; nothing else needed */}
-  const ds=Object.keys(nav).sort();const vs=ds.map(d=>nav[d]);
   const _as=_pao||new Date().toISOString().slice(0,10);
+  const ds=Object.keys(nav).filter(d=>d<=_as).sort();const vs=ds.map(d=>nav[d]);
   const _po=priceObsAt(code,_as);
   if(!_po)continue;
   const last=_po.price,prev=vs.length>1?vs[vs.length-2]:_po.price,ld=ds.length?ds[ds.length-1]:'';
@@ -2341,12 +2341,18 @@ function buildFilterList(elId,items,activeSet){
 function renderTfControl(){
  const tf=document.getElementById('cmdTf');
  const opts=['1D','1W','1M','3M','6M','1Y','YTD','MAX'];
+ const focusedTf=document.activeElement&&document.activeElement.closest?document.activeElement.closest('#cmdTf button'):null;
+ const focusedValue=focusedTf&&focusedTf.dataset.tf;
  tf.innerHTML=opts.map(o=>`<button type="button" data-tf="${o}" class="${histTF===o?'on':''}">${o}</button>`).join('');
  tf.querySelectorAll('button').forEach(b=>b.onclick=()=>setTimeframe(b.dataset.tf));
+ if(focusedValue){const next=[...tf.querySelectorAll('button')].find(b=>b.dataset.tf===focusedValue);if(next)next.focus();}
 
  const label=histTF==='CUSTOM'?t('r_CUSTOM'):histTF;
  document.getElementById('periodTriggerLabel').textContent=label;
  const statusTf=document.getElementById('statusTf');if(statusTf)statusTf.textContent=label;
+ const fromInput=document.getElementById('tfFrom'),toInput=document.getElementById('tfTo');
+ if(fromInput)fromInput.value=histTF==='CUSTOM'?histFrom:'';
+ if(toInput)toInput.value=histTF==='CUSTOM'?histTo:'';
 
  const pop=document.getElementById('periodPopover');
  pop.innerHTML=`<h4 data-i18n="lblPeriod"></h4>`+opts.map(o=>`<label class="popover-row"><input type="radio" name="periodPop" value="${o}" ${histTF===o?'checked':''}><span>${o}</span></label>`).join('');
@@ -2383,7 +2389,7 @@ function renderConfidence(){
  stale.textContent=T.stale?String(T.stale):t('confFresh');
  document.getElementById('coverageDot').className='conf-dot'+((T.covered||0)===(T.total_active||0)?'':' warn');
  document.getElementById('rangeDot').className='conf-dot'+(T.stale?' warn':'');document.getElementById('staleDot').className='conf-dot'+(T.stale?' bad':'');
- const sf=document.getElementById('statusFresh');if(sf)sf.textContent=T.stale?`${T.stale} stale`:'';
+ const sf=document.getElementById('statusFresh');if(sf)sf.textContent=T.stale?t('staleStatus').replace('{n}',String(T.stale)):'';
 }
 function renderEmpty(){const empty=ALL.length===0,hasHoldings=Object.values(HOLDINGS).some(h=>h.units>1e-8);document.body.classList.toggle('is-empty',empty);const el=document.getElementById('emptyState');el.hidden=!empty;if(empty){el.querySelector('h2').textContent=t(hasHoldings?'missingNavTitle':'emptyTitle');el.querySelector('p').textContent=t(hasHoldings?'missingNavBody':'emptyBody');}}
 function renderTL(){
@@ -2405,7 +2411,7 @@ function renderTL(){
 function renderScope(){
  const chip=document.getElementById('scopeChip'),lbl=document.getElementById('eyebrowLbl');
  const active=filterAMC.size>0||filterTax.size>0;
- if(!active){chip.hidden=true;lbl.textContent=t('eyebrow');return;}
+ if(!active){chip.hidden=true;chip.textContent='';lbl.textContent=t('eyebrow');const ss=document.getElementById('statusScope');if(ss)ss.textContent='';return;}
  chip.hidden=false;lbl.textContent=t('eyebrowFiltered');
  const parts=[...filterAMC,...filterTax];
  chip.textContent=parts.join(' · ')+` — ${F.length}/${ALL.length}`;
@@ -2534,6 +2540,7 @@ function pageAsOf(){
   if(!codes.includes(x.code))continue;
   if((x.action==='buy'||x.action==='sell')&&+x.price>0&&(x.date||'')>m)m=x.date;
  }
+ if(histTF==='CUSTOM'&&histTo&&histTo<m)return histTo;
  return m;
 }
 function windowCoverage(start){
