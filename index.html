@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-kE3ZJFhtuXkV7HWLNNCOEr5wKOz3AGWGIRfwaY+KSV0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-a6MhCgZeJHQDvI+d9EuVPcWC5B1WaykzGwfqCb169m0='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,7 +75,7 @@ body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-em
 .cmdbar{display:flex;align-items:center;gap:10px;padding:10px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .cmdbar-group{position:relative;display:flex;align-items:center;gap:8px}
 .popover-trigger{display:inline-flex;align-items:center;gap:6px}
-.popover{position:absolute;top:calc(100% + 6px);left:0;z-index:60;min-width:220px;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-md,12px);box-shadow:var(--shadow);padding:12px;display:none}
+.popover{position:fixed;z-index:60;min-width:220px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow-y:auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-md,12px);box-shadow:var(--shadow);padding:12px;display:none}
 .popover.open{display:block}
 .popover h4{margin:0 0 8px;font-size:12px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px}
 .popover-row{display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px}
@@ -396,7 +396,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
  <div class="tf-segmented" id="cmdTf"></div>
  <div class="cmdbar-group narrow-tf" id="narrowTfGroup" style="display:none">
   <button type="button" class="btn ghost popover-trigger" id="periodTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="periodPopover"><span id="periodTriggerLabel"></span></button>
-  <div class="popover" id="periodPopover" role="dialog" aria-label="Timeframe" data-i18n-aria-label="lblPeriod"></div>
+  <div class="popover" id="periodPopover" role="dialog" aria-label="Timeframe" data-i18n-aria="lblPeriod"></div>
  </div>
 
  <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
@@ -2903,7 +2903,15 @@ function hideDialog(id){const bg=document.getElementById(id);bg.classList.remove
 let OPEN_POPOVER=null;
 function openPopover(trigger,panel){
  if(OPEN_POPOVER&&OPEN_POPOVER.panel!==panel)closePopover(OPEN_POPOVER.panel);
- panel.classList.add('open');trigger.setAttribute('aria-expanded','true');
+ panel.classList.add('open');
+ const r=trigger.getBoundingClientRect();
+ const panelWidth=Math.max(panel.offsetWidth,220);
+ let left=r.left;
+ if(left+panelWidth>window.innerWidth-8)left=Math.max(8,window.innerWidth-panelWidth-8);
+ let top=r.bottom+6;
+ if(top+panel.offsetHeight>window.innerHeight-8)top=Math.max(8,r.top-panel.offsetHeight-6);
+ panel.style.left=left+'px';panel.style.top=top+'px';panel.style.right='auto';
+ trigger.setAttribute('aria-expanded','true');
  OPEN_POPOVER={trigger,panel};
  const focusable=panel.querySelector('button,input,[tabindex]');
  if(focusable)focusable.focus();
