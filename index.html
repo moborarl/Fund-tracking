@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-LkfevunO31J1sxWp89haVqqswqTWImZhKd+k5QH4lpg='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-c1GAKqAS0cadE85uavJB92AYz0K+va4cQ8HDIq45Q0I='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,12 +44,21 @@ body{background:radial-gradient(1200px 600px at 80% -10%,#13203a 0%,transparent 
 .empty-state h2{font-size:18px}.empty-state p{max-width:560px;margin:8px auto 18px;color:var(--muted);font-size:13px}.empty-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-empty .foot{display:none}
 /* hero */
-.hero{padding:18px 0 4px}.hero-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.hero{padding:14px 0}.hero-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
 @media(max-width:880px){.hero-grid{grid-template-columns:1fr}}
+.hero-bar{display:flex;align-items:baseline;flex-wrap:wrap;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 18px}
+.hero-bar .tl-headline{margin-top:0}
+.hero-value{font-size:24px;font-weight:800;letter-spacing:-.5px;white-space:nowrap}
+.hero-value .cur{font-size:14px;color:var(--muted);font-weight:600;margin-right:4px}
+.hero-toggle{margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--line2);color:var(--muted);border-radius:9px;padding:6px 13px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.hero-toggle:hover{color:var(--txt);border-color:var(--accent)}
+.hero-toggle .chev{transition:transform .15s ease;display:inline-block}
+.hero-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.hero-details{margin-top:14px}
+.hero-details .tl-label{margin:0 0 12px}
 .hero-main{background:linear-gradient(160deg,#13203a,#0c1322);border:1px solid var(--line);border-radius:18px;padding:24px 26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .hero-main::after{content:"";position:absolute;right:-40px;top:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(77,141,255,.18),transparent 70%)}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600}
-.totval{font-size:42px;font-weight:800;letter-spacing:-1.3px;margin:5px 0 2px}.totval .cur{font-size:20px;color:var(--muted);font-weight:600;margin-right:5px}
 .hero-sub{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
 .scope-chip:not([hidden]){display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 10px;margin-left:10px}
 .chg-from{font-size:11px;color:var(--muted2);margin-left:8px;font-weight:500}
@@ -65,7 +74,7 @@ body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-em
 .mini{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;justify-content:center}
 .mini .lab{font-size:11.5px;color:var(--muted);font-weight:500}.mini .val{font-size:24px;font-weight:800;margin-top:6px}.mini .meta{font-size:11.5px;color:var(--muted);margin-top:3px}
 .chip2{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
-.cmdbar{display:flex;align-items:center;gap:10px;padding:10px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cmdbar{display:flex;align-items:center;gap:10px;padding:10px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;z-index:45;background:var(--bg)}
 .cmdbar-group{position:relative;display:flex;align-items:center;gap:8px}
 .popover-trigger{display:inline-flex;align-items:center;gap:6px}
 .popover{position:fixed;z-index:60;min-width:220px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow-y:auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-md,12px);box-shadow:var(--shadow);padding:12px;display:none}
@@ -101,7 +110,7 @@ body.is-empty .hero,body.is-empty .tabbar-wrap,body.is-empty .tabbody,body.is-em
 .tabbody{width:100%;min-width:0;max-width:1340px;margin:0 auto;padding:0 22px 56px}
 .tabpanel{padding-top:4px}
 @media(max-width:1023px){
- .tabbar-wrap{position:sticky;top:0;z-index:40}
+ .tabbar-wrap{position:sticky;top:var(--cmdbar-h,64px);z-index:40}
  .status-row{display:flex}
 }
 section{margin-top:26px}
@@ -215,7 +224,7 @@ input[type=file]{display:none}
 @media(max-width:720px){
  body{overflow-x:hidden;padding-bottom:32px}.wrap{padding:0 14px}
  .brand{min-width:0}.brand>div:last-child{min-width:0}.brand .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .confidence{grid-template-columns:1fr}.hero{padding-top:12px}.hero-main,.card{padding:16px}.totval{font-size:34px}.hero-sub{gap:14px}.hero-side{gap:12px}
+ .confidence{grid-template-columns:1fr}.hero{padding-top:12px}.hero-main,.card{padding:16px}.hero-value{font-size:20px}.hero-toggle span:not(.chev){display:none}.hero-sub{gap:14px}.hero-side{gap:12px}
  section{margin-top:20px}.sec-head{align-items:flex-start}.sec-head .hint{width:100%}.ms-top>*{max-width:100%}.ms-search{width:100%;flex-basis:100%}.ms-modes{max-width:100%;overflow-x:auto}.tf-row{align-items:stretch}.tf-custom{width:100%}.tf-custom input{min-width:0;width:100%}.bench-sel{max-width:none;width:100%;margin-left:0!important}.chart-box{height:280px}
  .modal-bg{padding:12px 8px}.modal{border-radius:10px}.modal-h,.modal-b{padding:16px}.tf2{grid-template-columns:1fr}.txn-row{align-items:flex-start;flex-wrap:wrap}.txn-c{flex-basis:55%}.risk-kpis{grid-template-columns:1fr 1fr;gap:8px}
 }
@@ -253,7 +262,7 @@ input[type=file]{display:none}
 html{scrollbar-color:var(--line2) var(--bg)}
 body{background:var(--bg);color:var(--txt);padding-bottom:0}
 body::before{display:none}
-.mono,.totval,.mini .val,.rk .v,table{font-variant-numeric:tabular-nums lining-nums}
+.mono,.hero-value,.mini .val,.rk .v,table{font-variant-numeric:tabular-nums lining-nums}
 .brand{align-items:flex-start;padding-bottom:22px;border-bottom:1px solid var(--line)}
 .logo{width:36px;height:36px;border-radius:7px;background:rgba(199,167,96,.07);border:1px solid var(--accent);color:var(--accent);box-shadow:none;font-size:10px}
 .brand h1{font-size:14px;font-weight:600;color:var(--txt)}
@@ -267,15 +276,16 @@ body::before{display:none}
 .confidence{margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-bottom:0}
 .conf-item{min-height:44px;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-md)}
 .conf-item:first-child{padding-left:12px}.conf-item:last-child{border-right:1px solid var(--line)}.conf-dot{border-radius:50%}
-.hero{padding:24px 0 0}
+.hero{padding:18px 0 0}
+.hero-bar{background:var(--panel2);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+.hero-value{font-weight:600;line-height:1.08}
+.hero-value .cur{font-weight:500;color:var(--muted)}
 .hero-grid{grid-template-columns:minmax(0,2fr) minmax(250px,.8fr);gap:12px;background:transparent;border-bottom:0}
 .hero-main,.mini{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
 .hero-main{padding:26px 28px 24px;min-height:264px}
 .hero-main::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent)}
 .hero-main::after{display:none}
 .eyebrow{color:var(--accent);font-size:10px;font-weight:600}
-.totval{font-size:46px;font-weight:600;margin:7px 0 3px;line-height:1.08}
-.totval .cur{font-size:16px;font-weight:500;color:var(--muted)}
 .hero-sub{margin-top:17px;padding-top:15px;border-top:1px solid var(--line)}
 .hero-sub .it b{font-size:15px;font-weight:600}
 .range-pills{margin-top:18px;padding:3px;gap:2px}
@@ -325,7 +335,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 @media(max-width:1100px){
  .wrap{padding-right:20px;padding-left:20px}
  .hero-grid{grid-template-columns:minmax(0,1.5fr) minmax(230px,.75fr)}
- .totval{font-size:40px}.grid3{grid-template-columns:1fr 1fr}.grid3>.card:last-child{grid-column:1/-1}
+ .grid3{grid-template-columns:1fr 1fr}.grid3>.card:last-child{grid-column:1/-1}
 }
 @media(max-width:900px){
  .wrap{padding:0 16px 44px}
@@ -335,7 +345,7 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
 @media(max-width:680px){
  body::before{display:none}.wrap{padding-right:12px;padding-left:12px}
  .confidence{grid-template-columns:1fr;gap:6px}.conf-item{padding:9px 10px;border:1px solid var(--line)}.conf-item:first-child{padding-left:10px}.conf-item:last-child{border-right:1px solid var(--line)}
- .hero{padding-top:16px}.hero-main{padding:21px 16px}.totval{font-size:34px}.hero-side{grid-template-columns:1fr}.mini{padding:16px}
+ .hero{padding-top:16px}.hero-main{padding:21px 16px}.hero-side{grid-template-columns:1fr}.mini{padding:16px}
  section{margin-top:28px}.sec-head{align-items:flex-start}.sec-head .hint{width:100%}.card{padding:15px 12px}.chart-box{height:300px}
  .ms-top>*{max-width:100%}.ms-search{width:100%;flex-basis:100%}.ms-modes{max-width:100%;overflow-x:auto}.tf-row{align-items:stretch}.tf-custom{width:100%}.tf-custom input{min-width:0;width:100%}.bench-sel{width:100%;max-width:none;margin-left:0!important}
  .risk-kpis{grid-template-columns:1fr 1fr}.tbl-wrap{max-height:none}
@@ -382,28 +392,34 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
   <div class="empty-actions"><button class="btn" id="emptySignIn" type="button" data-i18n="emptySignIn">Sign in</button><button class="btn ghost" id="emptyImport" type="button" data-i18n="emptyImport">Import portfolio</button></div>
  </div>
 
- <div class="hero" id="pfHeader"><div class="hero-grid">
-  <div class="hero-main">
-   <div style="display:flex;align-items:baseline;flex-wrap:wrap"><div class="eyebrow" id="eyebrowLbl" data-i18n="eyebrow">Total Market Value</div><span class="scope-chip" id="scopeChip" hidden></span></div>
-   <div class="totval"><span class="cur">฿</span><span id="h-value" class="mono"></span></div>
-   <div class="hero-sub"><div class="it"><span data-i18n="costBasis">Cost Basis</span><b class="mono" id="h-cost"></b></div>
-    <div class="it"><span data-i18n="unrealPL">Unrealized P/L</span><b class="mono pos" id="h-unreal"></b></div>
-    <div class="it"><span data-i18n="fundsLbl">Funds</span><b id="h-count"></b></div></div>
+ <div class="hero" id="pfHeader">
+  <div class="hero-bar">
+   <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:8px"><div class="eyebrow" id="eyebrowLbl" data-i18n="eyebrow">Total Market Value</div><span class="scope-chip" id="scopeChip" hidden></span></div>
+   <div class="hero-value mono"><span class="cur">฿</span><span id="h-value"></span></div>
    <div class="tl-headline"><span class="big mono" id="tl-baht"></span><span class="pct mono" id="tl-pct"></span><span class="chg-from" id="tl-from"></span></div>
+   <button type="button" class="hero-toggle" id="heroToggle" aria-expanded="false" aria-controls="heroDetails"><span class="chev" aria-hidden="true">▾</span><span data-i18n="heroDetailsLbl">Details</span></button>
+  </div>
+  <div class="hero-details" id="heroDetails" hidden>
    <div class="tl-label" id="tl-label"></div>
-   <svg class="spark" id="spark" width="100%" height="36" viewBox="0 0 300 36" preserveAspectRatio="none" aria-hidden="true"></svg>
+   <div class="hero-grid">
+    <div class="hero-main">
+     <div class="hero-sub"><div class="it"><span data-i18n="costBasis">Cost Basis</span><b class="mono" id="h-cost"></b></div>
+      <div class="it"><span data-i18n="unrealPL">Unrealized P/L</span><b class="mono pos" id="h-unreal"></b></div>
+      <div class="it"><span data-i18n="fundsLbl">Funds</span><b id="h-count"></b></div></div>
+     <svg class="spark" id="spark" width="100%" height="36" viewBox="0 0 300 36" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+    <div class="hero-side">
+     <div class="mini"><div class="lab" data-i18n="heroUnrealLab">Unrealized P/L (on current holdings)</div><div class="val mono pos" id="m-unreal"></div>
+      <div class="meta"><span data-i18n="vsCost">vs cost</span> <span class="chip2" id="m-unreal-pct" style="background:rgba(31,210,134,.14);color:var(--pos)"></span></div></div>
+     <div class="mini"><div class="lab" data-i18n="heroRealLab">Realized P/L (cumulative)</div><div class="val mono" id="m-real"></div><div class="meta" data-i18n="heroRealMeta">from past redemptions</div></div>
+    </div>
+   </div>
+   <div class="confidence" id="confidenceBar" aria-live="polite">
+    <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
+    <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
+    <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
+   </div>
   </div>
-  <div class="hero-side">
-   <div class="mini"><div class="lab" data-i18n="heroUnrealLab">Unrealized P/L (on current holdings)</div><div class="val mono pos" id="m-unreal"></div>
-    <div class="meta"><span data-i18n="vsCost">vs cost</span> <span class="chip2" id="m-unreal-pct" style="background:rgba(31,210,134,.14);color:var(--pos)"></span></div></div>
-   <div class="mini"><div class="lab" data-i18n="heroRealLab">Realized P/L (cumulative)</div><div class="val mono" id="m-real"></div><div class="meta" data-i18n="heroRealMeta">from past redemptions</div></div>
-  </div>
- </div>
- <div class="confidence" id="confidenceBar" aria-live="polite">
-  <div class="conf-item"><span class="conf-dot" id="coverageDot"></span><span data-i18n="confCoverage">Valuation coverage</span><b id="confCoverage">—</b></div>
-  <div class="conf-item"><span class="conf-dot" id="rangeDot"></span><span data-i18n="confRange">NAV date range</span><b id="confRange">—</b></div>
-  <div class="conf-item"><span class="conf-dot" id="staleDot"></span><span data-i18n="confStale">Stale funds</span><b id="confStale">—</b></div>
- </div>
  </div>
  </div>
  <div class="tabbar-wrap" id="tabbarWrap">
@@ -2161,7 +2177,7 @@ let LANG=localStorage.getItem('kkp_lang')||'en';
 const I18N={
 en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',langBtnLbl:'Language',
  lblAMC:'AMC',lblTax:'Tax',lblPeriod:'Timeframe',eyebrow:'Total Market Value',eyebrowFiltered:'Filtered value',vsDate:'vs {d}',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
- heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',
+ heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',heroDetailsLbl:'Details',
  secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
  portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
  benchNone:'Benchmark: none',benchAdd:'+ Add benchmark fund code…',benchPrompt:'Enter a Finnomena fund code to use as benchmark (e.g. SCBSET50, K-SET50-A):',benchFetch:'Fetching benchmark',benchFail:'❌ Could not fetch benchmark',
@@ -2205,7 +2221,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  tabHoldings:'Holdings',tabReturns:'Returns',tabAllocation:'Allocation',tabRisk:'Risk',tabTax:'Tax'},
 th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',lblPeriod:'ช่วงเวลา',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
- heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',
+ heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',heroDetailsLbl:'รายละเอียด',
  secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
  portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
  benchNone:'เกณฑ์เปรียบเทียบ: ไม่มี',benchAdd:'+ เพิ่มรหัสกองทุนเกณฑ์เทียบ…',benchPrompt:'ใส่รหัสกองทุน Finnomena เพื่อใช้เป็นเกณฑ์เทียบ (เช่น SCBSET50, K-SET50-A):',benchFetch:'กำลังดึงข้อมูลเกณฑ์เทียบ',benchFail:'❌ ดึงข้อมูลเกณฑ์เทียบไม่สำเร็จ',
@@ -2911,6 +2927,16 @@ window.addEventListener('resize',()=>{
  if(cs.display==='none'||cs.visibility==='hidden'||!r.width||!r.height){closePopover(panel,false);return;}
  positionPopover(trigger,panel);
 });
+function syncCmdbarHeight(){
+ const bar=document.getElementById('cmdbar');
+ if(bar)document.documentElement.style.setProperty('--cmdbar-h',bar.offsetHeight+'px');
+}
+window.addEventListener('resize',syncCmdbarHeight);
+document.getElementById('heroToggle').addEventListener('click',()=>{
+ const d=document.getElementById('heroDetails'),btn=document.getElementById('heroToggle'),willOpen=d.hidden;
+ d.hidden=!willOpen;
+ btn.setAttribute('aria-expanded',willOpen?'true':'false');
+});
 document.addEventListener('click',e=>{
  if(!OPEN_POPOVER)return;
  if(OPEN_POPOVER.panel.contains(e.target)||OPEN_POPOVER.trigger.contains(e.target))return;
@@ -3374,6 +3400,7 @@ applyLang();
 document.getElementById('emptySignIn').onclick=openAuth;
 document.getElementById('emptyImport').onclick=()=>document.getElementById('impHoldFile').click();
 renderAll();
+syncCmdbarHeight();
 loadMarket().then(autoFetchNAV);
 </script>
 </body>
