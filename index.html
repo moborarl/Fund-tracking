@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-c1GAKqAS0cadE85uavJB92AYz0K+va4cQ8HDIq45Q0I='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-6rCfUxzf6tfOlcHFqP7gpeaKr5H8dukkQq892Dg1asU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,13 +138,33 @@ section{margin-top:26px}
 .ms-search::placeholder{color:var(--muted2)}
 .ms-modes{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:3px}
 .ms-modes button{background:none;border:none;color:var(--muted);font:inherit;font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer}.ms-modes button.on{background:var(--accent);color:#fff}
-.ms-list{max-height:150px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel2);margin-bottom:13px}
-.ms-grp{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);font-weight:700;margin:8px 0 6px;display:flex;align-items:center;gap:8px}
-.ms-grp:first-child{margin-top:0}
-.ms-grp .ga{font-size:10px;color:var(--accent);cursor:pointer;font-weight:600}
-.ms-chips{display:flex;flex-wrap:wrap;gap:6px}
-.ms-chip{font-size:11px;font-weight:600;padding:4px 9px;border-radius:7px;cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--muted);transition:.1s;user-select:none;white-space:nowrap}
-.ms-chip:hover{color:var(--txt)}.ms-chip.on{color:#0b111e;border-color:transparent}
+.ms-picker{position:relative;flex:1 1 420px;min-width:0}
+.ms-field{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:40px;padding:5px 8px;background:var(--panel2);border:1px solid var(--line2);border-radius:9px;cursor:text}
+.ms-field:focus-within{border-color:var(--accent)}
+.ms-field .ms-search{flex:1 1 160px;min-width:120px;border:0;background:transparent;padding:4px}
+.ms-field .ms-search:focus-visible{outline:none}
+.ms-port,.ms-pill{font:inherit;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
+.ms-pill:hover,.ms-port:hover{color:var(--txt);border-color:var(--accent)}
+.ms-port[aria-pressed="true"],.ms-pill.on{background:var(--accent);border-color:var(--accent);color:#10130f}
+.ms-chip{display:inline-flex;align-items:center;gap:2px;font-size:11.5px;font-weight:600;padding:3px 4px 3px 9px;border-radius:7px;border:1px solid var(--line2);background:var(--panel);color:var(--txt);white-space:nowrap}
+.ms-chip button{border:0;background:none;color:var(--muted);font:inherit;font-size:12px;line-height:1;padding:2px 5px;border-radius:4px;cursor:pointer}
+.ms-chip button:hover{color:var(--txt);background:var(--line)}
+.ms-panel{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;max-height:min(460px,62vh);overflow-y:auto;background:var(--panel);border:1px solid var(--line2);border-radius:12px;box-shadow:var(--shadow);padding:10px 12px}
+.ms-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.ms-bar .lb{font-size:11px;color:var(--muted2)}
+.ms-grp{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0 2px;padding:0 6px;font-size:10.5px;font-weight:700;color:var(--muted2);text-transform:uppercase}
+.ms-link{font:inherit;font-size:11px;font-weight:600;color:var(--accent);background:none;border:0;padding:2px 0;cursor:pointer;text-transform:none}
+.ms-row{display:grid;grid-template-columns:18px minmax(0,1fr) minmax(0,1.3fr) 96px 64px;gap:10px;align-items:center;width:100%;padding:7px 6px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--txt);font:inherit;font-size:12px;text-align:left;cursor:pointer}
+.ms-row:hover{background:var(--panel2)}
+.ms-row .ck{width:14px;height:14px;border:1px solid var(--line2);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#10130f}
+.ms-row[aria-pressed="true"] .ck{background:var(--accent);border-color:var(--accent)}
+.ms-row .cd{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-row[aria-pressed="false"] .cd{color:var(--muted)}
+.ms-row .nm{color:var(--muted2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-row .vl,.ms-row .pc{text-align:right;font-variant-numeric:tabular-nums}
+.ms-foot{display:flex;align-items:center;gap:12px;padding-top:10px;font-size:11.5px;color:var(--muted)}
+.ms-empty{padding:16px 6px;color:var(--muted);font-size:12px}
+@media(max-width:680px){.ms-row{grid-template-columns:18px minmax(0,1fr) auto;row-gap:2px}.ms-row .nm{grid-column:2/4;grid-row:2}.ms-row .pc{display:none}}
 .chart-box{position:relative;height:330px}
 /* table */
 .tbl-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow-x:auto;box-shadow:var(--shadow)}
@@ -229,7 +249,7 @@ input[type=file]{display:none}
  .modal-bg{padding:12px 8px}.modal{border-radius:10px}.modal-h,.modal-b{padding:16px}.tf2{grid-template-columns:1fr}.txn-row{align-items:flex-start;flex-wrap:wrap}.txn-c{flex-basis:55%}.risk-kpis{grid-template-columns:1fr 1fr;gap:8px}
 }
 /* print */
-@media print{.cmdbar,.tabbar-wrap,.ms-top,.ms-list,.tf-row,.foot,.btn,.tf-segmented,.scope-chip{display:none!important}
+@media print{.cmdbar,.tabbar-wrap,.ms-top,.tf-row,.foot,.btn,.tf-segmented,.scope-chip{display:none!important}
  .tabpanel{display:block!important}.shell{display:block!important;height:auto!important}.tabbody{overflow:visible!important}
  body{background:#fff;color:#000;padding-bottom:0}
  .card,.hero-main,.mini,.tbl-wrap{box-shadow:none;border-color:#bbb;background:#fff;color:#000}
@@ -271,8 +291,8 @@ body::before{display:none}
 .btn:hover,.btn.ghost:hover{filter:none;background:rgba(199,167,96,.08);border-color:var(--accent);color:var(--txt)}
 .btn:focus-visible,.fchip:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .fgroup .lbl,.eyebrow,.rk .l,.m-stat .l,.tf label,.m-sec h4,thead th,.risk-tbl th{letter-spacing:0;color:var(--muted2)}
-.fchip,.ms-chip,.ms-modes,.range-pills,.bench-sel,.ms-search,.tf-custom input[type=date],.tf select,.tf input{border-radius:var(--radius-sm);background:var(--panel2);border-color:var(--line);box-shadow:none}
-.fchip.on,.ms-chip.on,.ms-modes button.on,.range-pills button.on{background:var(--accent);color:#10130f;box-shadow:none}
+.fchip,.ms-modes,.range-pills,.bench-sel,.tf-custom input[type=date],.tf select,.tf input{border-radius:var(--radius-sm);background:var(--panel2);border-color:var(--line);box-shadow:none}
+.fchip.on,.ms-modes button.on,.range-pills button.on{background:var(--accent);color:#10130f;box-shadow:none}
 .confidence{margin-top:10px;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-bottom:0}
 .conf-item{min-height:44px;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-md)}
 .conf-item:first-child{padding-left:12px}.conf-item:last-child{border-right:1px solid var(--line)}.conf-dot{border-radius:50%}
@@ -305,7 +325,6 @@ section{margin-top:34px;padding-top:0}
 .card h3{font-size:12px;font-weight:600}.card .csub{font-size:10.5px}
 .chart-box{height:390px}.chart-sm{height:200px}
 .ms-top,.tf-row{padding-bottom:12px;border-bottom:1px solid var(--line)}
-.ms-list{border-radius:var(--radius-sm);background:var(--panel2);border-color:var(--line)}
 .ms-modes{padding:2px}.ms-modes button{border-radius:4px}
 .tbl-wrap{border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--shadow);max-height:720px;overflow:auto;background:var(--panel)}
 table{font-size:11.5px}
@@ -444,13 +463,16 @@ tbody tr:hover{background:rgba(199,167,96,.07)}
   <div class="sec-head"><h2 data-i18n="secHist">Historical Comparison</h2><span class="hint" data-i18n="histHint">Select portfolio &amp; multiple funds · switch Value / % Change / NAV</span></div>
   <div class="card">
    <div class="ms-top">
-    <input class="ms-search" id="msSearch" placeholder="Search funds to add…" data-i18n-ph="searchPh">
-    <button class="btn ghost" id="msPort" data-i18n="portOnly">Portfolio only</button>
-    <button class="btn ghost" id="msNone" data-i18n="clearBtn">Clear</button>
-    <div class="ms-modes" id="msSortBtns"><button data-s="value" class="on" data-i18n="sortValue">Sort: Value</button><button data-s="name" data-i18n="sortName">Sort: Name</button></div>
+    <div class="ms-picker" id="msPicker">
+     <div class="ms-field">
+      <button type="button" class="ms-port" id="msPort" aria-pressed="true" data-i18n="portWord">Portfolio</button>
+      <span id="msChips" style="display:contents"></span>
+      <input class="ms-search" id="msSearch" placeholder="Search code or fund name…" data-i18n-ph="searchPh" role="combobox" aria-expanded="false" aria-controls="msList" aria-autocomplete="list" autocomplete="off">
+     </div>
+     <div class="ms-panel" id="msList" hidden></div>
+    </div>
     <div class="ms-modes"><button data-m="value" class="on" data-i18n="modeValue">Value ฿</button><button data-m="norm" data-i18n="modeNorm">% Change</button><button data-m="nav">NAV</button></div>
    </div>
-   <div class="ms-list" id="msList"></div>
    <div class="tf-row">
     <div class="tf-custom"><input type="date" id="tfFrom"><span>→</span><input type="date" id="tfTo"><button class="btn ghost" id="tfApply" data-i18n="applyBtn">Apply</button></div>
     <select class="bench-sel" id="benchSel" style="margin-left:auto"></select>
@@ -2165,7 +2187,7 @@ const TAX_COL={'SSF':'#c7a760','ThaiESG':'#57c59b','ThaiESGX':'#7fa59a','General
 const AMC_COL={'KKP':'#c7a760','SCB':'#7fa59a','UOB':'#e1aa54','Bualuang':'#57c59b','K-Fund':'#e76f61','Eastspring':'#5fa9a0','LH Fund':'#a7b77b','ONE':'#d28c5d'};
 const PALETTE=['#c7a760','#57c59b','#5fa9a0','#7fa59a','#e76f61','#e1aa54','#9ca8a2','#d28c5d','#8eb47f','#b89068','#6e9790','#d0bd86','#c77670','#829d8f','#b5a46f'];
 
-let histMode='value',histSel=new Set(['__PORT__']),msFilter='',histSort='value',sortK='value',sortDir=-1;
+let histMode='value',histSel=new Set(['__PORT__']),msFilter='',msGroup='amc',msExpanded=new Set(),sortK='value',sortDir=-1;
 let filterAMC=new Set(),filterTax=new Set();
 let ALL=[],F=[],T={};
 let histTF=localStorage.getItem('kkp_histtf')||'MAX',histFrom=localStorage.getItem('kkp_histfrom')||'',histTo=localStorage.getItem('kkp_histto')||'';
@@ -2178,8 +2200,8 @@ const I18N={
 en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from execution',txnBtn:'⇄ Buy / Sell',signIn:'☁ Sign in',updNav:'Update NAV',syncing:'Syncing…',menuBtn:'Open actions',langBtnLbl:'Language',
  lblAMC:'AMC',lblTax:'Tax',lblPeriod:'Timeframe',eyebrow:'Total Market Value',eyebrowFiltered:'Filtered value',vsDate:'vs {d}',costBasis:'Cost Basis',unrealPL:'Unrealized P/L',fundsLbl:'Funds',
  heroUnrealLab:'Unrealized P/L (on current holdings)',vsCost:'vs cost',heroRealLab:'Realized P/L (cumulative)',heroRealMeta:'from past redemptions',heroDetailsLbl:'Details',
- secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search funds to add…',
- portOnly:'Portfolio only',clearBtn:'Clear',sortValue:'Sort: Value',sortName:'Sort: Name',modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
+ secHist:'Historical Comparison',histHint:'Ledger-adjusted portfolio · switch Value / TWR / NAV',searchPh:'Search code or fund name…',
+ modeValue:'Value ฿',modeNorm:'% Change',applyBtn:'Apply',
  benchNone:'Benchmark: none',benchAdd:'+ Add benchmark fund code…',benchPrompt:'Enter a Finnomena fund code to use as benchmark (e.g. SCBSET50, K-SET50-A):',benchFetch:'Fetching benchmark',benchFail:'❌ Could not fetch benchmark',
  secAlloc:'Allocation',allocHint:'Reflects current filter',byAsset:'By Asset Class',byAssetSub:'Asset allocation',byAMC:'By AMC',byAMCSub:'Asset management company',byTax:'By Tax Benefit',
  topGainers:'Top Gainers',topLosers:'Top Losers',bestPerf:'Best performers',weakPerf:'Weakest performers',rvu:'Realized vs Unrealized',plBreak:'P/L breakdown',unrealWord:'Unrealized',realWord:'Realized',
@@ -2193,7 +2215,7 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
  expBtn:'⬇ Download nav_history.json',impBtn:'⬆ Import NAV database',impHoldBtn:'⬆ Import portfolio (holdings.json)',disclaimer:'For portfolio tracking only — not investment advice.',
  r_1D:'1 Day',r_1W:'1 Week',r_1M:'1 Month',r_3M:'3 Months',r_6M:'6 Months',r_1Y:'1 Year',r_YTD:'Year to date',r_MAX:'All history',r_CUSTOM:'Custom range',tlLabel:'Portfolio value change over the past {p}',showing:'Showing <b>{a}</b> of {b} funds',
  plFoot:'Total P/L <b style="color:var(--txt)">฿{t}</b> — unrealized gains on paper make up the majority; realized P/L ฿{r} comes from past partial redemptions.',
- wholePort:'Whole Portfolio',selWord:'Selected',clearAll:'clear all',allWord:'+ all',
+ wholePort:'Whole Portfolio',clearAll:'Clear all',msQuick:'Quick',msTop5:'Top 5 by value',msGainers:'Top gainers',msLosers:'Top losers',msGroupBy:'Group by',msSelectGroup:'Select group',msUnselectGroup:'Deselect group',msShowMore:'Show {n} more',msFundsN:'{n} funds',msSelCount:'{n} funds selected',msPlusPort:' + portfolio',msDone:'Done',msNoMatch:'No funds match “{q}”',msRemove:'Remove',
  mNAVret:'NAV Total Return',mProfile:'Profile',mFees:'Fees',mTop5:'Top 5 Holdings',mMaster:'Master Fund',mStrategy:'Investment Strategy',mFull:'Full details ↗',mPort:'Portfolio ↗',mBuySell:'+ Buy / Sell',mLoading:'Loading fund details from Finnomena…',mMarket:'Market Value',mUnreal:'Unrealized',mWeight:'Weight',mCategory:'Category',mRisk:'Risk level',mDividend:'Dividend policy',mInception:'Inception',mNetAssets:'Net assets',divYes:'Pays dividends',divNo:'No dividends',
  csvSaved:'✅ CSV exported',
  mFeeActual:'actual collected',mFeeMgmt:'Management fee',mFeeTER:'Total expense ratio',googleBtn:'Continue with Google',orWord:'or',promptBtn:'📋 Copy AI import prompt',promptCopied:'Prompt copied — paste it into any AI together with photos of your fund statements, then import the JSON it returns',mergeAsk:'Merge with your existing portfolio?\n\nOK = update/add only the funds in this file\nCancel = REPLACE the whole portfolio with this file',
@@ -2222,8 +2244,8 @@ en:{brandSub:'Multi-AMC · NAV-based valuation',asOf:'As of',fromExec:'from exec
 th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'ข้อมูล ณ',fromExec:'ราคาจากรายการ',txnBtn:'⇄ ซื้อ / ขาย',signIn:'☁ เข้าสู่ระบบ',updNav:'อัปเดต NAV',syncing:'กำลังซิงค์…',menuBtn:'เปิดเมนูการทำงาน',langBtnLbl:'ภาษา',
  lblAMC:'บลจ.',lblTax:'สิทธิภาษี',lblPeriod:'ช่วงเวลา',eyebrow:'มูลค่าตลาดรวม',eyebrowFiltered:'มูลค่าตามตัวกรอง',vsDate:'เทียบ {d}',costBasis:'ต้นทุนรวม',unrealPL:'กำไร/ขาดทุนยังไม่รับรู้',fundsLbl:'กองทุน',
  heroUnrealLab:'กำไร/ขาดทุนยังไม่รับรู้ (จากที่ถืออยู่)',vsCost:'เทียบต้นทุน',heroRealLab:'กำไร/ขาดทุนรับรู้แล้ว (สะสม)',heroRealMeta:'จากการขายคืนที่ผ่านมา',heroDetailsLbl:'รายละเอียด',
- secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหากองทุนเพื่อเพิ่ม…',
- portOnly:'เฉพาะพอร์ต',clearBtn:'ล้าง',sortValue:'เรียง: มูลค่า',sortName:'เรียง: ชื่อ',modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
+ secHist:'เปรียบเทียบย้อนหลัง',histHint:'พอร์ตปรับตามรายการซื้อขาย · สลับ มูลค่า / TWR / NAV',searchPh:'ค้นหารหัสหรือชื่อกองทุน…',
+ modeValue:'มูลค่า ฿',modeNorm:'% เปลี่ยนแปลง',applyBtn:'ตกลง',
  benchNone:'เกณฑ์เปรียบเทียบ: ไม่มี',benchAdd:'+ เพิ่มรหัสกองทุนเกณฑ์เทียบ…',benchPrompt:'ใส่รหัสกองทุน Finnomena เพื่อใช้เป็นเกณฑ์เทียบ (เช่น SCBSET50, K-SET50-A):',benchFetch:'กำลังดึงข้อมูลเกณฑ์เทียบ',benchFail:'❌ ดึงข้อมูลเกณฑ์เทียบไม่สำเร็จ',
  secAlloc:'สัดส่วนการลงทุน',allocHint:'ตามตัวกรองปัจจุบัน',byAsset:'ตามประเภทสินทรัพย์',byAssetSub:'การจัดสรรสินทรัพย์',byAMC:'ตาม บลจ.',byAMCSub:'บริษัทหลักทรัพย์จัดการกองทุน',byTax:'ตามสิทธิประโยชน์ภาษี',
  topGainers:'ปรับขึ้นสูงสุด',topLosers:'ปรับลงมากสุด',bestPerf:'ผลงานดีที่สุด',weakPerf:'ผลงานอ่อนแอที่สุด',rvu:'รับรู้แล้ว vs ยังไม่รับรู้',plBreak:'สรุปกำไรขาดทุน',unrealWord:'ยังไม่รับรู้',realWord:'รับรู้แล้ว',
@@ -2237,7 +2259,7 @@ th:{brandSub:'หลาย บลจ. · มูลค่าตาม NAV',asOf:'
  expBtn:'⬇ ดาวน์โหลด nav_history.json',impBtn:'⬆ นำเข้าฐานข้อมูล NAV',impHoldBtn:'⬆ นำเข้าพอร์ต (holdings.json)',disclaimer:'ใช้เพื่อติดตามพอร์ตเท่านั้น — ไม่ใช่คำแนะนำการลงทุน',
  r_1D:'1 วัน',r_1W:'1 สัปดาห์',r_1M:'1 เดือน',r_3M:'3 เดือน',r_6M:'6 เดือน',r_1Y:'1 ปี',r_YTD:'ตั้งแต่ต้นปี',r_MAX:'ทั้งหมด',r_CUSTOM:'ช่วงที่กำหนดเอง',tlLabel:'มูลค่าพอร์ตเปลี่ยนแปลงในช่วง {p} ที่ผ่านมา',showing:'แสดง <b>{a}</b> จาก {b} กองทุน',
  plFoot:'กำไร/ขาดทุนรวม <b style="color:var(--txt)">฿{t}</b> — ส่วนใหญ่เป็นกำไรที่ยังไม่รับรู้ · กำไรรับรู้แล้ว ฿{r} จากการขายคืนบางส่วนที่ผ่านมา',
- wholePort:'พอร์ตทั้งหมด',selWord:'ที่เลือก',clearAll:'ล้างทั้งหมด',allWord:'+ ทั้งหมด',
+ wholePort:'พอร์ตทั้งหมด',clearAll:'ล้างทั้งหมด',msQuick:'ลัด',msTop5:'Top 5 ตามมูลค่า',msGainers:'กำไรมากสุด',msLosers:'ขาดทุนมากสุด',msGroupBy:'จัดกลุ่ม',msSelectGroup:'เลือกทั้งกลุ่ม',msUnselectGroup:'ยกเลิกทั้งกลุ่ม',msShowMore:'แสดงอีก {n} กอง',msFundsN:'{n} กอง',msSelCount:'เลือก {n} กอง',msPlusPort:' + พอร์ตรวม',msDone:'เสร็จ',msNoMatch:'ไม่พบกองทุนที่ตรงกับ “{q}”',msRemove:'เอาออก',
  mNAVret:'ผลตอบแทนรวม NAV',mProfile:'ข้อมูลกองทุน',mFees:'ค่าธรรมเนียม',mTop5:'หลักทรัพย์ 5 อันดับแรก',mMaster:'กองทุนหลัก',mStrategy:'กลยุทธ์การลงทุน',mFull:'รายละเอียดเต็ม ↗',mPort:'พอร์ตกองทุน ↗',mBuySell:'+ ซื้อ / ขาย',mLoading:'กำลังโหลดข้อมูลกองทุนจาก Finnomena…',mMarket:'มูลค่าตลาด',mUnreal:'กำไร/ขาดทุนยังไม่รับรู้',mWeight:'น้ำหนัก',mCategory:'ประเภทกองทุน',mRisk:'ระดับความเสี่ยง',mDividend:'นโยบายปันผล',mInception:'วันจัดตั้งกองทุน',mNetAssets:'สินทรัพย์สุทธิ',divYes:'จ่ายปันผล',divNo:'ไม่จ่ายปันผล',
  csvSaved:'✅ ส่งออก CSV แล้ว',
  mFeeActual:'เก็บจริง',mFeeMgmt:'ค่าธรรมเนียมการจัดการ',mFeeTER:'ค่าใช้จ่ายรวมทั้งหมด',googleBtn:'เข้าสู่ระบบด้วย Google',orWord:'หรือ',promptBtn:'📋 คัดลอกพรอมป์ต AI สำหรับนำเข้าพอร์ต',promptCopied:'คัดลอกแล้ว — นำไปวางใน AI พร้อมรูป statement กองทุน แล้วนำ JSON ที่ได้มากดนำเข้าพอร์ต',mergeAsk:'รวมกับพอร์ตเดิมหรือไม่?\n\nOK = อัปเดต/เพิ่มเฉพาะกองที่อยู่ในไฟล์นี้\nCancel = แทนที่พอร์ตทั้งหมดด้วยไฟล์นี้',
@@ -2499,27 +2521,27 @@ function renderTable(){
 }
 
 /* ---------- multi-select history ---------- */
-function msSortFn(a,b){return histSort==='name'?a.code.localeCompare(b.code):b.value-a.value;}
+function msSortFn(a,b){return b.value-a.value;}
+function msGroupKey(f){return (msGroup==='tax'?f.tax:f.amc)||'Other';}
+function msSetOpen(open){const p=document.getElementById('msList');if(p.hidden===!open)return;p.hidden=!open;document.getElementById('msSearch').setAttribute('aria-expanded',String(open));if(!open)msExpanded.clear();}
 function renderMSList(){
- const byAmc={};F.forEach(f=>{(byAmc[f.amc]=byAmc[f.amc]||[]).push(f);});
- let html='';
- const selFunds=F.filter(f=>histSel.has(f.code)).sort(msSortFn);
- if(histSel.has('__PORT__')||selFunds.length){
-  html+=`<div class="ms-grp">${t('selWord')} <button type="button" class="ga" data-clear="1">${t('clearAll')}</button></div><div class="ms-chips">`;
-  if(histSel.has('__PORT__'))html+=`<button type="button" class="ms-chip on" data-id="__PORT__" style="background:#fff">${t('wholePort')} ✕</button>`;
-  html+=selFunds.map(f=>`<button type="button" class="ms-chip on" data-id="${escAttr(f.code)}" style="background:${AMC_COL[f.amc]||'#c7a760'}">${escHTML(f.code.replace('KKP ',''))} ✕</button>`).join('');
-  html+=`</div>`;}
- html+=`<div class="ms-grp">${t('portWord')}</div><div class="ms-chips"><button type="button" class="ms-chip ${histSel.has('__PORT__')?'on':''}" data-id="__PORT__" style="${histSel.has('__PORT__')?'background:#fff':''}">${t('wholePort')}</button></div>`;
- for(const amc of Object.keys(byAmc)){
-  const list=byAmc[amc].filter(f=>!msFilter||f.code.toLowerCase().includes(msFilter)||f.name.toLowerCase().includes(msFilter)).sort(msSortFn);
-  if(!list.length)continue;
-  html+=`<div class="ms-grp">${escHTML(amc)} <button type="button" class="ga" data-amc="${escAttr(amc)}">${t('allWord')}</button></div><div class="ms-chips">`;
-  html+=list.map(f=>{const on=histSel.has(f.code);return `<button type="button" class="ms-chip ${on?'on':''}" data-id="${escAttr(f.code)}" style="${on?`background:${AMC_COL[amc]||'#c7a760'}`:''}">${escHTML(f.code.replace('KKP ',''))}</button>`;}).join('');
-  html+=`</div>`;}
+ const port=histSel.has('__PORT__'),selFunds=F.filter(f=>histSel.has(f.code)).sort(msSortFn);
+ document.getElementById('msPort').setAttribute('aria-pressed',String(port));
+ document.getElementById('msChips').innerHTML=selFunds.map(f=>`<span class="ms-chip">${escHTML(f.code.replace('KKP ',''))}<button type="button" data-x="${escAttr(f.code)}" aria-label="${escAttr(t('msRemove')+' '+f.code)}">✕</button></span>`).join('');
+ const groups={};
+ F.filter(f=>!msFilter||f.code.toLowerCase().includes(msFilter)||f.name.toLowerCase().includes(msFilter)).forEach(f=>{const k=msGroupKey(f);(groups[k]=groups[k]||[]).push(f);});
+ const sum=k=>groups[k].reduce((s,f)=>s+f.value,0);
+ let html=`<div class="ms-bar"><span class="lb">${t('msQuick')}</span><button type="button" class="ms-pill" data-p="top5">${t('msTop5')}</button><button type="button" class="ms-pill" data-p="gain">${t('msGainers')}</button><button type="button" class="ms-pill" data-p="loss">${t('msLosers')}</button><span style="flex:1"></span><span class="lb">${t('msGroupBy')}</span><button type="button" class="ms-pill ${msGroup==='amc'?'on':''}" data-g="amc">${t('lblAMC')}</button><button type="button" class="ms-pill ${msGroup==='tax'?'on':''}" data-g="tax">${t('lblTax')}</button></div>`;
+ const keys=Object.keys(groups).sort((a,b)=>sum(b)-sum(a));
+ if(!keys.length)html+=`<div class="ms-empty">${escHTML(t('msNoMatch').replace('{q}',msFilter))}</div>`;
+ for(const k of keys){
+  const list=groups[k].sort(msSortFn),all=list.every(f=>histSel.has(f.code)),lim=msFilter||msExpanded.has(k)?list.length:3;
+  html+=`<div class="ms-grp"><span>${escHTML(k)} · ${escHTML(t('msFundsN').replace('{n}',list.length))}</span><button type="button" class="ms-link" data-grp="${escAttr(k)}">${all?t('msUnselectGroup'):t('msSelectGroup')}</button></div>`;
+  html+=list.slice(0,lim).map(f=>{const on=histSel.has(f.code);return `<button type="button" class="ms-row" data-id="${escAttr(f.code)}" aria-pressed="${on}"><span class="ck" aria-hidden="true">${on?'✓':''}</span><span class="cd">${escHTML(f.code)}</span><span class="nm">${escHTML(f.name===f.code?'':f.name)}</span><span class="vl">฿${fmt0(f.value)}</span><span class="pc ${cls(f.unreal_pct)}">${sign(f.unreal_pct,1)}%</span></button>`;}).join('');
+  if(list.length>lim)html+=`<button type="button" class="ms-link" style="margin:6px" data-more="${escAttr(k)}">${escHTML(t('msShowMore').replace('{n}',list.length-lim))}</button>`;
+ }
+ html+=`<div class="ms-foot"><span>${escHTML(t('msSelCount').replace('{n}',selFunds.length)+(port?t('msPlusPort'):''))}</span><button type="button" class="ms-link" data-clear="1">${t('clearAll')}</button><span style="flex:1"></span><button type="button" class="ms-pill" data-done="1">${t('msDone')}</button></div>`;
  document.getElementById('msList').innerHTML=html;
- document.querySelectorAll('#msList .ms-chip').forEach(c=>c.onclick=()=>{const id=c.dataset.id;histSel.has(id)?histSel.delete(id):histSel.add(id);renderMSList();renderHist();});
- document.querySelectorAll('#msList .ga[data-amc]').forEach(g=>g.onclick=()=>{byAmc[g.dataset.amc].forEach(f=>histSel.add(f.code));renderMSList();renderHist();});
- const clr=document.querySelector('#msList .ga[data-clear]');if(clr)clr.onclick=()=>{histSel=new Set();renderMSList();renderHist();};
 }
 /* ==== PERF ENGINE START ==== */
 const daysBefore=(iso,n)=>{const d=new Date(iso);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
@@ -3234,12 +3256,26 @@ document.getElementById('ovImp').onclick=()=>document.getElementById('impFile').
 document.getElementById('ovImpHold').onclick=()=>document.getElementById('impHoldFile').click();
 document.querySelectorAll('th.sortable').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortDir*=-1;else{sortK=k;sortDir=-1;}renderTable();});
 document.querySelectorAll('.ms-modes button[data-m]').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histMode=b.dataset.m;renderHist();});
-document.querySelectorAll('#msSortBtns button').forEach(b=>b.onclick=()=>{b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');histSort=b.dataset.s;renderMSList();renderHist();});
 document.getElementById('txnBg').onclick=e=>{if(e.target.id==='txnBg')closeTxn();};
 document.getElementById('swBg').onclick=e=>{if(e.target.id==='swBg')closeSw();};
-document.getElementById('msSearch').oninput=e=>{msFilter=e.target.value.toLowerCase().trim();renderMSList();};
-document.getElementById('msPort').onclick=()=>{histSel=new Set(['__PORT__']);renderMSList();renderHist();};
-document.getElementById('msNone').onclick=()=>{histSel=new Set();renderMSList();renderHist();};
+document.getElementById('msSearch').oninput=e=>{msFilter=e.target.value.toLowerCase().trim();msSetOpen(true);renderMSList();};
+document.getElementById('msSearch').onfocus=()=>msSetOpen(true);
+document.getElementById('msSearch').onkeydown=e=>{if(e.key==='Escape')msSetOpen(false);};
+document.getElementById('msPicker').onclick=e=>{
+ const b=e.target.closest('button');
+ if(!b){if(e.target.closest('.ms-field'))document.getElementById('msSearch').focus();return;}
+ const d=b.dataset;let changed=true;
+ if(b.id==='msPort'){histSel.has('__PORT__')?histSel.delete('__PORT__'):histSel.add('__PORT__');}
+ else if(d.x){histSel.delete(d.x);}
+ else if(d.id){histSel.has(d.id)?histSel.delete(d.id):histSel.add(d.id);}
+ else if(d.grp){const codes=F.filter(f=>msGroupKey(f)===d.grp).map(f=>f.code),all=codes.every(c=>histSel.has(c));codes.forEach(c=>all?histSel.delete(c):histSel.add(c));}
+ else if(d.p){const r=d.p==='top5'?[...F].sort(msSortFn):d.p==='gain'?F.filter(f=>f.unreal_pct>0).sort((a,b)=>b.unreal_pct-a.unreal_pct):F.filter(f=>f.unreal_pct<0).sort((a,b)=>a.unreal_pct-b.unreal_pct);histSel=new Set([...(histSel.has('__PORT__')?['__PORT__']:[]),...r.slice(0,5).map(f=>f.code)]);}
+ else if(d.clear){histSel=new Set();}
+ else if(d.done){msSetOpen(false);return;}
+ else{changed=false;if(d.g){msGroup=d.g;msExpanded.clear();}else if(d.more)msExpanded.add(d.more);}
+ renderMSList();if(changed)renderHist();
+};
+document.addEventListener('pointerdown',e=>{const p=document.getElementById('msPicker');if(p&&!p.contains(e.target))msSetOpen(false);},true);
 document.getElementById('updBtn').onclick=updateNAV;
 /* custom range (fixed-period buttons live in the command bar; see renderTfControl) */
 document.getElementById('tfApply').onclick=()=>{
