@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-6rCfUxzf6tfOlcHFqP7gpeaKr5H8dukkQq892Dg1asU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'sha256-N7WuTQ0uYsVd+YF+n2I/Udyh7X0gf1pJBKQULa3VrUQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fund-nav-sync.nupark.workers.dev https://pmfqjnheavnbqpsdnffm.supabase.co wss://pmfqjnheavnbqpsdnffm.supabase.co https://api.yourpower.today https://api.allorigins.win https://corsproxy.io https://www.finnomena.com; img-src 'self' data: https:; object-src 'none'; base-uri 'none'; form-action 'self' https://pmfqjnheavnbqpsdnffm.supabase.co; upgrade-insecure-requests">
 <title>Multi-AMC Portfolio Monitor</title>
 <!-- v2.0 · TH/EN · adjustable timeframe · benchmark · risk metrics · CSV export -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2185,7 +2185,7 @@ const C={pos:'#57c59b',neg:'#e76f61',accent:'#c7a760',gold:'#e1aa54',violet:'#7f
 const ASSET_COL={'Foreign Equity':'#57c59b','Thai Equity':'#c7a760','Mixed':'#5fa9a0','Fixed Income / MM':'#9ca8a2'};
 const TAX_COL={'SSF':'#c7a760','ThaiESG':'#57c59b','ThaiESGX':'#7fa59a','General':'#9ca8a2','LTF':'#e1aa54','RMF':'#5fa9a0'};
 const AMC_COL={'KKP':'#c7a760','SCB':'#7fa59a','UOB':'#e1aa54','Bualuang':'#57c59b','K-Fund':'#e76f61','Eastspring':'#5fa9a0','LH Fund':'#a7b77b','ONE':'#d28c5d'};
-const PALETTE=['#c7a760','#57c59b','#5fa9a0','#7fa59a','#e76f61','#e1aa54','#9ca8a2','#d28c5d','#8eb47f','#b89068','#6e9790','#d0bd86','#c77670','#829d8f','#b5a46f'];
+const PALETTE=['#4d8dff','#ff5a6a','#1fd286','#f0b95d','#9b7bff','#2dd4bf','#ff8a3d','#f472b6','#a3e635','#38bdf8','#eab308','#94a3b8'];
 
 let histMode='value',histSel=new Set(['__PORT__']),msFilter='',msGroup='amc',msExpanded=new Set(),sortK='value',sortDir=-1;
 let filterAMC=new Set(),filterTax=new Set();
